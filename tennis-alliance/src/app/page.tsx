@@ -1,5 +1,31 @@
+'use client'
 import Image from 'next/image'
 import styles from './page.module.css'
+import { useState} from 'react';
+
+const QuoteDisplay = () => {
+  const [quote, setQuote] = useState(null);
+
+  function handleClick() {
+    fetch('https://api.quotable.io/random')
+    .then(response => response.json())
+    .then(json => setQuote(json))
+  };
+
+  return (
+    <div>
+      {quote ? 
+        <div>
+          <p>{quote['content']}</p>
+          <p>author: {quote['author']}</p>
+          <p>tags: {quote['tags']}</p> 
+        </div>  
+      : <p>Click the button for a quote!</p>}
+      <br></br>
+      <button onClick={handleClick}> Get a quote! </button>
+    </div>
+  )
+}
 
 export default function Home() {
   return (
@@ -9,6 +35,7 @@ export default function Home() {
           Get started by editing&nbsp;
           <code className={styles.code}>src/app/page.tsx</code>
         </p>
+        <QuoteDisplay/>
         <div>
           <a
             href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -27,6 +54,7 @@ export default function Home() {
           </a>
         </div>
       </div>
+
 
       <div className={styles.center}>
         <Image
