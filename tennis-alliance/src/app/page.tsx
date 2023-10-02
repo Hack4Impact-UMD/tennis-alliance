@@ -1,7 +1,41 @@
+'use client'
 import Image from 'next/image'
 import styles from './page.module.css'
+import React, {useState, useEffect} from 'react';
+
+
 
 export default function Home() {
+ 
+
+    const [quote, setQuote] = useState("");
+    const [author, setAuthor] = useState("");
+    const [type, setTag] = useState("");
+  
+    useEffect(() => {
+      fetch("http://api.quotable.io/random")
+        .then(res => res.json())
+        .then(
+          (quote) => {
+            setQuote(quote.content);  
+            setAuthor(quote.author);
+            setTag(quote.tags);
+          }
+        )
+    },[]);
+  
+    let fetchNewQuote = () => {
+      fetch("http://api.quotable.io/random")
+        .then(res => res.json())
+        .then(
+          (quote) => {
+            setQuote(quote.content);  
+            setAuthor(quote.author);
+            setTag(quote.tags)
+          }
+        )
+    }
+  
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -82,13 +116,24 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
+                     By{' '}
+            <Image
+              src="/vercel.svg"
+              alt="Vercel Logo"
+              className={styles.vercelLogo}
+              width={100}
+              height={24}
+              priority
+            />
         </a>
+      </div>
+      <div>
+      <h2>
+The type of Quote is: {type}
+</h2>
+<p>{quote}</p>
+<p>- {author}</p>
+<button onClick={fetchNewQuote}>Fetch New Quote</button>
       </div>
     </main>
   )
