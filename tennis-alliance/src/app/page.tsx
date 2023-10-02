@@ -128,6 +128,7 @@ export default function Home() {
         </a>
       </div>
       <div>
+        // The quote 
       <h2>
 The type of Quote is: {type}
 </h2>
