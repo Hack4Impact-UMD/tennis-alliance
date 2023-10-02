@@ -1,7 +1,22 @@
-import Image from 'next/image'
+import React,{useState} from 'react'
 import styles from './page.module.css'
 
 export default function Home() {
+  const [quote, setQuote] = useState<String>();
+  const [auth, setAuth] = useState<String>();
+
+  async function randomQuote() {
+    const response = await fetch('https://api.quotable.io/random')
+    const quote = await response.json()
+
+    setQuote(quote.content);
+    setAuth(quote.author);
+    
+    // Output the quote and author name
+    console.log(quote.content)
+    console.log(`- ${quote.author}`)
+  }
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -16,27 +31,12 @@ export default function Home() {
             rel="noopener noreferrer"
           >
             By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
           </a>
         </div>
       </div>
 
       <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+        
       </div>
 
       <div className={styles.grid}>
@@ -49,7 +49,7 @@ export default function Home() {
           <h2>
             Docs <span>-&gt;</span>
           </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
+          <p>{quote} from {auth}</p>
         </a>
 
         <a
