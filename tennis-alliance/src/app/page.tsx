@@ -1,5 +1,42 @@
+"use client"
 import Image from 'next/image'
 import styles from './page.module.css'
+import { useState } from 'react';
+
+const HomePage = () => {
+  const [quoteData, setQuoteData] = useState(null);
+
+  const handleClick = async () => {
+      try {
+          const response = await fetch('https://api.quotable.io/random');
+          const data = await response.json();
+          setQuoteData(data);
+      } catch (error) {
+          console.error("There was an error fetching the quote:", error);
+      }
+  };
+
+  return (
+    <div style={{ padding: '50px' }}>
+        {quoteData ? (
+            <div>
+                <blockquote style={{ fontSize: '24px', marginBottom: '10px' }}>
+                    {quoteData['content']}
+                </blockquote>
+                <p style={{ fontSize: '18px', marginBottom: '10px' }}>- {quoteData['author']}</p>
+                <p style={{ fontSize: '16px', marginBottom: '30px' }}>
+                    Tags: {quoteData['tags']}
+                </p>
+            </div>
+        ) : (
+            <p>Loading...</p>
+        )}
+        <button onClick={handleClick} style={{ fontSize: '18px' }}>New Quote</button>
+    </div>
+);
+};
+
+
 
 export default function Home() {
   return (
@@ -28,6 +65,10 @@ export default function Home() {
         </div>
       </div>
 
+      <div>
+      <HomePage/>
+      </div>
+      
       <div className={styles.center}>
         <Image
           className={styles.logo}
