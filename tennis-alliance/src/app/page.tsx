@@ -1,38 +1,40 @@
-import React,{useState} from 'react'
+"use client"
+import React, {useState} from 'react'
 import styles from './page.module.css'
 
 export default function Home() {
-  const [quote, setQuote] = useState<String>();
-  const [auth, setAuth] = useState<String>();
+  const [quote, setQuote] = useState<String>("");
+  const [auth, setAuth] = useState<String>("");
+  const [tags, setTags] = useState<any>();
 
   async function randomQuote() {
     const response = await fetch('https://api.quotable.io/random')
     const quote = await response.json()
-
-    setQuote(quote.content);
-    setAuth(quote.author);
     
     // Output the quote and author name
     console.log(quote.content)
     console.log(`- ${quote.author}`)
+    return quote
+  }
+
+  const handleClick = async () => {
+    const q = await randomQuote()
+    setQuote(q.content);
+    setAuth(q.author);
+    setTags(q.tags.toString());
   }
 
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-          </a>
-        </div>
+        <p id="quote-body">{quote}</p>
+        <p id="author">- {auth}</p>
+        <p id="tags">Tags: {tags}</p>
+        <button
+          id="generate-quote"
+          onClick={handleClick}>
+            Generate a quote!
+        </button>
       </div>
 
       <div className={styles.center}>
