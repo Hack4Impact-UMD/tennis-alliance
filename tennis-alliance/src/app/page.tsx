@@ -127,7 +127,7 @@ export default function Home() {
             />
         </a>
       </div>
-      {/*Actual Quote*/}
+      {/*Actual Quote code starts here*/}
       <div>
         <h2>
           The type of Quote is: 
