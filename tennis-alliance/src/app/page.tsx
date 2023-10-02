@@ -1,44 +1,38 @@
-import Image from 'next/image'
+"use client"
 import styles from './page.module.css'
+import React,{useState} from 'react'; 
 
 export default function Home() {
+  const [quote, setQuote] = useState<any[]>([]);
+  const [author, setAuthor] = useState<any[]>([]);
+  const [tags, setTags] = useState<any[]>([]);
+
+  async function getQuote() {
+    const response = await fetch('https://api.quotable.io/random')
+    const quote = await response.json()
+    console.log(quote.content)
+    console.log(quote)
+    return quote;
+  }
+
+  const handleClick = async () => {
+    const quote = await getQuote();
+    setQuote(quote.content);
+    setAuthor(quote.author);
+    setTags(quote.tags.toString());
+  }
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+      <div className={styles.card}>
+        <p id="quote-body">{quote}</p>
+        <p id="author">- {author}</p>
+        <p id="tags">Tags: {tags}</p>
+      <button
+        id="generate-quote"
+        onClick={handleClick}
+      >Click to generate a quote!</button>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
       <div className={styles.grid}>
         <a
           href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
