@@ -10,7 +10,7 @@ export default function Home() {
 
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
-    const [type, setTag] = useState("");
+    const [tags, setTag] = useState([]);
   
     useEffect(() => {
       fetch("http://api.quotable.io/random")
@@ -127,14 +127,21 @@ export default function Home() {
             />
         </a>
       </div>
+      {/*Actual Quote*/}
       <div>
-        // The quote 
-      <h2>
-The type of Quote is: {type}
-</h2>
-<p>{quote}</p>
-<p>- {author}</p>
-<button onClick={fetchNewQuote}>Fetch New Quote</button>
+        <h2>
+          The type of Quote is: 
+        </h2>
+        <h2>
+            <ul>
+              {tags.map((tag, index) => (
+              <li key={index}>{tag}</li>
+              ))}
+           </ul>
+        </h2>
+        <p>{quote}</p>
+        <p>- {author}</p>
+        <button onClick={fetchNewQuote}>Fetch New Quote</button>
       </div>
     </main>
   )
