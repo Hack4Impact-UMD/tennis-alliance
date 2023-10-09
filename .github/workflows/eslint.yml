@@ -1,0 +1,30 @@
+name: ESLint
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: 18.18.0
+
+jobs:
+  eslint:
+    name: Run ESLint scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Code Linting
+        run: npm run lint
