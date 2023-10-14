@@ -3,12 +3,135 @@
 .body {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
+    display: flex;
+    justify-content: center;
 }
 
-.textbox {
+/* Control all divs in the page */
+.allDivs {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    align-items: space-between;
+    width: 635px;
+    height: 100%;
+    position: relative;
+    transition: width 0.3s ease;
+}
+
+/* -------- TEXT BOXES -------- */
+
+/* Style for first and last name text boxes */
+.individualNames {
+    width: 48%;
+    height: 3em;
     background-color: rgba(199, 220, 197, 1);
-    border-radius:5px;
+    border-radius:13px;
     outline: none;
     border: 1px solid #cdcdcd;
+    transition: width 0.3s ease;
+}
 
+/* Row ordering for name text boxes */
+.textNames {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1em;
+    margin-top: .5em;
+}
+
+/* Styling text box for email and phone # */
+.textbox {
+    width: 100%;
+    height: 3em;
+    background-color: rgba(199, 220, 197, 1);
+    border-radius:13px;
+    outline: none;
+    border: 1px solid #cdcdcd;
+    margin-bottom: 1em;
+    margin-top: .5em;
+}
+
+/* Styling the text area */
+#textarea {
+    width: 100%;
+    resize: none;
+    width: 100%;
+    height: 8em;
+    background-color: rgba(199, 220, 197, 1);
+    border-radius:13px;
+    outline: none;
+    border: 1px solid #cdcdcd;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    margin-top: .5em;
+}
+
+/* -------- CHECKBOXES -------- */
+
+/* Spacing the check boxes */
+.checkbox {
+    margin-bottom: 1em;
+}
+
+/* Style of unchecked state of checkbox */
+.checkbox input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    background-color: rgba(199, 220, 197, 1);
+    border: 1px solid #cdcdcd;
+    outline: none;
+    vertical-align: middle;
+}
+
+/* Style the label associated with the checkbox */
+.checkbox label {
+    vertical-align: middle;
+    margin-left: 5px; /* Add some spacing between the checkbox and the label */
+}
+
+/* Add styles for the checked state of the checkbox */
+.checkbox input[type="checkbox"]:checked {
+    background-color: #42b983; /* Change the background color when checked */
+    border: 1px solid #42b983; /* Change the border color when checked */
+}
+
+/* -------- SUBMIT BUTTON -------- */
+
+.submitLocation {
+    float: right;
+}
+
+/* Style submit button */
+.submitButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(147, 188, 225, 1);
+    height: 3em;
+    width: 7em;
+    border-radius: 13px;
+    outline: none;
+    border: 1px solid #cdcdcd;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+/*  -------- SCREEN SIZE -------- */
+
+/* Make adjustments to divs based on screen size */
+@media screen and (max-width: 650px){
+    .allDivs {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .individualNames {
+        width: 47%;
+    }
 }
