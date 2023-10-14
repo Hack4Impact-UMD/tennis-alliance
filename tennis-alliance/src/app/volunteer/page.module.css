@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap');
+
+.body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+.textbox {
+    background-color: rgba(199, 220, 197, 1);
+    border-radius:5px;
+    outline: none;
+    border: 1px solid #cdcdcd;
+
+}

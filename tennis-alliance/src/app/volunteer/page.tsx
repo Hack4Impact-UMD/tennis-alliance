@@ -1,22 +1,21 @@
 import React from 'react';
-
+import styles from './page.module.css'
 export default function Volunteer() {
     return (
-        <div className="mx-auto max-w-2xl px-4 my-10">
-
+        <div className={styles.body}>
             <form>
                 <div className='w-full flex flex-col'>
-                    <label htmlFor='name'> Name </label>
-                    <input type="text" id="first_name" placeholder='First' />
-                    <input type="text" id="last_name" placeholder='Last'/>
+                    <label htmlFor='name'> Name </label> <br></br>
+                    <input type="text" id="first_name" placeholder='First' className={styles.textbox}/>
+                    <input type="text" id="last_name" placeholder='Last'   className={styles.textbox}/>
                 </div>
                 <div className='w-full flex flex-col'>
-                    <label htmlFor='name'> Email </label>
-                    <input type="text" id="email" />
+                    <label htmlFor='name'> Email </label> <br></br>
+                    <input type="text" id="email" className={styles.textbox}/>
                 </div>
                 <div className='w-full flex flex-col'>
-                    <label htmlFor='name'> Phone Number </label>
-                    <input type="text" id="phonenumber" />
+                    <label htmlFor='name'> Phone Number </label> <br></br>
+                    <input type="text" id="phonenumber" className={styles.textbox}/>
                 </div>
                  
                 <legend>Check all skills that apply: </legend>
@@ -41,7 +40,10 @@ export default function Volunteer() {
                     <input type="checkbox" id="other" name="skill" value="other" />
                     <label htmlFor="other">Other</label>
                 </div>
-                <textarea /> 
+                <div>
+                    <label>If other, please specify</label> <br></br>
+                    <textarea rows={6} /> 
+                </div>
             </form>
         </div>
     )
