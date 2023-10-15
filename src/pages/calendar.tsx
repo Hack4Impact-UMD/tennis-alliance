@@ -73,7 +73,7 @@ const CalendarApp = () => {
                     dayHeaders={false}
                     fixedWeekCount={false}
                     events={events}
-                    aspectRatio= {1.622}
+                    aspectRatio= {1.6}
                     />
                 </div>
 
