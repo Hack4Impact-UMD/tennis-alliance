@@ -4,6 +4,23 @@
     --fc-today-bg-color: #AACDEE;
 }
 
+.fc {
+    background-color: #0E8FCC;
+    border-radius: 2%;
+    overflow: hidden;
+}
+
+.fc-dayGridMonth-view .fc-day, .fc-dayGridWeek-view .fc-day {
+    background-color: white;
+    border-color: black;
+}
+
+.fc-toolbar {
+    height: 30px;
+    font-size: 35px;
+    margin-top: 50px;
+}
+
 #container {
     display: flex;
     justify-content: center;
@@ -11,9 +28,10 @@
 }
 
 #calendar {
-    width: 700px;
+    width: 800px;
+    height: 625px;
     outline: 1px solid black;
-    border-radius: 15px;
+    border-radius: 2%;
 }
 
 p.yellow-border {

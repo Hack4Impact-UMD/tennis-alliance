@@ -6,38 +6,38 @@ import "./calendar_style.css";
 
 const CalendarApp = () => {
     const events = [
-        { title: "Teaching Youth Lessons", 
+        { name: "Teaching Youth Lessons", 
             date: "2023-10-04", 
             time: "3:00pm", 
             description: "Assisting children ages 10-12 with tennis practice and learning different skills", 
             slotsOpen: 7, 
             totalSlots: 20, 
-            display: "background", 
-            color: "#03D12B"},
-        { title: "Court Cleanup", 
+            display: "background",
+            backgroundColor: "#82C27B"},
+        { name: "Court Cleanup", 
             date: "2023-10-17", 
             time: "3:00pm", 
             description: "", 
             slotsOpen: 7, 
             totalSlots: 20, 
-            display: "background", 
-            color: "#02D12B"},
-        { title: "Teaching Adult Lessons", 
+            display: "background",
+            backgroundColor: "#82C27B"},
+        { name: "Teaching Adult Lessons", 
             date: "2023-10-15",                
             time: "3:00pm", 
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
             totalSlots: 20, 
-            display: "background", 
-            color: "#02D12B"},
-        { title: "Teaching Adult Lessons", 
+            display: "background",
+            backgroundColor: "#82C27B"},
+        { name: "Teaching Adult Lessons", 
             date: "2023-10-20",                
             time: "3:00pm", 
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
             totalSlots: 20, 
-            display: "background", 
-            color: "#02D12B"},    
+            display: "background",
+            backgroundColor: "#82C27B"},    
     ];
 
     const upcomingEvents = events.filter((event) => {
@@ -68,8 +68,12 @@ const CalendarApp = () => {
                     <FullCalendar
                     initialView="dayGridMonth"
                     plugins={[dayGridPlugin]}
+                    titleFormat={{month: 'long'}}
                     headerToolbar={{start: "", center: "title", end: ""}}
+                    dayHeaders={false}
+                    fixedWeekCount={false}
                     events={events}
+                    aspectRatio= {1.622}
                     />
                 </div>
 
@@ -80,7 +84,7 @@ const CalendarApp = () => {
                             <tbody>
                                 <tr>
                                     <td className="event-td left-td">Today's Events<br></br><br></br>{formatDate(event.date)}</td>
-                                    <td className="event-td">{event.title}<br></br><span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
+                                    <td className="event-td">{event.name}<br></br><span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
                                 </tr>
                             </tbody>
                         </table>
@@ -95,7 +99,7 @@ const CalendarApp = () => {
                             <tbody>
                                 <tr>
                                     <td className="event-td left-td">{formatDate(event.date)}</td>
-                                    <td className="event-td">{event.title}<br></br><span className="small-font">Time: {event.time}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
+                                    <td className="event-td">{event.name}<br></br><span className="small-font">Time: {event.time}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
                                 </tr>
                             </tbody>
                         </table>
