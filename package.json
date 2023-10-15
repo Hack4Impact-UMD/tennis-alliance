@@ -11,14 +11,20 @@
         "lint:fix": "next lint --fix"
     },
     "dependencies": {
+        "@fullcalendar/core": "^6.1.9",
+        "@fullcalendar/daygrid": "^6.1.9",
+        "@fullcalendar/react": "^6.1.9",
         "next": "^13.5.4",
         "react": "^18.2.0",
+        "react-big-calendar": "^1.8.4",
+        "react-calendar": "^4.6.0",
         "react-dom": "^18.2.0",
         "typescript": "^5.2.2"
     },
     "devDependencies": {
         "@types/node": "^20.8.4",
         "@types/react": "^18.2.27",
+        "@types/react-big-calendar": "^1.8.0",
         "@types/react-dom": "^18.2.12",
         "@typescript-eslint/eslint-plugin": "^6.7.5",
         "@typescript-eslint/parser": "^6.7.5",
