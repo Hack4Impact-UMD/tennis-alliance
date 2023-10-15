@@ -1,3 +1,61 @@
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
 :root {
-    --fc-today-bg-color: rgba(68, 102, 173, 0.15);
+    --fc-today-bg-color: #AACDEE;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    font-family: 'Inter';
+}
+
+#calendar {
+    width: 700px;
+    outline: 1px solid black;
+    border-radius: 15px;
+}
+
+p.yellow-border {
+    outline: 1px solid black;
+    width: 25%;
+    border-radius: 15px;
+    padding: 15px;
+    background-color: #FFF9CA;
+    text-align: center;
+    font-size: 20px;
+}
+
+.today-events-container {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #93BCE1;
+    border-style: hidden;
+    padding: 200px;
+    width: 100%;
+}
+
+.upcoming-events-container {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #C7DCC5;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+}
+
+.event-td {
+    border: 1px solid black;
+    text-align: left;
+    padding: 15px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.left-td {
+    width: 30%;
+}
+
+ .small-font {
+    font-size: 15px;
 }
