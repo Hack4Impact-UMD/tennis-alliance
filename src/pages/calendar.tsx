@@ -23,7 +23,7 @@ const CalendarApp = () => {
             display: "background",
             backgroundColor: "#82C27B"},
         { name: "Teaching Adult Lessons", 
-            date: "2023-10-15",                
+            date: "2023-10-16",                
             time: "3:00pm", 
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
@@ -41,7 +41,7 @@ const CalendarApp = () => {
     ];
 
     const upcomingEvents = events.filter((event) => {
-        return new Date(event.date) > new Date()
+        return new Date(event.date).getDate() - new Date().getDate() >= 0
     })
 
     const eventsToday = events.filter((event) => {
