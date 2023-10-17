@@ -1,8 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from "react";
+import Image from 'next/image';
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import "./calendar_style.css";
+import logo from './racket.png';
 
 const CalendarApp = () => {
     const events = [
@@ -84,7 +86,7 @@ const CalendarApp = () => {
                             <tbody>
                                 <tr>
                                     <td className="event-td left-td">Today's Events<br></br><br></br>{formatDate(event.date)}</td>
-                                    <td className="event-td">{event.name}<br></br><span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
+                                    <td className="event-td"> <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br><span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
                                 </tr>
                             </tbody>
                         </table>
@@ -99,7 +101,7 @@ const CalendarApp = () => {
                             <tbody>
                                 <tr>
                                     <td className="event-td left-td">{formatDate(event.date)}</td>
-                                    <td className="event-td">{event.name}<br></br><span className="small-font">Time: {event.time}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
+                                    <td className="event-td"> <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br><span className="small-font">Time: {event.time}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span></td> 
                                 </tr>
                             </tbody>
                         </table>
