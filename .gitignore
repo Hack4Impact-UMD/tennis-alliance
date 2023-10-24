@@ -2,6 +2,7 @@
 
 # firebase
 .firebase
+*.log
 
 # dependencies
 /node_modules
