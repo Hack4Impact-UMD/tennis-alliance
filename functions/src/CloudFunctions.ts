@@ -1,4 +1,4 @@
-import {app, functions} from '../src/index';
+import app, {functions} from '../../config/firebase';
 
 import { httpsCallable } from 'firebase/functions';
 import { getAuth, sendPasswordResetEmail } from '@firebase/auth';
