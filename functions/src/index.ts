@@ -102,21 +102,21 @@ exports.createUser = functions
                       .then(() => {
                         res.json({ result: "Complete" });
                       })
-                      .catch((error) => {
+                      .catch((error: any) => {
                         throw new functions.https.HttpsError(
                           "Unknown",
                           "Failed to add user to database"
                         );
                       });
                   })
-                  .catch((error) => {
+                  .catch((error: any) => {
                     throw new functions.https.HttpsError(
                       "Unknown",
                       "Failed to set user's role"
                     );
                   });
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 throw new functions.https.HttpsError(
                   "Unknown",
                   "Failed to add user to authorization"
@@ -124,7 +124,7 @@ exports.createUser = functions
               });
           }
         })
-        .catch((error) => {
+        .catch((error: any) => {
           throw new functions.https.HttpsError(
             "unauthenticated",
             "failed to authenticate request. ID token is missing or invalid."
