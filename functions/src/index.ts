@@ -87,17 +87,19 @@ exports.createUser = functions
               })
               .then(async (userRecord: any) => {
                 await auth
-                  .setCustomUserClaims(userRecord.uid, {
-                    role: req.body.data.role,
-                  })
                   .then(async () => {
                     await db
                       .collection("Users")
                       .add({
                         auth_id: userRecord.uid,
                         email: req.body.data.email,
-                        name: req.body.data.name,
-                        type: req.body.data.role.toUpperCase(),
+                        pass: req.body.password, 
+                        firstName: req.body.newFirstName, 
+                        lastName: req.body.newLastName, 
+                        phone: req.body.phoneNumber, 
+                        zip: req.body.zipCode,  
+                        children: req.body.children, 
+                        notifs: req.body.notifcations
                       })
                       .then(() => {
                         res.json({ result: "Complete" });
@@ -108,12 +110,6 @@ exports.createUser = functions
                           "Failed to add user to database"
                         );
                       });
-                  })
-                  .catch((error: any) => {
-                    throw new functions.https.HttpsError(
-                      "Unknown",
-                      "Failed to set user's role"
-                    );
                   });
               })
               .catch((error: any) => {
