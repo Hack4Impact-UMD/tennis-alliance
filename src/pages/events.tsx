@@ -13,7 +13,7 @@ const CalendarApp = () => {
     // list of events
     const events = [
         { name: "Teaching Youth Lessons", 
-            date: "2023-11-11", 
+            date: "2023-11-12", 
             time: "3:00pm", 
             description: "Assisting children ages 10-12 with tennis practice and learning different skills", 
             slotsOpen: 7, 
@@ -22,7 +22,7 @@ const CalendarApp = () => {
             display: "background",
             backgroundColor: "#82C27B"},
         { name: "Court Cleanup", 
-            date: "2023-11-12", 
+            date: "2023-11-13", 
             time: "3:00pm", 
             description: "", 
             slotsOpen: 7, 
@@ -31,7 +31,7 @@ const CalendarApp = () => {
             display: "background",
             backgroundColor: "#82C27B"},
         { name: "Teaching Adult Lessons", 
-            date: "2023-11-13",                
+            date: "2023-11-14",                
             time: "3:00pm", 
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
@@ -133,7 +133,9 @@ const CalendarApp = () => {
                                     <td className="event-td">
                                         <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
                                         <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
-                                        <button className="button-event" onClick={handleRegisterClick}>Register</button> 
+                                        {!showRegistration && (
+                                            <button className="button-event" onClick={handleRegisterClick}>Register</button> 
+                                        )}
                                         {showRegistration && (
                                             <div>
                                                 <form>
@@ -151,7 +153,9 @@ const CalendarApp = () => {
                                                         <input type="checkbox" value="registrant2" /> registrant2
                                                         <input type="checkbox" value="registrant3" /> registrant3
                                                     </div>
-                                                    <button type="submit">Submit</button>
+                                                    <div className="button-container">
+                                                        <button className="submit-button" type="submit">Submit</button>
+                                                    </div>
                                                 </form>
                                             </div>
                                         )}
