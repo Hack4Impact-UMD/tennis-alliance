@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unescaped-entities */
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -8,6 +8,8 @@ import "./events_style.css";
 import logo from "./racket.png";
 
 const CalendarApp = () => {
+    const [showRegistration, setShowRegistration] = useState(false);
+
     // list of events
     const events = [
         { name: "Teaching Youth Lessons", 
@@ -96,6 +98,14 @@ const CalendarApp = () => {
         }
     };
 
+    const handleRegisterClick = () => {
+        setShowRegistration(true);
+    };
+
+    const handleCancelClick = () => {
+        setShowRegistration(false);
+    };
+
     return (
         <div id="container">
             <ul>
@@ -123,7 +133,29 @@ const CalendarApp = () => {
                                     <td className="event-td">
                                         <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
                                         <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
-                                        <button className="button-event">Register</button> <button>Cancel</button>
+                                        <button className="button-event" onClick={handleRegisterClick}>Register</button> 
+                                        {showRegistration && (
+                                            <div>
+                                                <form>
+                                                    <p>Would you like to register as a participant or volunteer?</p>
+                                                    <div className="radio">
+                                                        <label>
+                                                            <input type="radio" value="participant" name="registration" /> participant
+                                                            <input type="radio" value="volunteer" name="registration" /> volunteer
+                                                        </label>
+                                                    </div>
+
+                                                    <p>Please select the names of the people in your group who will be participating</p>
+                                                    <div className="checkbox">
+                                                        <input type="checkbox" value="registrant1" /> registrant1
+                                                        <input type="checkbox" value="registrant2" /> registrant2
+                                                        <input type="checkbox" value="registrant3" /> registrant3
+                                                    </div>
+                                                    <button type="submit">Submit</button>
+                                                </form>
+                                            </div>
+                                        )}
+                                        <button className="button-event" onClick={handleCancelClick}>Cancel</button>
                                     </td>
                                 </tr>
                             </tbody>

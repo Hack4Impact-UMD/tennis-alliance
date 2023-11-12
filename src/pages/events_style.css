@@ -98,10 +98,19 @@ p.blue-border {
     background-color: #9acfce;
     border-radius: 30px;
     border: none;
-    color: white;
-    padding: 15px;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 4px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+}
+
+.radio {
+    margin: 4px 20px;
+}
+
+.checkbox {
+    margin: 4px 20px;
 }
