@@ -33,12 +33,11 @@
     border-radius: 2%;
 }
 
-p.yellow-border {
-    outline: 1px solid black;
+p.blue-border {
     width: 25%;
     border-radius: 15px;
     padding: 15px;
-    background-color: #FFF9CA;
+    background-color: #0E8FCC;
     text-align: center;
     font-size: 20px;
 }
@@ -52,7 +51,25 @@ p.yellow-border {
     width: 100%;
 }
 
-.upcoming-events-container {
+.upcoming-events-container-both {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #b7dde6;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+}
+
+.upcoming-events-container-volunteer {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #e6e6b7;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+}
+
+.upcoming-events-container-participant {
     border-collapse: collapse;
     border-radius: 15px;
     background-color: #C7DCC5;
@@ -75,4 +92,16 @@ p.yellow-border {
 
  .small-font {
     font-size: 15px;
+}
+
+.button-event {
+    background-color: #9acfce;
+    border-radius: 30px;
+    border: none;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
 }
