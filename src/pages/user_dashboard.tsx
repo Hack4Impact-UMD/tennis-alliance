@@ -12,7 +12,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 const CalendarApp = () => {
     const [chevronDown, setChevronDown] = useState(false);
-    const userPerspective = "u1"; // which user we're fetching the registered events for in this example
+    const userPerspective = "u7"; // which user we're fetching the registered events for in this example
 
     // list of events
     const events = [
