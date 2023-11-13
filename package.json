@@ -11,8 +11,11 @@
         "lint:fix": "next lint --fix"
     },
     "dependencies": {
+        "cors": "^2.8.5",
         "encoding": "^0.1.13",
         "firebase": "^10.5.2",
+        "firebase-admin": "^11.11.0",
+        "firebase-functions": "^4.5.0",
         "next": "^13.5.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -20,7 +23,7 @@
         "typescript": "^5.2.2"
     },
     "devDependencies": {
-        "@types/node": "^20.8.4",
+        "@types/node": "^20.8.10",
         "@types/react": "^18.2.27",
         "@types/react-dom": "^18.2.12",
         "@typescript-eslint/eslint-plugin": "^6.7.5",

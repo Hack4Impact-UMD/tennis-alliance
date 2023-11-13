@@ -1,9 +1,8 @@
-"use client"
+"use client";
 import Image from "next/image";
 import styles from "./page.module.css";
 import {createUser} from "../api/auth";
 import {user} from "../api/test";
-import { createHash } from "crypto";
 
 // const user = {
 //     uid: 1101,

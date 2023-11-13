@@ -18,14 +18,6 @@
 //   response.send("Hello from Firebase!");
 // });
 
-
-export const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-export const app = admin.initializeApp();
-const db = admin.firestore();
-const cors = require("cors");
-const corsHandler = cors({ origin: true });
-
 /*
  * Creates a new user
  *
@@ -46,16 +38,25 @@ const corsHandler = cors({ origin: true });
               notifs: boolean,
  */
 
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const app = admin.initializeApp();
+const db = admin.firestore();
+const cors = require("cors");
+const corsHandler = cors({ origin: true });
+
+module.exports = {functions, admin, app, db, cors, corsHandler};
+
 exports.createUser = functions
   .region("us-east4")
-  .https.onRequest((req: any, res: any) => {
+  .https.onRequest((req, res) => {
     corsHandler(req, res, async () => {
       const auth = admin.auth();
       await auth
         .verifyIdToken(req.headers.authorization.split("Bearer ")[1])
-        .then(async (decodedToken: any) => {
+        .then(async (decodedToken) => {
           if (
-            req.body.data.id == null ||
+            req.body.data.uid == null ||
             req.body.data.email == null ||
             req.body.data.pass == null ||
             req.body.data.firstName == null ||
@@ -85,34 +86,31 @@ exports.createUser = functions
                 email: req.body.data.email,
                 password: "defaultpassword",
               })
-              .then(async (userRecord: any) => {
-                await auth
-                  .then(async () => {
-                    await db
-                      .collection("Users")
-                      .add({
-                        auth_id: userRecord.uid,
-                        email: req.body.data.email,
-                        pass: req.body.password, 
-                        firstName: req.body.newFirstName, 
-                        lastName: req.body.newLastName, 
-                        phone: req.body.phoneNumber, 
-                        zip: req.body.zipCode,  
-                        children: req.body.children, 
-                        notifs: req.body.notifcations
-                      })
-                      .then(() => {
-                        res.json({ result: "Complete" });
-                      })
-                      .catch((error: any) => {
-                        throw new functions.https.HttpsError(
-                          "Unknown",
-                          "Failed to add user to database"
-                        );
-                      });
+              .then(async (userRecord) => {
+                await db
+                  .collection("Users")
+                  .add({
+                    auth_id: userRecord.uid,
+                    email: req.body.data.email,
+                    pass: req.body.data.password, 
+                    firstName: req.body.data.newFirstName, 
+                    lastName: req.body.data.newLastName, 
+                    phone: req.body.data.phoneNumber, 
+                    zip: req.body.data.zipCode,  
+                    children: req.body.data.children, 
+                    notifs: req.body.data.notifcations
+                  })
+                  .then(() => {
+                    res.json({ result: "Complete" });
+                  })
+                  .catch((error) => {
+                    throw new functions.https.HttpsError(
+                      "Unknown",
+                      "Failed to add user to database"
+                    );
                   });
               })
-              .catch((error: any) => {
+              .catch((error) => {
                 throw new functions.https.HttpsError(
                   "Unknown",
                   "Failed to add user to authorization"
@@ -120,7 +118,7 @@ exports.createUser = functions
               });
           }
         })
-        .catch((error: any) => {
+        .catch((error) => {
           throw new functions.https.HttpsError(
             "unauthenticated",
             "failed to authenticate request. ID token is missing or invalid."
@@ -128,4 +126,3 @@ exports.createUser = functions
         });
     });
   });
-
