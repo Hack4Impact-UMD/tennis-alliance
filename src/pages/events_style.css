@@ -31,6 +31,7 @@
     width: 800px;
     outline: 1px solid black;
     border-radius: 2%;
+    box-shadow: 5px 5px lightblue;
 }
 
 p.blue-border {
@@ -131,4 +132,41 @@ p.blue-border {
     text-align: center;
     text-decoration: none;
     font-size: 16px;
+}
+
+.event-text {
+    position: absolute;
+    right: 100%;
+    font-size: 15px; /* Adjust size as needed */
+    margin-top: auto; 
+    white-space: nowrap;
+    color: white;
+}
+
+.fc-daygrid-day.has-event {
+    background-color: #0E8FCC; /* Your desired background color */
+}
+
+.arrow-down {
+    rotate: 270deg;
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.x {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.disclosure-toggle {
+    margin-left: 90%; /* Pushes the button to the right */
+    order: 2;
+    border: none;
+    background-color: transparent;
+    mix-blend-mode: multiply;
 }
