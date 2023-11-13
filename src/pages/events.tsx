@@ -10,7 +10,6 @@ import logo from "./racket.png";
 import leftChevron from "./left-chevron.png";
 import xMark from "./x.png";
 import { Disclosure } from "@headlessui/react";
-import { time } from "console";
 
 
 const CalendarApp = () => {
