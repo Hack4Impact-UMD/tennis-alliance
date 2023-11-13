@@ -1,32 +1,57 @@
+.loginContainer {
+  background-color: white;
+  width: 100vw;
+  position: relative; /* Make sure this is relative so absolute children relate to it */
+  overflow: hidden; /* This will ensure no child elements stick out */
+}
 
 .topRectangle {
-  display: flex;
-  align-items: center;
-  /* Add other styles for topRectangle here */
-  position: relative; /* Make the topRectangle a relative positioning context */
+  position: relative;
+  width: 100%; /* Full width of the parent container */
+  background-color: white; /* Ensures the background is white */
 }
+
 
 .logo {
-  margin-left: 10px; /* Adjust the margin */
-  position: absolute; /* Use absolute positioning for the logo */
-  right: 0; /* Position the logo at the right edge of the topRectangle */
-  top: 25%; /* Position the logo at the top edge of the topRectangle */
-  /* Add other styles for the logo here */
+  position: absolute;
+  left: 80%; /* Center horizontally relative to the parent element */
+  top: 50%; /* Center vertically relative to the parent element */
+  transform: translate(-50%, -50%); /* Adjusts the positioning to truly center the element */
+  max-width: 50vw; /* Sets a maximum width relative to the viewport width */
+
 }
 
-.menuContainer{
-  position: absolute; /* Use absolute positioning for the logo */
-  left: 0; /* Position the logo at the right edge of the topRectangle */
-  top: 35%;
+.menuContainer {
+  position: absolute;
+  left: 0;
+  top: 50%; /* Adjust if necessary */
+  transform: translateY(-50%); /* Center vertically */
   margin-left: 5%;
 }
-.menuItems{
-  display: block;
+.menuItems {
+  position: relative;
   display: block;
   margin-bottom: 10px;
   width: 76px;
   height: 14px;
   left: 45px;
   border-radius: 15px;
-
 }
+
+.bodyContainer {
+  position: relative;
+  width: 100%; /* Set width to 100% of the viewport width */
+  height: 100vh; /* Set height to 100% of the viewport height */
+  display: flex; /* Use flexbox to center children */
+  justify-content: center; /* Center children horizontally */
+  align-items: center; /* Center children vertically */
+  margin: 0; /* Reset any default margin */
+  padding: 0; /* Reset any default padding */
+}
+
+#centeredImage{
+  max-width: 100%; /* Ensures the image is responsive and fits within the container */
+  height: auto; /* Maintain aspect ratio */
+}
+
+
