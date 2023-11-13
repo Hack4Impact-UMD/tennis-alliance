@@ -4,6 +4,7 @@ const nextConfig = {
     eslint: {
         dirs: ["src"],
     },
+    images: { unoptimized: true }
 };
 
 export default nextConfig;
