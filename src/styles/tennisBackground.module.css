@@ -7,7 +7,7 @@
 }
 
 .background > img {
-    width: 100%;
+    width: 100vw;
     height: 400px;
     object-fit: cover;
 }
