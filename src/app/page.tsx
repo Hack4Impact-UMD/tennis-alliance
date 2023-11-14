@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
 import styles from "./page.module.css";
-import {createUser} from "../api/auth";
-import {user} from "../api/test";
+import { createUser } from "../api/auth";
+import { user } from "../api/test";
 
 // const user = {
 //     uid: 1101,
@@ -26,7 +26,6 @@ const Home = () => {
     return (
         <main className={styles.main}>
             <div className={styles.description}>
-                
                 <p>
                     Get started by editing&nbsp;
                     <code className={styles.code}>src/app/page.tsx</code>
@@ -46,9 +45,12 @@ const Home = () => {
                             height={24}
                             priority
                         />
-                        
                     </a>
-                    <button onClick={() => createUser(user)}>CLICK ME</button>
+                    <button
+                        onClick={() => createUser(user)}
+                    >
+                        CLICK ME
+                    </button>
                 </div>
             </div>
 
