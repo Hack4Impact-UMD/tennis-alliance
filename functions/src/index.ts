@@ -49,7 +49,14 @@ exports.createUser = functions
     .region("us-east4")
     .https.onRequest((req, res) => {
         corsHandler(req, res, async () => {
-            res.json({result: req.body});
+            const user = req.body;
+            
+            // successfully adds data to databse:
+            console.log("Received user:", user);
+            await db.collection('users').add(user);
+            
+            // This still produces empty dict, is that okay?
+            res.json({ result: user });
         });
     });
 
