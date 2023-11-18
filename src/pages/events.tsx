@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import "./events_style.css";
 import logo from "./racket.png";
 import leftChevron from "./left-chevron.png";
@@ -14,6 +15,8 @@ import { Disclosure } from "@headlessui/react";
 
 const CalendarApp = () => {
     const [registrationStates, setRegistrationStates] = useState({});
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDayEvents, setSelectedDayEvents] = useState([]);
 
     // list of events
     const events = [
@@ -41,6 +44,13 @@ const CalendarApp = () => {
         { name: "Teaching Adult Lessons", 
             date: "2023-11-20",                
             time: "3:00pm", 
+            description: "Assisting adults with tennis practice", 
+            slotsOpen: 7, 
+            totalSlots: 20, 
+            type: "participant"},
+        { name: "Teaching Adult Lessons", 
+            date: "2023-11-18",                
+            time: "5:00pm", 
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
             totalSlots: 20, 
@@ -130,7 +140,7 @@ const CalendarApp = () => {
         const dateStr = arg.date.toDateString();
         const eventCount = eventCounts[dateStr];
 
-        let eventText = ""; // Initialize the event text string
+        let eventText = ""; 
         if (eventCount === 1) {
             eventText = "1 event"; // Text for a single event
         } else if (eventCount > 1) {
@@ -158,14 +168,38 @@ const CalendarApp = () => {
         }
     };
 
+    const handleDateClick = (arg) => {
+        const clickedDayEvents = events.filter(event => event.date === arg.dateStr);
+        setSelectedDayEvents(clickedDayEvents);
+        setSelectedDate(arg.dateStr);
+    };
+
+    const handleClickOutside = (event) => {
+        if (!document.getElementById("sub-container").contains(event.target)) {
+            resetSelection();
+        }
+    };
+    
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+    
+    const resetSelection = () => {
+        setSelectedDayEvents([]);
+        setSelectedDate(null);
+    };
+
     return (
         <div id="container">
-            <ul>
+            <ul id="sub-container">
                 <p className="blue-border">New Events:</p>
                 <div id="calendar">
                     <FullCalendar
                         initialView="dayGridMonth"
-                        plugins={[dayGridPlugin]}
+                        plugins={[dayGridPlugin, interactionPlugin]}
                         titleFormat={{month: "long"}}
                         headerToolbar={{start: "", center: "title", end: ""}}
                         dayHeaders={false}
@@ -175,117 +209,191 @@ const CalendarApp = () => {
                         eventDisplay="none"
                         dayCellContent={renderDayCellContent}
                         dayCellClassNames={getDayCellClassNames}
+                        dateClick={handleDateClick}
+                        selectable={true}
                     />
                 </div>
 
-                {eventsToday.map((event) => (
+                {selectedDayEvents.length > 0 && (
                     <div>
-                        <br></br>
-                        <table className="today-events-container">
-                            <tbody>
-                                <tr>
-                                    <td className="event-td left-td">Today's Events<br></br><br></br>{formatDateMonthDay(event.date)}</td>
-                                    <td className="event-td">
-                                        <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
-                                        <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
-                                        {!registrationStates[event.name + event.time] && (
-                                            <button className="button-event" onClick={() => handleRegisterClick(event.name + event.time)}>Register</button> 
-                                        )}
-                                        {registrationStates[event.name + event.time] && (
-                                            <div>
-                                                <form>
-                                                    <p>Would you like to register as a participant or volunteer?</p>
-                                                    <div className="radio">
-                                                        <label>
-                                                            <input type="radio" value="participant" name="registration" /> participant  <br></br>
-                                                            <input type="radio" value="volunteer" name="registration" /> volunteer  <br></br>
-                                                        </label>
-                                                    </div>
-
-                                                    <p>Please select the names of the people in your group who will be participating</p>
-                                                    <div className="checkbox">
-                                                        <input type="checkbox" value="registrant1" /> registrant1 
-                                                        <input type="checkbox" value="registrant2" /> registrant2
-                                                        <input type="checkbox" value="registrant3" /> registrant3
-                                                    </div>
-                                                    <div className="button-container">
-                                                        <button className="submit-button" type="submit">Submit</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        )}
-                                        <button className="button-event" onClick={() => handleCancelClick(event.name + event.time)}>Cancel</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>  
-                ))}
-
-                <p className="blue-border">Upcoming Events</p>
-
-                {upcomingEvents.map((event) => (
-                    <div>
-                        <table className={getClassName(event.type)}>
-                            <tbody>
-                                <tr>
-                                    <td className="event-td left-td">{formatDateMonthDay(event.date)}<br></br>{listTypes(event.type)}</td>
-                                    <td className="event-td"> 
-                                        <Disclosure>
-                                            {({open}) =>
-                                                <>
-                                                    <div className="header-with-button">
-                                                        <Disclosure.Button className="disclosure-toggle">
-                                                            {open ? (
-                                                                <Image className="x" src={xMark} alt="close" />
-                                                            ) : (
-                                                                <Image className="arrow-down" src={leftChevron} alt="open" />
-                                                            )}
-                                                        </Disclosure.Button><br></br>
-                                                        <div className="header-content">
-                                                            <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
-                                                            <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
-                                                        </div>
-                                                    </div>
-                                                    <Disclosure.Panel >
-                                                        {!registrationStates[event.name + event.time] && (
-                                                            <button className="button-event" onClick={() => handleRegisterClick(event.name + event.time)}>Register</button> 
-                                                        )}
-                                                        {registrationStates[event.name + event.time] && (
-                                                            <div>
-                                                                <form>
-                                                                    <p>Would you like to register as a participant or volunteer?</p>
-                                                                    <div className="radio">
-                                                                        <label>
-                                                                            <input type="radio" value="participant" name="registration" /> participant  <br></br>
-                                                                            <input type="radio" value="volunteer" name="registration" /> volunteer  <br></br>
-                                                                        </label>
-                                                                    </div>
-
-                                                                    <p>Please select the names of the people in your group who will be participating</p>
-                                                                    <div className="checkbox">
-                                                                        <input type="checkbox" value="registrant1" name="group" /> registrant1 
-                                                                        <input type="checkbox" value="registrant2" name="group" /> registrant2
-                                                                        <input type="checkbox" value="registrant3" name="group" /> registrant3
-                                                                    </div>
-                                                                    <div className="button-container">
-                                                                        <button className="submit-button" type="submit">Submit</button>
-                                                                    </div>
-                                                                </form>
+                        <p className="blue-border">{selectedDate}</p>
+                        {selectedDayEvents.map((event) => (
+                            <div>
+                                <table className={getClassName(event.type)}>
+                                    <tbody>
+                                        <tr>
+                                            <td className="event-td left-td">{formatDateMonthDay(event.date)}<br></br>{listTypes(event.type)}</td>
+                                            <td className="event-td"> 
+                                                <Disclosure>
+                                                    {({open}) =>
+                                                        <>
+                                                            <div className="header-with-button">
+                                                                <Disclosure.Button className="disclosure-toggle">
+                                                                    {open ? (
+                                                                        <Image className="x" src={xMark} alt="close" />
+                                                                    ) : (
+                                                                        <Image className="arrow-down" src={leftChevron} alt="open" />
+                                                                    )}
+                                                                </Disclosure.Button><br></br>
+                                                                <div className="header-content">
+                                                                    <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
+                                                                    <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
+                                                                </div>
                                                             </div>
-                                                        )}
-                                                        <button className="button-event" onClick={() => handleCancelClick(event.name + event.time)}>Cancel</button>
-                                                    </Disclosure.Panel>
-                                                </>
-                                            }
-                                        </Disclosure>
-                                    </td> 
-                                </tr>
-                            </tbody>
-                        </table>
-                        <br></br>
+                                                            <Disclosure.Panel >
+                                                                {!registrationStates[event.name + event.time] && (
+                                                                    <button className="button-event" onClick={() => handleRegisterClick(event.name + event.time)}>Register</button> 
+                                                                )}
+                                                                {registrationStates[event.name + event.time] && (
+                                                                    <div>
+                                                                        <form>
+                                                                            <p>Would you like to register as a participant or volunteer?</p>
+                                                                            <div className="radio">
+                                                                                <label>
+                                                                                    <input type="radio" value="participant" name="registration" /> participant  <br></br>
+                                                                                    <input type="radio" value="volunteer" name="registration" /> volunteer  <br></br>
+                                                                                </label>
+                                                                            </div>
+
+                                                                            <p>Please select the names of the people in your group who will be participating</p>
+                                                                            <div className="checkbox">
+                                                                                <input type="checkbox" value="registrant1" name="group" /> registrant1 
+                                                                                <input type="checkbox" value="registrant2" name="group" /> registrant2
+                                                                                <input type="checkbox" value="registrant3" name="group" /> registrant3
+                                                                            </div>
+                                                                            <div className="button-container">
+                                                                                <button className="submit-button" type="submit">Submit</button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                )}
+                                                                <button className="button-event" onClick={() => handleCancelClick(event.name + event.time)}>Cancel</button>
+                                                            </Disclosure.Panel>
+                                                        </>
+                                                    }
+                                                </Disclosure>
+                                            </td> 
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br></br>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                )}
+
+                {!selectedDate && (
+                    <div>
+                        {eventsToday.map((event) => (
+                            <div>
+                                <br></br>
+                                <table className="today-events-container">
+                                    <tbody>
+                                        <tr>
+                                            <td className="event-td left-td">Today's Events<br></br><br></br>{formatDateMonthDay(event.date)}</td>
+                                            <td className="event-td">
+                                                <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
+                                                <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
+                                                {!registrationStates[event.name + event.time] && (
+                                                    <button className="button-event" onClick={() => handleRegisterClick(event.name + event.time)}>Register</button> 
+                                                )}
+                                                {registrationStates[event.name + event.time] && (
+                                                    <div>
+                                                        <form>
+                                                            <p>Would you like to register as a participant or volunteer?</p>
+                                                            <div className="radio">
+                                                                <label>
+                                                                    <input type="radio" value="participant" name="registration" /> participant  <br></br>
+                                                                    <input type="radio" value="volunteer" name="registration" /> volunteer  <br></br>
+                                                                </label>
+                                                            </div>
+
+                                                            <p>Please select the names of the people in your group who will be participating</p>
+                                                            <div className="checkbox">
+                                                                <input type="checkbox" value="registrant1" /> registrant1 
+                                                                <input type="checkbox" value="registrant2" /> registrant2
+                                                                <input type="checkbox" value="registrant3" /> registrant3
+                                                            </div>
+                                                            <div className="button-container">
+                                                                <button className="submit-button" type="submit">Submit</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                )}
+                                                <button className="button-event" onClick={() => handleCancelClick(event.name + event.time)}>Cancel</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>  
+                        ))}
+
+                        <p className="blue-border">Upcoming Events</p>
+
+                        {upcomingEvents.map((event) => (
+                            <div>
+                                <table className={getClassName(event.type)}>
+                                    <tbody>
+                                        <tr>
+                                            <td className="event-td left-td">{formatDateMonthDay(event.date)}<br></br>{listTypes(event.type)}</td>
+                                            <td className="event-td"> 
+                                                <Disclosure>
+                                                    {({open}) =>
+                                                        <>
+                                                            <div className="header-with-button">
+                                                                <Disclosure.Button className="disclosure-toggle">
+                                                                    {open ? (
+                                                                        <Image className="x" src={xMark} alt="close" />
+                                                                    ) : (
+                                                                        <Image className="arrow-down" src={leftChevron} alt="open" />
+                                                                    )}
+                                                                </Disclosure.Button><br></br>
+                                                                <div className="header-content">
+                                                                    <Image className="object-cover" src={logo} alt="gwg"/> {event.name}<br></br>
+                                                                    <span className="small-font">Time: {event.time}<br></br>{event.description}<br></br>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
+                                                                </div>
+                                                            </div>
+                                                            <Disclosure.Panel >
+                                                                {!registrationStates[event.name + event.time] && (
+                                                                    <button className="button-event" onClick={() => handleRegisterClick(event.name + event.time)}>Register</button> 
+                                                                )}
+                                                                {registrationStates[event.name + event.time] && (
+                                                                    <div>
+                                                                        <form>
+                                                                            <p>Would you like to register as a participant or volunteer?</p>
+                                                                            <div className="radio">
+                                                                                <label>
+                                                                                    <input type="radio" value="participant" name="registration" /> participant  <br></br>
+                                                                                    <input type="radio" value="volunteer" name="registration" /> volunteer  <br></br>
+                                                                                </label>
+                                                                            </div>
+
+                                                                            <p>Please select the names of the people in your group who will be participating</p>
+                                                                            <div className="checkbox">
+                                                                                <input type="checkbox" value="registrant1" name="group" /> registrant1 
+                                                                                <input type="checkbox" value="registrant2" name="group" /> registrant2
+                                                                                <input type="checkbox" value="registrant3" name="group" /> registrant3
+                                                                            </div>
+                                                                            <div className="button-container">
+                                                                                <button className="submit-button" type="submit">Submit</button>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                )}
+                                                                <button className="button-event" onClick={() => handleCancelClick(event.name + event.time)}>Cancel</button>
+                                                            </Disclosure.Panel>
+                                                        </>
+                                                    }
+                                                </Disclosure>
+                                            </td> 
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br></br>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </ul>
         </div>
     );
