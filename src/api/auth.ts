@@ -1,4 +1,4 @@
-import { functions, app } from "../config";
+import { functions, app, auth } from "../config";
 
 import { httpsCallable } from "firebase/functions";
 import { type AuthError } from '@firebase/auth';
@@ -9,7 +9,8 @@ import {
   sendPasswordResetEmail,
   UserCredential,
 } from 'firebase/auth';
-
+import React, { useState } from "react";
+import style from "../app/page.module.css";
 /*
  * Creates a user and sends a password reset email to that user.
  */
@@ -34,6 +35,23 @@ type User = {
     notifcations: boolean;
 };
 
+// ---- USER AUTHENTICATION TEMPORARY LOCATION FOR TESTING -------
+const submitting = async (email: string, password: string) => {
+  console.log('email:', email);
+    try {
+      const userCred: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log(userCred.user);
+    } catch (error) {
+      console.error('Error signing in:', error);
+    }
+
+};
+
+export default submitting;
+
+// ---- USER AUTHENTICATION TEMPORARY LOCATION FOR TESTING -------
+
+  
 export function createUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
         const createUserCloudFunction = httpsCallable(

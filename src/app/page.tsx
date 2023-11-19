@@ -1,8 +1,14 @@
 "use client";
 import Image from "next/image";
-import styles from "./page.module.css";
-import { createUser } from "../api/auth";
+import style from "./page.module.css";
+import submitting, { createUser } from "../api/auth";
 import { user } from "../api/test";
+import {useState} from "react";
+import {
+    signInWithEmailAndPassword
+} from "firebase/auth";
+import {auth} from "../config";
+
 
 // const user = {
 //     uid: 1101,
@@ -23,106 +29,60 @@ import { user } from "../api/test";
 //   }
 
 const Home = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
     return (
-        <main className={styles.main}>
-            <div className={styles.description}>
-                <p>
-                    Get started by editing&nbsp;
-                    <code className={styles.code}>src/app/page.tsx</code>
-                </p>
+        <main className={style.main}>
+            <div className={style.description}>
+                
                 <div>
-                    <a
-                        href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        By{" "}
-                        <Image
-                            src="/vercel.svg"
-                            alt="Vercel Logo"
-                            className={styles.vercelLogo}
-                            width={100}
-                            height={24}
-                            priority
-                        />
-                    </a>
+                    
                     <button
                         onClick={() => createUser(user)}
                     >
                         CLICK ME
                     </button>
+                    <br/>
+                    <form>
+                        <div className={style.personal}>
+                        <label htmlFor='email'>Email</label>
+                        <br />
+                        <input
+                            type="text"
+                            id="email"
+                            onChange={(event) => setEmail(event.target.value)}
+                            className={style.textbox}
+                            required
+                        />
+                        <br />
+                        <div className={style.textNames}>
+                            <div className={style.nameTitles}>
+                            <label htmlFor='password'>Password</label>
+                            <br />
+                            <input
+                                type="password"
+                                id="password"
+                                onChange={(event) => setPassword(event.target.value)}
+                                className={style.phone}
+                                required
+                            />
+                            </div>
+                        </div>
+                        </div>
+
+                        <div className={style.submitLocation}>
+                        <button type="button" onClick={() => submitting(email, password)} className={style.submitButton}>
+                            Submit
+                        </button>
+                        <br />
+                        </div>
+                    </form>
+                    
+                    
                 </div>
             </div>
 
-            <div className={styles.center}>
-                <Image
-                    className={styles.logo}
-                    src="/next.svg"
-                    alt="Next.js Logo"
-                    width={180}
-                    height={37}
-                    priority
-                />
-            </div>
-
-            <div className={styles.grid}>
-                <a
-                    href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className={styles.card}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2>
-                        Docs <span>-&gt;</span>
-                    </h2>
-                    <p>
-                        Find in-depth information about Next.js features and
-                        API.
-                    </p>
-                </a>
-
-                <a
-                    href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className={styles.card}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2>
-                        Learn <span>-&gt;</span>
-                    </h2>
-                    <p>
-                        Learn about Next.js in an interactive course
-                        with&nbsp;quizzes!
-                    </p>
-                </a>
-
-                <a
-                    href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className={styles.card}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2>
-                        Templates <span>-&gt;</span>
-                    </h2>
-                    <p>Explore the Next.js 13 playground.</p>
-                </a>
-
-                <a
-                    href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className={styles.card}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2>
-                        Deploy <span>-&gt;</span>
-                    </h2>
-                    <p>
-                        Instantly deploy your Next.js site to a shareable URL
-                        with Vercel.
-                    </p>
-                </a>
-            </div>
         </main>
     );
 };
