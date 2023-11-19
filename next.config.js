@@ -1,12 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        unoptimized: true,
-      },
+    reactStrictMode: true,
     output: "export",
     eslint: {
         dirs: ["src"],
     },
+    images: {
+        unoptimized: true,
+    },
+    trailingSlash: true,
 };
 
 export default nextConfig;
