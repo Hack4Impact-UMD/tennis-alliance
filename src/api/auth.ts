@@ -8,6 +8,7 @@ import {
   signOut,
   sendPasswordResetEmail,
   UserCredential,
+  onAuthStateChanged,
 } from 'firebase/auth';
 import React, { useState } from "react";
 import style from "../app/page.module.css";
@@ -34,23 +35,6 @@ type User = {
     children: Children[];
     notifcations: boolean;
 };
-
-// ---- USER AUTHENTICATION TEMPORARY LOCATION FOR TESTING -------
-const submitting = async (email: string, password: string) => {
-  console.log('email:', email);
-    try {
-      const userCred: UserCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log(userCred.user);
-    } catch (error) {
-      console.error('Error signing in:', error);
-    }
-
-};
-
-export default submitting;
-
-// ---- USER AUTHENTICATION TEMPORARY LOCATION FOR TESTING -------
-
   
 export function createUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -76,10 +60,12 @@ export function authenticateUser(
   email: string,
   password: string,
 ): Promise<UserCredential> {
-  return new Promise((resolve, reject) => {
-    const auth = getAuth(app);
-    signInWithEmailAndPassword(auth, email, password)
+  return new Promise(async (resolve, reject) => {
+    
+    await signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
+        console.log(userCredential.user)
+        monitorAuthState();
         resolve(userCredential);
       })
       .catch((error: AuthError) => {
@@ -88,15 +74,50 @@ export function authenticateUser(
   });
 }
 
+export const monitorAuthState = async () => {
+  await onAuthStateChanged(auth, user => {
+    if (user) {
+      console.log(user)
+      console.log("logged in! switch to user dashboard page")
+      
+    } else {
+      console.log("you are not logged in")
+    }
+  });
+}
+
+
+
+
 export function logOut(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const auth = getAuth(app);
-    signOut(auth)
+  return new Promise(async (resolve, reject) => {
+  await signOut(auth)
       .then(() => {
+        console.log("logged out!")
+        monitorAuthState();
+
         resolve();
+      
       })
       .catch((error) => {
         reject(error);
       });
   });
 }
+
+
+
+
+
+// const submitting = async (email: string, password: string) => {
+//   console.log('email:', email);
+//     try {
+//       const userCred: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+//       console.log(userCred.user);
+//     } catch (error) {
+//       console.error('Error signing in:', error);
+//     }
+
+// };
+
+// export default submitting;

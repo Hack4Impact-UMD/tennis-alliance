@@ -1,14 +1,9 @@
 "use client";
 import Image from "next/image";
 import style from "./page.module.css";
-import submitting, { createUser } from "../api/auth";
+import { createUser, authenticateUser, logOut, monitorAuthState } from "../api/auth";
 import { user } from "../api/test";
-import {useState} from "react";
-import {
-    signInWithEmailAndPassword
-} from "firebase/auth";
-import {auth} from "../config";
-
+import {useEffect, useState} from "react";
 
 // const user = {
 //     uid: 1101,
@@ -31,6 +26,11 @@ import {auth} from "../config";
 const Home = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    
+    
 
     return (
         <main className={style.main}>
@@ -72,10 +72,14 @@ const Home = () => {
                         </div>
 
                         <div className={style.submitLocation}>
-                        <button type="button" onClick={() => submitting(email, password)} className={style.submitButton}>
-                            Submit
-                        </button>
-                        <br />
+                            <button type="button" onClick={() => {authenticateUser(email, password); setLoggedIn(true)}} className={style.submitButton}>
+                                Log In
+                            </button>
+                            <br />
+                            <button type="button" onClick={() => {logOut(); setLoggedIn(false)}} className={style.submitButton}>
+                                Sign Out
+                            </button>
+                            <br />
                         </div>
                     </form>
                     
