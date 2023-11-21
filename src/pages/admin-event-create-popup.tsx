@@ -131,8 +131,8 @@ const Popup = () => {
 
     const modifiersStyles = {
         selected: {
-            color: 'white',
-            backgroundColor: '#000C79',
+            color: "white",
+            backgroundColor: "#000C79",
         },
     };
 
