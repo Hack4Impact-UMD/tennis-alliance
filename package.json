@@ -11,9 +11,11 @@
         "lint:fix": "next lint --fix"
     },
     "dependencies": {
+        "date-fns": "^2.30.0",
         "firebase": "^10.5.2",
         "next": "^13.5.4",
         "react": "^18.2.0",
+        "react-day-picker": "^8.9.1",
         "react-dom": "^18.2.0",
         "typescript": "^5.2.2"
     },
