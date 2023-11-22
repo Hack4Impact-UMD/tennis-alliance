@@ -31,3 +31,22 @@ button {
     -webkit-transform: scale(1.05);
     transform: scale(1.05);
 }
+
+.participantcontainer {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.participantlist {
+    list-style: none;
+    padding: 0;
+}
+
+.participantitem {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}

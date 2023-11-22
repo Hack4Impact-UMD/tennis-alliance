@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap');
+
+.participantcontainer {
+    margin: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Inter', sans-serif;
+
+}
+
+.participantlist {
+    flex-direction: center;
+}
+
+.participantitem {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid; 
+    border-radius: 3px;
+}
