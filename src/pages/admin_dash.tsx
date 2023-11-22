@@ -5,6 +5,9 @@ import styles from "@/styles/adminDash.module.css"
 
 
 
+
+
+
 const participants = [
     { name: "John Doe", email: "johndoe@gmail.com", type: "Volunteer"}, 
     { name: "Jane Doe", email: "janedoe@gmail.com", type: "Participant"}, 
@@ -20,7 +23,7 @@ const Searchbar = () => {
         } else {
             // Filter participants and extract names
             const filteredParticipants = participants.filter((participant) =>
-                participant.name.includes(searchTerm)
+                participant.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
             setActiveSearch(filteredParticipants);
@@ -29,12 +32,20 @@ const Searchbar = () => {
 
     return (
         <form className={styles.form}>
+            <span className={styles.label}>All Participants</span>
             <div className={styles.parent}>
                 <input className={styles.search} type="search" placeholder='Search' onChange ={(e) => handleSearch(e)}>
                 </input>
             </div>
-
+            <div className={styles.participantcontainer}>
+            <div className={styles.participantitem1}>
+                <span className={styles.name1}>Name </span>
+                <span className={styles.email1}>Email </span>
+                <span className={styles.type1}>Type </span>
+            </div>
+            </div>
             {
+                
                 (
                     activeSearch.length > 0 && 
                     <div className={styles.participantcontainer}>

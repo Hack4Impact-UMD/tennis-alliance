@@ -5,9 +5,9 @@
     background-image: url('/Users/anoushkaarora/t_all/tennis-alliance/src/assets/image 24.png');
     background-position: 10px 10px;
     background-repeat: no-repeat;
-    
-    width: 15%;
-    font-size: 15px; 
+    margin-top: 2%; 
+    width: 35%;
+    font-size: 18px; 
     color: black; 
     padding: 12px 15px;
     border-color: transparent; 
@@ -15,6 +15,18 @@
     background-color: #0E8FCC;
     font-family: 'Inter', sans-serif;
   }
+
+.label {
+    display: flexbox;
+    place-items: center;
+    margin-left: 370px; 
+    border-radius: 10px;
+    background-color: #0E8FCC;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    padding: 12px 15px;
+   
+}
 
 .parent {
     display: flexbox;
@@ -24,15 +36,15 @@
 
 .participantitem {
     margin: 0 auto;
-    background-color: #9acfce;
+    background-color: #E4F5E2;
     border-radius: 15px;
     border: none;
     color: rgb(0, 0, 0);
     padding: 10px;
     margin: 4px 20px;
     text-decoration: none;
-    text-align: center;
     font-size: 16px;
+    text-align: center;
 }
 
 .participantcontainer {
@@ -49,11 +61,31 @@
 
 .name {
     margin-right: 10%; 
-    text-align: left;
+
 }
 
 .email {
     margin-right: 10%; 
 }
 
+.name1 {
+    margin-right: 23%; 
 
+}
+
+.email1 {
+    margin-right: 23%; 
+}
+
+.participantitem1 {
+    margin: 0 auto;
+    background-color: #9acfce;
+    border-radius: 15px;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    margin: 4px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    text-align: center;
+}
