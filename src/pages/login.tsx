@@ -30,9 +30,7 @@ const UIPage = () => {
        <div className={styles.loginContainer}>
            <div className={styles.topRectangle}>
                <div className={styles.menuContainer}>
-                   <Image src={Rectangle1} alt="Rectangle 1" className={styles.menuContainer}/>
-                   <Image src={Rectangle2} alt="Rectangle 1" className={styles.menuContainer}/>
-                   <Image src={Rectangle3} alt="Rectangle 1" className={styles.menuContainer}/>
+
                </div>
            </div>
            <div className={styles.bodyContainer}>
