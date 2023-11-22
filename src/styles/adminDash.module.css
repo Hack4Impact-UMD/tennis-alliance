@@ -1,20 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap');
 
-.participantcontainer {
-    margin: 20px;
-    padding: 10px;
-    border-radius: 5px;
+
+.search {
+    background-image: url('/Users/anoushkaarora/t_all/tennis-alliance/src/assets/image 24.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    
+    width: 15%;
+    font-size: 15px; 
+    color: black; 
+    padding: 12px 15px;
+    border-color: transparent; 
+    border-radius: 10px;
+    background-color: #0E8FCC;
     font-family: 'Inter', sans-serif;
+  }
 
-}
-
-.participantlist {
-    flex-direction: center;
+.parent {
+    display: flexbox;
+    place-items: center;
+    margin-left: 370px; 
 }
 
 .participantitem {
-    margin-bottom: 10px;
+    margin: 0 auto;
+    background-color: #9acfce;
+    border-radius: 15px;
+    border: none;
+    color: rgb(0, 0, 0);
     padding: 10px;
-    border: 1px solid; 
-    border-radius: 3px;
+    margin: 4px 20px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
 }
+
+.participantcontainer {
+    
+    margin-left: 350px; 
+    margin-right: 350px; 
+    border-radius: 5px;
+    font-family: 'Inter', sans-serif;
+    display:flexbox;
+    place-items: center;
+
+
+}
+
+.name {
+    margin-right: 10%; 
+    text-align: left;
+}
+
+.email {
+    margin-right: 10%; 
+}
+
+
