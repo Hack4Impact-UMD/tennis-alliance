@@ -1,29 +1,18 @@
 .loginContainer {
-    background-color: white;
-    width: 100vw;
-    position: relative;
-    /* Make sure this is relative so absolute children relate to it */
-    overflow: hidden;
-    /* This will ensure no child elements stick out */
- }
- 
- 
- .topRectangle {
-    position: absolute;
-    width: 100%;
-    /* Full width of the parent container */
-    background-color: white;
-    /* Ensures the background is white */
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   height: auto;
+   background: url("../assets/Group 27.png") no-repeat center center fixed;
+   
  }
  
 
  
  .forgotPasswordLink {
-    position: absolute;
     width: 184px;
     height: 36px;
-    left: 458px;
-    top: 606px;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
@@ -36,7 +25,7 @@
  
  
  .box {
-    position: absolute;
+
     width: 519px;
     height: 432px;
     left: 163px;
@@ -48,20 +37,17 @@
  
  
  .minilogo {
-    position: absolute;
+    
     width: 359px;
     height: 92px;
-    left: 243px;
-    top: 312px;
+
  }
  
  
  .email {
-    position: absolute;
     width: 133px;
     height: 59px;
-    left: 209px;
-    top: 452px;
+
  
  
     font-family: 'Inter';
@@ -78,11 +64,10 @@
  .pw {
  
  
-    position: absolute;
+
     width: 255px;
     height: 59px;
-    left: 209px;
-    top: 594px;
+
  
  
     font-family: 'Inter';
@@ -102,11 +87,10 @@
     /* Rectangle 78 */
  
  
-    position: absolute;
+
     width: 426px;
     height: 60px;
-    left: 209px;
-    top: 511px;
+
  
  
     background: #FFFFFF;
@@ -117,10 +101,10 @@
  
  
  .logo {
-    position: absolute;
-    left: 80%;
+
+
     /* Center horizontally relative to the parent element */
-    top: 50%;
+
     /* Center vertically relative to the parent element */
     transform: translate(-50%, -50%);
     /* Adjusts the positioning to truly center the element */
@@ -132,11 +116,10 @@
  
  
  .submitButtonContainer {
-    position: absolute;
+
     width: 242px;
     height: 60px;
-    left: 286px;
-    top: 741px;
+
     background: #FFFFFF;
     border-radius: 10.689px;
     cursor: pointer;
@@ -146,24 +129,18 @@
  }
  
  
+
  .logoImage {
-    position: absolute;
-    width: 48px;
-    height: 60px;
-    left: 0;
-    top: 0;
-    background: url("/image 6.svg");
- }
- 
+   width: 48px;
+   height: 60px;
+   background: url("/image 6.svg");
+}
  
  .submitText {
-    position: absolute;
+
     width: 292px;
     height: 52px;
-    left: 60px;
-    /* Adjust based on the logo width */
-    top: 4px;
-    /* Adjust based on the logo height */
+
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
@@ -188,11 +165,10 @@
  
  
  .bottomText {
-    position: absolute;
+
     width: 494px;
     height: 28px;
-    left: 199px;
-    top: 818px;
+
  
  
     font-family: 'Inter';
@@ -206,30 +182,7 @@
  }
  
  
- .menuContainer {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    /* Adjust if necessary */
-    transform: translateY(-50%);
-    /* Center vertically */
-    margin-left: 5%;
-    z-index: 99999;
- }
- 
- 
- .menuItems {
-    position: relative;
-    display: block;
-    margin-bottom: 10px;
-    width: 76px;
-    height: 14px;
-    left: 45px;
-    border-radius: 15px;
-    z-index: 999;
- 
- }
- 
+
  
  .bodyContainer {
     position: relative;
@@ -255,5 +208,14 @@
     /* Ensures the image is responsive and fits within the container */
     height: auto;
     /* Maintain aspect ratio */
+ }
+ .boxContainer {
+   width: 400px;
+   height: 500px;  
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   background-color: blue;
  }
  
