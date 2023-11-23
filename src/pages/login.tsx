@@ -35,8 +35,8 @@ const UIPage = () => {
                     value={inputText1}
                     onChange={handleInputChange1}
                     style={{
-                        width: '100%',
-                        height: '100%',
+                        width: '80%',
+                        height: '10%',
                         border: 'none',
                         borderRadius: '10.689px',
                         outline: 'none',
@@ -52,8 +52,8 @@ const UIPage = () => {
                     value={inputText2}
                     onChange={handleInputChange2}
                     style={{
-                        width: '100%',
-                        height: '100%',
+                        width: '80%',
+                        height: '10%',
                         border: 'none',
                         borderRadius: '10.689px',
                         outline: 'none',

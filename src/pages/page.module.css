@@ -45,21 +45,16 @@
  
  
  .email {
-    width: 133px;
-    height: 59px;
-
- 
- 
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 34.2047px;
-    line-height: 41px;
- 
- 
-    color: #000000;
+   width: 133px;
+   height: 59px;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 400;
+   font-size: 34.2047px;
+   line-height: 41px;
+   color: #000000;
+   text-indent: 5px;
  }
- 
  
  .pw {
  
@@ -118,7 +113,7 @@
  .submitButtonContainer {
 
     width: 242px;
-    height: 60px;
+    height: 30px;
 
     background: #FFFFFF;
     border-radius: 10.689px;
@@ -153,6 +148,7 @@
  
  
  .genLink {
+    position: relative;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
@@ -161,6 +157,7 @@
     color: #122286;
     text-decoration: underline;
     cursor: pointer;
+    justify-content: center;
  }
  
  
@@ -210,12 +207,13 @@
     /* Maintain aspect ratio */
  }
  .boxContainer {
-   width: 400px;
-   height: 500px;  
+   width: 519px;
+   height: 432px;  
    display: flex;
    flex-direction: column;
    justify-content: center;
    align-items: center;
-   background-color: blue;
+   background-color: #93BCE1;
+   border-radius: 30px;
  }
  
