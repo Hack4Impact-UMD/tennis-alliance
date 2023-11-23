@@ -10,11 +10,7 @@ import {
   UserCredential,
   onAuthStateChanged,
 } from 'firebase/auth';
-import React, { useState } from "react";
-import style from "../app/page.module.css";
-/*
- * Creates a user and sends a password reset email to that user.
- */
+
 
 type Children = {
     firstName: string;
@@ -36,6 +32,8 @@ type User = {
     notifcations: boolean;
 };
   
+
+// Create user and logs them in.
 export function createUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
         const createUserCloudFunction = httpsCallable(
@@ -45,6 +43,8 @@ export function createUser(user: User): Promise<void> {
         createUserCloudFunction(user)
             .then(() => {
                 console.log(user);
+                // Logs user after creating account
+                authenticateUser(user.newEmail, user.password);
                 resolve();
             })
             .catch((error: string) => {
@@ -55,7 +55,7 @@ export function createUser(user: User): Promise<void> {
 }
 
 
-
+// Log in
 export function authenticateUser(
   email: string,
   password: string,
@@ -77,10 +77,13 @@ export function authenticateUser(
 export const monitorAuthState = async () => {
   await onAuthStateChanged(auth, user => {
     if (user) {
+      // Needs to implement transition to user dashboard IF Just logged in
+      // I think it shouldn't do anything if already logged in
       console.log(user)
       console.log("logged in! switch to user dashboard page")
       
     } else {
+      // If not logged in, current page should be the login page
       console.log("you are not logged in")
     }
   });
@@ -88,16 +91,14 @@ export const monitorAuthState = async () => {
 
 
 
-
+// Log out
 export function logOut(): Promise<void> {
   return new Promise(async (resolve, reject) => {
   await signOut(auth)
       .then(() => {
         console.log("logged out!")
         monitorAuthState();
-
         resolve();
-      
       })
       .catch((error) => {
         reject(error);

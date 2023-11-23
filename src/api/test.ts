@@ -24,7 +24,7 @@ type User = {
 export const user: User = {
     uid: 1101,
     newEmail: "person@gmail.com",
-    password: "1234",
+    password: "123456",
     newFirstName: "John",
     newLastName: "Doe",
     phoneNumber: 1234567890,

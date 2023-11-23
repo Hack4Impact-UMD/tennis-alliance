@@ -1,43 +1,3 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-// import {onRequest} from "firebase-functions/v2/https";
-// import * as logger from "firebase-functions/logger";
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-/*
- * Creates a new user
- *
- * Arguments: id: number,
-              email: string,
-              pass: Hash,
-              firstName: string,
-              lastName: string,
-              phone: number,
-              zip: number,
-              children: {
-                firstName: string,
-                lastName: string,
-                age: number,
-                birthYear: number,
-                school: string,
-              }[],
-              notifs: boolean,
- */
-
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
@@ -51,13 +11,18 @@ exports.createUser = functions
         corsHandler(req, res, async () => {
             const user = req.body;
             
-            // successfully adds data to databse:
+           
             console.log("Received user:", user);
             const auth = admin.auth();
-            await auth.db.collection('users').add(user);
-            // await db.collection('users').add(user);
+            // Add user to database
+            await db.collection('users').add(user);
+
+            // Adds user to authetication 
+            await auth.createUser({
+                email: user.data.newEmail,
+                password: user.data.password,
+              });
             
-            // This still produces empty dict, is that okay?
             res.json({ result: user });
         });
     });
