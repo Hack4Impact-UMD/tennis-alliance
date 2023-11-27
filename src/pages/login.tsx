@@ -1,16 +1,15 @@
 
 "use client";
-import React, { useState } from 'react';
-import Image from "next/image";
-import styles from './page.module.css'
+import React, { useState } from "react";
+import styles from "./page.module.css";
 
 
 
 
 
 const UIPage = () => {
-    const [inputText1, setInputText1] = useState('');
-    const [inputText2, setInputText2] = useState('');
+    const [inputText1, setInputText1] = useState("");
+    const [inputText2, setInputText2] = useState("");
 
 
     const handleInputChange1 = (e) => {
@@ -35,14 +34,14 @@ const UIPage = () => {
                     value={inputText1}
                     onChange={handleInputChange1}
                     style={{
-                        width: '80%',
-                        height: '10%',
-                        border: 'none',
-                        borderRadius: '10.689px',
-                        outline: 'none',
-                        paddingLeft: '10px', // Adjust this value based on your design
+                        width: "80%",
+                        height: "10%",
+                        border: "none",
+                        borderRadius: "10.689px",
+                        outline: "none",
+                        paddingLeft: "10px", // Adjust this value based on your design
 
-                        color: '#000000',
+                        color: "#000000",
                     }}
                 />
 
@@ -52,14 +51,14 @@ const UIPage = () => {
                     value={inputText2}
                     onChange={handleInputChange2}
                     style={{
-                        width: '80%',
-                        height: '10%',
-                        border: 'none',
-                        borderRadius: '10.689px',
-                        outline: 'none',
-                        paddingLeft: '10px',
+                        width: "80%",
+                        height: "10%",
+                        border: "none",
+                        borderRadius: "10.689px",
+                        outline: "none",
+                        paddingLeft: "10px",
 
-                        color: '#000000',
+                        color: "#000000",
                     }}
                 />
 
@@ -67,7 +66,7 @@ const UIPage = () => {
                 <a href="#" className={styles.forgotPasswordLink}> Forgot password?</a>
                 <div
                     className={styles.submitButtonContainer}
-                    onClick={() => console.log('Submit button clicked')}
+                    onClick={() => console.log("Submit button clicked")}
                 >
                     <div className={styles.logoImage}></div>
                     <div className={styles.submitText}>Submit</div>
