@@ -1,16 +1,14 @@
 .loginContainer {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   height: auto;
-   background: url("../assets/Group 27.png") no-repeat center center fixed;
-   
- }
- 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    background: url("../assets/Group 27.png") no-repeat center center fixed;
+    height:100vh;
+}
 
- 
- .forgotPasswordLink {
+.forgotPasswordLink {
     width: 184px;
     height: 36px;
     font-family: 'Inter';
@@ -21,11 +19,9 @@
     color: #122286;
     text-decoration: underline;
     cursor: pointer;
- }
- 
- 
- .box {
+}
 
+.box {
     width: 519px;
     height: 432px;
     left: 163px;
@@ -33,98 +29,69 @@
     background: #93BCE1;
     box-shadow: 0px 4.27559px 4.27559px rgba(0, 0, 0, 0.25), 0px 4.27559px 4.27559px rgba(0, 0, 0, 0.25);
     border-radius: 16.0335px;
- }
- 
- 
- .minilogo {
-    
+}
+
+.minilogo {
     width: 359px;
     height: 92px;
 
- }
- 
- 
- .email,
- .pw {
-     width: 100%; /* Make email and password text full width */
-     font-family: 'Inter';
-     font-style: normal;
-     font-weight: 400;
-     font-size: 34.2047px;
-     line-height: 41px;
-     color: #000000;
-     text-indent: 50px;
-     padding: 10px 0;
- }
- 
- 
- .username {
-    /* Rectangle 78 */
- 
- 
-
-    width: 426px;
-    height: 60px;
-
- 
- 
-    background: #FFFFFF;
-    border-radius: 10.689px;
- 
- 
- }
- 
- 
- .logo {
-
-
-    /* Center horizontally relative to the parent element */
-
-    /* Center vertically relative to the parent element */
-    transform: translate(-50%, -50%);
-    /* Adjusts the positioning to truly center the element */
-    max-width: 50vw;
-    /* Sets a maximum width relative to the viewport width */
- 
- 
- }
- 
- .submitButtonContainer {
-
-    width: 35%;
-    height: 40px;
-
-    background: #FFFFFF;
-    border-radius: 10.689px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
- }
- 
- 
-
- .logoImage {
-   width: 48px;
-   height: 60px;
-   background: url("/image 6.svg");
 }
- 
- .submitText {
 
-    width: 292px;
-    height: 40px;
-
+.email,
+.pw {
+    width: 100%;
+    /* Make email and password text full width */
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 34.2047px;
     line-height: 41px;
     color: #000000;
- }
- 
- 
- .genLink {
+    text-indent: 50px;
+    padding: 10px 0;
+}
+
+.username {
+    width: 426px;
+    height: 60px;
+    background: #FFFFFF;
+    border-radius: 10.689px;
+}
+
+.logo {
+    transform: translate(-50%, -50%);
+    max-width: 50vw;
+}
+
+.submitButtonContainer {
+    width: 35%;
+    height: 40px;
+    background: #FFFFFF;
+    border-radius: 10.689px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logoImage {
+    width: 48px;
+    height: 60px;
+    background: url("/image 6.svg");
+}
+
+.submitText {
+    width: 292px;
+    height: 40px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 34.2047px;
+    line-height: 41px;
+    color: #000000;
+}
+
+.genLink {
     position: relative;
     font-family: 'Inter';
     font-style: normal;
@@ -135,69 +102,51 @@
     text-decoration: underline;
     cursor: pointer;
     justify-content: center;
- }
- 
- 
- .bottomText {
+}
 
+.bottomText {
     width: 494px;
     height: 28px;
-
- 
- 
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 24px;
- 
- 
     color: #000000;
- }
- 
- 
+}
 
- 
- .bodyContainer {
+.bodyContainer {
     position: relative;
     width: 100%;
-    /* Set width to 100% of the viewport width */
     height: 100vh;
-    /* Set height to 100% of the viewport height */
     display: flex;
-    /* Use flexbox to center children */
     justify-content: center;
-    /* Center children horizontally */
     align-items: center;
-    /* Center children vertically */
     margin: 0;
-    /* Reset any default margin */
     padding: 0;
-    /* Reset any default padding */
- }
- 
- 
- #centeredImage {
+}
+
+#centeredImage {
     max-width: 100%;
-    /* Ensures the image is responsive and fits within the container */
     height: auto;
-    /* Maintain aspect ratio */
- }
- .boxContainer {
-   width: 519px;
-   height: 432px;  
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   background-color: #93BCE1;
-   border-radius: 30px;
- }
- 
- 
+}
+
+.boxContainer {
+    width: 519px;
+    height: 432px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #93BCE1;
+    border-radius: 30px;
+}
+
+
 .inputContainer {
     width: 80%;
-    margin-bottom: 16px; /* Adjust the margin as needed */
+    margin-bottom: 16px;
+    /* Adjust the margin as needed */
 }
 
 .input {
@@ -213,7 +162,18 @@
 .forgotPasswordLinkContainer {
     width: 80%;
     display: flex;
-    justify-content: flex-end; /* Align the link to the right */
-    margin-bottom: 16px; /* Adjust the margin as needed */
+    justify-content: flex-end;
+    /* Align the link to the right */
+    margin-bottom: 16px;
+    /* Adjust the margin as needed */
 }
 
+/* .loginContainer.input[type="text"] {
+    width: "80%";
+    height: "10%";
+    border: "none";
+    border-radius: "10.689px";
+    outline: "none";
+    padding-left: "10px";
+    color: "#000000";
+} */

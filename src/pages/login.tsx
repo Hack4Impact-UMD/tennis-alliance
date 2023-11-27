@@ -3,10 +3,6 @@
 import React, { useState } from "react";
 import styles from "./page.module.css";
 
-
-
-
-
 const UIPage = () => {
     const [inputText1, setInputText1] = useState("");
     const [inputText2, setInputText2] = useState("");
@@ -61,8 +57,6 @@ const UIPage = () => {
                         color: "#000000",
                     }}
                 />
-
-                        
                 <a href="#" className={styles.forgotPasswordLink}> Forgot password?</a>
                 <div
                     className={styles.submitButtonContainer}
