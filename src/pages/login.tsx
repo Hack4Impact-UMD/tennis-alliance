@@ -12,12 +12,12 @@ const UIPage = () => {
     const [inputText2, setInputText2] = useState("");
 
 
-    const handleInputChange1 = (e) => {
+    const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputText1(e.target.value);
     };
 
 
-    const handleInputChange2 = (e) => {
+    const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputText2(e.target.value);
     };
 
