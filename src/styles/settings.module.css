@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap');
 
 .body {
-    font-family: 'Inter', sans-serif;
+    font-family: sans-serif;
     font-weight: 400;
     display: flex;
     justify-content: center;
@@ -22,14 +21,16 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
+
+
 
 .accHead {
     display: flex;
     justify-content: space-between;
     align-items: center;
     justify-content: center;
-    font-family: Inter;
     font-size: 25px;
     font-weight: 500;
     line-height: 30px;
@@ -42,11 +43,12 @@
     border: none;
     border-top: 2px solid ; /* Set border properties */
     color: rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5em;
 }
 
 /* Style for first and last name text boxes */
 .individualNames {
-    width: 27em;
+    width: 25em;
     height: 3em;
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius:13px;
@@ -55,6 +57,7 @@
     transition: width 0.3s ease;
     padding-left: 10px;
     padding-right: 10px;
+    margin-top:1em;
 }
 
 /* Row ordering for name text boxes */
@@ -65,25 +68,27 @@
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 1em;
-    margin-top: .5em;
+    margin-top: 1em;
+    margin-bottom: 1.5em;
     /* margin: 0 auto; */
 }
 
 .nameTitles {
     display: flex;
     flex-direction: column;
+    
 }
 
 .numTitles {
     display: flex;
     flex-direction: column;
+    margin-left: 1em;
 }
 
 
 .personal {
     display: flex;
     flex-direction: column;
-    
 }
 
 .textbox {
@@ -100,6 +105,7 @@
     transition: width 0.3s ease;
     padding-left: 40px;    
     padding-right: 10px;
+    margin-top: 1em;
 }
 .textbox:focus {
     color: black; /* Set text color to be visible */
@@ -110,6 +116,7 @@
     display:flex;
     align-items: center;
     justify-content: space-between;
+    margin-top:.5em;
 }
 
 .add {
@@ -120,9 +127,8 @@
 .phone {
     background-image: url("/phone.png");
     background-position: 10px;
-    background-repeat:no-repeat !important;
-    padding-left:20px;
-    width: 32em;
+    background-repeat:no-repeat;
+    width: 28em;
     height: 3em;
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 13px;
@@ -131,6 +137,7 @@
     transition: width 0.3s ease;
     padding-left: 40px;
     padding-right: 10px;
+    margin-top: 1em;
 }
 .phone:focus {
     color: black; /* Set text color to be visible */
@@ -146,6 +153,7 @@
     outline: none;
     border: 1px solid #cdcdcd;
     transition: width 0.3s ease;
+    margin-top: 1em;
 }
 
 
@@ -164,12 +172,18 @@
     margin-top: .5em;
     padding-left: 10px;
     padding-right: 10px;
+    margin-bottom: 1.5em;
+    margin-top: 1.5em;
 }
 
+.labelSpace {
+    margin-bottom:1em;
+}
 
 /* Spacing the check boxes */
 .checkbox {
-    margin-bottom: 1em;
+    margin-top:1em;
+    margin-bottom: 1.2em;
 }
 
 /* Style of unchecked state of checkbox */
@@ -213,13 +227,13 @@
     border-radius: 13px;
     outline: none;
     border: 1px solid #cdcdcd;
-    font-family: Inter;
     font-size: 20px;
     font-weight: 500;
     line-height: 24px;
     letter-spacing: 0em;
     text-align: center;
-
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
 }
 
 
@@ -237,15 +251,18 @@
 }
 
 @media screen and (max-width: 752px) {
+    .textNames {
+        width: 100%;
+    }
     .nameTitles {
         width: 47%;
     }
     .individualNames {
-        width: 100%;
+        width: 92%;
     }
 
     .phone {
-        width: 130%;
+        width: 110%;
     }
 
     .zip {
@@ -255,11 +272,14 @@
 }
 
 @media screen and (max-width: 528px){
+    .individualNames {
+        width: 85%;
+    }
     .phone {
-        width: 105%;
+        width: 80%;
     }
 
     .zip {
-        width: 102%;
+        width: 100%;
     }
 }

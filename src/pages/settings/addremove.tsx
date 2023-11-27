@@ -1,10 +1,8 @@
 "use client";
 import React, { useState } from 'react';
-import style from "./settings.module.css";
+import style from "../../styles/settings.module.css";
 import Image from "next/image";
 import plus from "./images/plus.png";
-
-
 
 const ChildrenComponents = () => {
     const [sections, setSections] = useState([{ id: 1 }]);
@@ -29,10 +27,9 @@ const ChildrenComponents = () => {
       <div>
         {sections.map((section) => (
           <div key={section.id} className={style.personal}>
-            <br/>
             <div className={style.textNames}>
               <div className={style.nameTitles}>
-                <label htmlFor={`first_name_${section.id}`}>First Name</label> <br />
+                <label htmlFor={`first_name_${section.id}`}>First Name</label>
                 <input
                   type="text"
                   id={`first_name_${section.id}`}
@@ -41,7 +38,7 @@ const ChildrenComponents = () => {
                 />
               </div>
               <div className={style.nameTitles}>
-                <label htmlFor={`last_name_${section.id}`}>Last Name</label> <br />
+                <label htmlFor={`last_name_${section.id}`} >Last Name</label>
                 <input
                   type="text"
                   id={`last_name_${section.id}`}
@@ -50,8 +47,7 @@ const ChildrenComponents = () => {
                 />
               </div>
             </div>
-            <br />
-            <label htmlFor={`email_${section.id}`}>Email</label> <br />
+            <label htmlFor={`email_${section.id}`}>Email</label>
             <input
               type="text"
               id={`email_${section.id}`}
@@ -60,7 +56,6 @@ const ChildrenComponents = () => {
           </div>
           
         ))}
-        <br/>
         <div className={style.textNames}>
             <div className={style.editChildren} onClick={addSection}>
                 <label htmlFor='name' className={style.add}> ADD CHILD </label>
@@ -72,8 +67,6 @@ const ChildrenComponents = () => {
                 <Image src={plus} alt="plus"/>
             </div>
 
-            
-            
             
         </div>
       </div>
