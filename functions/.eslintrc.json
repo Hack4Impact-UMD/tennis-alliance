@@ -1,41 +1,22 @@
 {
     "env": {
-        "browser": true,
-        "es2021": true
+        "es6": true,
+        "node": true
     },
-    "extends": [
-        "next/core-web-vitals",
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:react/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+        "ecmaVersion": 2018
     },
-    "plugins": [
-        "@typescript-eslint",
-        "react"
-    ],
+    "extends": ["eslint:recommended", "google"],
     "rules": {
+        "no-restricted-globals": ["error", "name", "length"],
+        "prefer-arrow-callback": "error",
         "react/react-in-jsx-scope": "off",
         "react/jsx-uses-react": "off",
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
+        "indent": ["error", 4],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"],
+        "object-curly-spacing": ["error", "always"],
+        "@typescript-eslint/no-var-requires": 0
     }
 }
