@@ -40,15 +40,15 @@ const Popup = () => {
     };
 
     /* TimePicker */
-    const handleStartTimeChange = (e, field) => {
+    const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
         setStartTime({ ...startTime, [field]: e.target.value });
     };
 
-    const handleEndTimeChange = (e, field) => {
+    const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
         setEndTime({ ...endTime, [field]: e.target.value });
     };
 
-    const togglePeriod = (timeType) => {
+    const togglePeriod = (timeType: string) => {
         if (timeType === "start") {
             setStartTime({ ...startTime, period: startTime.period === "AM" ? "PM" : "AM" });
         } else {
@@ -57,18 +57,18 @@ const Popup = () => {
     };
 
     /* DayPicker */
-    const handleDayClick = (day) => {
+    const handleDayClick = (day: Date) => {
         setSelectedDay(day);
         setShowMonthPicker(false);
         setShowYearPicker(false);
     };
 
-    const handleMonthChange = (month) => {
+    const handleMonthChange = (month: number) => {
         setCurrentMonth(setMonth(currentMonth, month));
         setShowMonthPicker(false);
     };
 
-    const handleYearChange = (year) => {
+    const handleYearChange = (year: number) => {
         setCurrentMonth(setYear(currentMonth, year));
         setShowYearPicker(false);
     };
@@ -158,7 +158,7 @@ const Popup = () => {
                                 <DayPicker
                                     mode="single"
                                     selected={selectedDay}
-                                    onSelect={handleDayClick}
+                                    onDayClick={handleDayClick}
                                     month={currentMonth}
                                     modifiersStyles={modifiersStyles}
                                     components={{
@@ -210,6 +210,20 @@ const Popup = () => {
                                 <button onClick={() => togglePeriod("end")} className={styles.periodButton}>
                                     {endTime.period}
                                 </button>
+                            </div>
+                            <div className={styles.maxSelect}>
+                                <p className={styles.maxTitle}>Max # of Participants</p>
+                                <input 
+                                    type="number"
+                                    className={styles.maxInput}
+                                    min={0}
+                                />
+                                <p className={styles.maxTitle}>Max # of Volunteers</p>
+                                <input 
+                                    type="number"
+                                    className={styles.maxInput}
+                                    min={0}
+                                />
                             </div>
                             <div className={styles.submitCancelContainer}>
                                 <button onClick={submitEvent} className={styles.submitCancelButton}>submit</button>

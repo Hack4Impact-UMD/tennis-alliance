@@ -63,6 +63,14 @@
     margin-bottom: 10px;
 }
 
+.maxTitle {
+    font-size: 18px;
+    color: white;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
 .submitCancelContainer {
     display: flex;
     justify-content: center;
@@ -96,7 +104,7 @@
     justify-content: center;
 }
 
-.timeInput {
+.timeInput, .maxInput {
     width: 40px;
     padding: 5px;
     margin: 0 5px;
@@ -206,4 +214,12 @@
     display: flex;
     justify-content: right;
     align-items: right;
+}
+
+.maxSelect {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
 }
