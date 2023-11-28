@@ -39,9 +39,9 @@ const Searchbar = () => {
             </div>
             <div className={styles.participantcontainer}>
             <div className={styles.participantitem1}>
-                <span className={styles.name1}>Name </span>
-                <span className={styles.email1}>Email </span>
-                <span className={styles.type1}>Type </span>
+                <span className={styles.name}>Name </span>
+                <span className={styles.email}>Email </span>
+                <span className={styles.type1}>Participant or Volunteer </span>
             </div>
             </div>
             {
