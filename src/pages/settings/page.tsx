@@ -24,7 +24,7 @@ export default function Settings() {
 
                     <Image src={profile} alt="profile" priority={false}/>
                     
-                    <h3>Full Name</h3>
+                    <h3 className={style.additional}>Full Name</h3>
                     
 
                     <div className={style.textNames}>
@@ -50,7 +50,7 @@ export default function Settings() {
                             </div>
                             <div className={style.numTitles}>
                                 <label htmlFor='name' > Zip Code </label>
-                                <input type="text" id="zip" placeholder=''   className={style.zip} required/>
+                                <input type="text" id="zip" placeholder=''   className={style.individualNames} required/>
                             </div>
                         </div>   
                     </div>
@@ -63,7 +63,7 @@ export default function Settings() {
                     <hr className={style.hhhr}></hr>
                     <h3>Additional Info</h3>
 
-                    <div>
+                    <div className={style.additional}>
                         <label>Tell us about your background and interests</label> 
                         <textarea id={style.textarea} rows={10}/> 
                     </div>

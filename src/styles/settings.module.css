@@ -14,7 +14,6 @@
     margin: 0 auto;
     width: 752px;
     position: relative;
-
 }
 
 .top {
@@ -22,6 +21,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 1em;
+    margin-bottom:1em;
 }
 
 
@@ -48,7 +49,7 @@
 
 /* Style for first and last name text boxes */
 .individualNames {
-    width: 25em;
+    width: 27em;
     height: 3em;
     border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius:13px;
@@ -89,6 +90,7 @@
 .personal {
     display: flex;
     flex-direction: column;
+    margin-top:1em;
 }
 
 .textbox {
@@ -123,21 +125,24 @@
     padding-right: 10px;
 }
 
+.additional {
+    margin-top: 1em;
+}
 
 .phone {
     background-image: url("/phone.png");
     background-position: 10px;
     background-repeat:no-repeat;
-    width: 28em;
+    width: 27em;
     height: 3em;
     border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 13px;
+    border-radius:13px;
     outline: none;
     border: 1px solid #cdcdcd;
     transition: width 0.3s ease;
-    padding-left: 40px;
+    padding-left: 10px;
     padding-right: 10px;
-    margin-top: 1em;
+    margin-top:1em;
 }
 .phone:focus {
     color: black; /* Set text color to be visible */
@@ -241,45 +246,58 @@
 
 
 /* Make adjustments to divs based on screen size */
-
-
-/* Make adjustments to divs based on screen size */
-@media screen and (max-width: 752px){
+@media screen and (max-width: 857px) {
     .allDivs {
-        width: 80%;
+        width: 90%;
     }
+
 }
 
 @media screen and (max-width: 752px) {
-    .textNames {
-        width: 100%;
-    }
-    .nameTitles {
-        width: 47%;
+    .allDivs {
+        width: 80%;
     }
     .individualNames {
-        width: 92%;
+        width: 20em;
     }
-
     .phone {
-        width: 110%;
-    }
-
-    .zip {
-        width: 100%;
+        width: 20em;
     }
 
 }
 
-@media screen and (max-width: 528px){
+@media screen and (max-width: 683px) {
+    .allDivs {
+        width: 70%;
+    }
     .individualNames {
-        width: 85%;
+        width: 15em;
     }
     .phone {
-        width: 80%;
+        width: 15em;
     }
 
-    .zip {
-        width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+    
+    .individualNames {
+        width: 12em;
+    }
+    .phone {
+        width: 12em;
+    }
+
+}
+
+@media screen and (max-width: 564px){
+    .allDivs {
+        width: 65%;
+    }
+    .individualNames {
+        width: 10em;
+    }
+    .phone {
+        width: 10em;
     }
 }
