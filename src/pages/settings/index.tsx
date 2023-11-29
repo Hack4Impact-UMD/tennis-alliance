@@ -1,9 +1,8 @@
 import Image from "next/image";
 import React from 'react';
 import style from "../../styles/settings.module.css";
-import tennis from "../settings/images/tennispic.png";
-import profile from "../settings/images/Vector.png";
-import "./images/evaEmailFill2.png";
+import tennis from "../../assets/tennispic.png";
+import profile from "../../assets/Vector.png";
 import Children from "./addremove";
 
 export default function Settings() {

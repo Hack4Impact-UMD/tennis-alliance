@@ -95,7 +95,7 @@
 
 .textbox {
     background-color: transparent ;
-    background-image: url("/evaEmailFill2.png");
+    background-image: url("../assets/evaEmailFill2.png");
     background-position: 10px ;
     background-repeat:no-repeat;
     padding-left:20px;
@@ -227,6 +227,8 @@
     justify-content: center;
     align-items: center;
     background-color: rgba(1, 137, 202, 1);
+    color: rgba(255, 255, 255, 1);
+
     height: 3em;
     width: 7em;
     border-radius: 13px;

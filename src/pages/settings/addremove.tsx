@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import style from "../../styles/settings.module.css";
 import Image from "next/image";
-import plus from "./images/plus.png";
+import plus from "../../assets/plus.png";
 
 const ChildrenComponents = () => {
     const [sections, setSections] = useState([{ id: 1 }]);
