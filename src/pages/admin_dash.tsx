@@ -44,7 +44,7 @@ const Searchbar = () => {
         } else {
             // Filter participants and extract names
             const filteredParticipants = participants.filter((participant) =>
-                participant.last_name.toLowerCase().includes(searchTerm.toLowerCase())
+                (participant.first_name.concat(" ").concat(participant.last_name)).toLowerCase().includes(searchTerm.toLowerCase())
             );
 
             setActiveSearch(filteredParticipants);
