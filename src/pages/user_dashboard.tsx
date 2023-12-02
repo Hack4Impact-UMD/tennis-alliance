@@ -6,8 +6,8 @@ import Event from "../types";
 import React, { useState } from "react";
 import Image from "next/image";
 import logo  from "./racket.png";
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { Disclosure } from '@headlessui/react'
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { Disclosure } from "@headlessui/react";
 
 
 const CalendarApp = () => {
@@ -78,7 +78,7 @@ const CalendarApp = () => {
         return event.participants.includes(userPerspective) || event.volunteers.includes(userPerspective);
     });
 
-     //checking which events the selected user is paticipating/volunteering in
+    //checking which events the selected user is paticipating/volunteering in
     const [involvedEvents, setEventsList] = useState(createInitialState);
 
     const formatDate = (timestamp: number) => {
@@ -97,9 +97,9 @@ const CalendarApp = () => {
     const getTime = (timestamp: number) => {
         const dateObj = new Date(timestamp * 1000); //multiply by 1000 to go from seconds to milliseconds
         let hours = dateObj.getHours();
-        let minutes = dateObj.getMinutes();
-        let  minutesString = minutes.toString().padStart(2, '0');
-        let timeOfDay = (hours > 12)? "PM" : "AM";
+        const minutes = dateObj.getMinutes();
+        const  minutesString = minutes.toString().padStart(2, "0");
+        const timeOfDay = (hours > 12)? "PM" : "AM";
         hours = (hours % 12 == 0)? 12: hours % 12;
         return `${hours}:${minutesString} ${timeOfDay}`;
     };
@@ -120,7 +120,7 @@ const CalendarApp = () => {
     return (
         <div id="container">
             <ul>
-            <p className="blue-border">Events Registered:</p>
+                <p className="blue-border">Events Registered:</p>
                 <div className="registered-full-container">
                     {involvedEvents.map((event) => (
                         <div className={`registered-event registered-event-${getEventType(event, userPerspective).toLowerCase()}`}>
@@ -129,30 +129,30 @@ const CalendarApp = () => {
                                     <tr>
                                         <td className="event-td left-td">{formatDate(event.startDateTime)}<br></br>{getEventType(event, userPerspective)}</td>
                                         <td className="right-td">
-                                        <Disclosure>
-                                            <div className="name-div">
-                                            
-                                                <div id="icon-and-name" className="name-div">
-                                                    <div>
-                                                        <Image
-                                                            className="racket-logo"
-                                                            src={logo}
-                                                            alt="A black-and-white drawing of a tennis racket"
-                                                            style={{verticalAlign: "middle", marginRight: "15px", alignSelf: "center"}}
-                                                        />
-                                                    </div>
+                                            <Disclosure>
+                                                <div className="name-div">
+
+                                                    <div id="icon-and-name" className="name-div">
+                                                        <div>
+                                                            <Image
+                                                                className="racket-logo"
+                                                                src={logo}
+                                                                alt="A black-and-white drawing of a tennis racket"
+                                                                style={{verticalAlign: "middle", marginRight: "15px", alignSelf: "center"}}
+                                                            />
+                                                        </div>
                                                         <span>{event.title}</span>
-                                                </div>
+                                                    </div>
                                                               
                                                     <Disclosure.Button className="event-arrow">
                                                         <ChevronDownIcon style={{position: "relative", width: "45px"}}/>
                                                     </Disclosure.Button>
                                                 
-                                            </div>
-                                            <span style={{fontSize: "16px"}}>Time: {getTime(event.startDateTime)}</span><br></br><span style={{fontSize: "14px"}}>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
-                                            <Disclosure.Panel>
-                                                <button className="button-event" onClick={() => handleRemoveClick(event)}>Remove</button>
-                                            </Disclosure.Panel>
+                                                </div>
+                                                <span style={{fontSize: "16px"}}>Time: {getTime(event.startDateTime)}</span><br></br><span style={{fontSize: "14px"}}>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
+                                                <Disclosure.Panel>
+                                                    <button className="button-event" onClick={() => handleRemoveClick(event)}>Remove</button>
+                                                </Disclosure.Panel>
                                             </Disclosure>
                                         </td>
                                     </tr>
