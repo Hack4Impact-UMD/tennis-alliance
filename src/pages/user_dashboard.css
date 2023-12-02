@@ -63,6 +63,7 @@ p.blue-border {
     background-color: #AACDEE;
     border-radius: 30px;
     border: none;
+    cursor: pointer;
     color: rgb(0, 0, 0);
     padding: 10px 20px;
     margin: 20px;
@@ -122,4 +123,10 @@ p.blue-border {
 
 .registered-event-volunteer {
     background-color: #FCF7CE;
+}
+
+.event-arrow {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
 }

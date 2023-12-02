@@ -6,20 +6,19 @@ import Event from "../types";
 import React, { useState } from "react";
 import Image from "next/image";
 import logo  from "./racket.png";
-import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Disclosure } from '@headlessui/react'
 
 
 const CalendarApp = () => {
-    const [chevronDown, setChevronDown] = useState(false);
-    const userPerspective = "u7"; // which user we're fetching the registered events for in this example
+    const userPerspective = "u1"; // which user we're fetching the registered events for in this example
 
     // list of events
     const events = [
         { id: 1,
             title: "Teaching Youth Lessons", 
-            startDateTime: 1700164800, // Nov 16 3:00 pm
-            endDateTime: 1700168400, // Nov 16 4:00 pm
+            startDateTime: 1705435231, // Jan 16 3:00 pm
+            endDateTime: 1705438831, // Jan 16 4:00 pm
             description: "Assisting children ages 10-12 with tennis practice and learning different skills", 
             slotsOpen: 7, 
             totalSlots: 20, 
@@ -28,8 +27,8 @@ const CalendarApp = () => {
             display: "background"},
         {  id: 2,
             title: "Court Cleanup", 
-            startDateTime: 1700226000, // Nov 17 8:00 am
-            endDateTime: 1700247600, // Nov 17 2:00 pm
+            startDateTime: 1705410031, // Jan 17 8:00 am
+            endDateTime: 1705431631, // Jan 17 2:00 pm
             description: "", 
             slotsOpen: 7, 
             totalSlots: 20, 
@@ -38,8 +37,8 @@ const CalendarApp = () => {
             display: "background"},
         {  id: 3,
             title: "Teaching Adult Lessons", 
-            startDateTime: 1700337600, // Nov 18 3:00 pm
-            endDateTime: 1700341200, // Nov 18 4:00 pm
+            startDateTime: 1705608031, // Jan 18 3:00 pm
+            endDateTime: 1705611631, // Jan 18 4:00 pm
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
             totalSlots: 20, 
@@ -49,8 +48,8 @@ const CalendarApp = () => {
             display: "background"},
         {  id: 4,
             title: "Teaching Adult Lessons", 
-            startDateTime: 1700502900, // Nov 20 12:55 pm
-            endDateTime: 1700514000, // Nov 20 4:00 pm
+            startDateTime: 1705773331, // Jan 20 12:55 pm
+            endDateTime: 1705784431, // Jan 20 4:00 pm
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
             totalSlots: 20, 
@@ -60,8 +59,8 @@ const CalendarApp = () => {
             display: "background"},
         {  id: 5,
             title: "Teaching Adult Lessons", 
-            startDateTime: 1700943600, // Nov 25 3:20 pm
-            endDateTime: 1700946000, // Nov 25 4:00 pm
+            startDateTime: 1706214031, // Jan 25 3:20 pm
+            endDateTime: 1706216431, // Jan 25 4:00 pm
             description: "Assisting adults with tennis practice", 
             slotsOpen: 7, 
             totalSlots: 20, 
@@ -75,10 +74,12 @@ const CalendarApp = () => {
         return (event.startDateTime *  1000) - Date.now() >= 0;
     });
 
-     //checking which events the selected user is paticipating/volunteering in
-    const involvedEvents = upcomingEvents.filter((event) => {
-        return event.participants.includes(userPerspective) || event.volunteers.includes(userPerspective); 
+    const createInitialState = upcomingEvents.filter((event: Event) => {
+        return event.participants.includes(userPerspective) || event.volunteers.includes(userPerspective);
     });
+
+     //checking which events the selected user is paticipating/volunteering in
+    const [involvedEvents, setEventsList] = useState(createInitialState);
 
     const formatDate = (timestamp: number) => {
         const months = [
@@ -96,7 +97,6 @@ const CalendarApp = () => {
     const getTime = (timestamp: number) => {
         const dateObj = new Date(timestamp * 1000); //multiply by 1000 to go from seconds to milliseconds
         let hours = dateObj.getHours();
-        console.log(dateObj.getDate());
         let minutes = dateObj.getMinutes();
         let  minutesString = minutes.toString().padStart(2, '0');
         let timeOfDay = (hours > 12)? "PM" : "AM";
@@ -112,8 +112,9 @@ const CalendarApp = () => {
         }
     };
 
-    const handleRemoveClick = () => {
-        
+    const handleRemoveClick = (event: any) => {
+        const newEventsList = involvedEvents.filter((listEvent) => listEvent !== event);
+        setEventsList(newEventsList);
     };
 
     return (
@@ -128,7 +129,9 @@ const CalendarApp = () => {
                                     <tr>
                                         <td className="event-td left-td">{formatDate(event.startDateTime)}<br></br>{getEventType(event, userPerspective)}</td>
                                         <td className="right-td">
+                                        <Disclosure>
                                             <div className="name-div">
+                                            
                                                 <div id="icon-and-name" className="name-div">
                                                     <div>
                                                         <Image
@@ -140,10 +143,17 @@ const CalendarApp = () => {
                                                     </div>
                                                         <span>{event.title}</span>
                                                 </div>
-                                                <ChevronDownIcon style={{position: "relative", width: "45px"}}/>
+                                                              
+                                                    <Disclosure.Button className="event-arrow">
+                                                        <ChevronDownIcon style={{position: "relative", width: "45px"}}/>
+                                                    </Disclosure.Button>
+                                                
                                             </div>
                                             <span style={{fontSize: "16px"}}>Time: {getTime(event.startDateTime)}</span><br></br><span style={{fontSize: "14px"}}>Slots open: {event.slotsOpen} out of {event.totalSlots}</span><br></br>
-                                            <button className="button-event" onClick={handleRemoveClick}>Remove</button>
+                                            <Disclosure.Panel>
+                                                <button className="button-event" onClick={() => handleRemoveClick(event)}>Remove</button>
+                                            </Disclosure.Panel>
+                                            </Disclosure>
                                         </td>
                                     </tr>
                                 </tbody>
