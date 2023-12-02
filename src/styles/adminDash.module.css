@@ -2,11 +2,9 @@
 
 
 .search {
-    background-image: url('/Users/anoushkaarora/t_all/tennis-alliance/src/assets/image 24.png');
-    background-position: 10px 10px;
-    background-repeat: no-repeat;
-    margin-top: 2%; 
-    width: 35%;
+    margin-left: 25.7%; 
+    margin-top: 1%; 
+    width: 30%;
     font-size: 18px; 
     color: black; 
     padding: 12px 15px;
@@ -14,7 +12,25 @@
     border-radius: 10px;
     background-color: #0E8FCC;
     font-family: 'Inter', sans-serif;
-  }
+}
+
+.filter {
+
+    width: 18%;
+    font-size: 18px; 
+    color: black; 
+    padding: 12px 15px;
+    border-color: transparent; 
+    border-radius: 10px;
+    background-color: #0E8FCC;
+    font-family: 'Inter', sans-serif;
+    margin-left: 0.5%; 
+    text-align: left;
+}
+
+
+
+
 
 .label {
     display: flexbox;
@@ -28,11 +44,60 @@
    
 }
 
+
 .parent {
-    display: flexbox;
-    place-items: center;
-    margin-left: 370px; 
+    display: flex; 
 }
+
+.filterbar {
+    font-family: 'Inter', sans-serif;
+    background-color: #AACDEE;
+    border-radius: 20px; 
+    padding-bottom: 1.5%;
+    padding-left: 20px;  
+    width: 60%; 
+    margin-left: 300px; 
+
+}
+
+.checkbox {
+    margin-right: 15px; 
+    margin-left: 5px; 
+}
+.box {
+    margin-top: 0.5%; 
+}
+.button {
+    margin-left: 56%; 
+}
+.apply {
+    font-family: 'Inter', sans-serif;
+    border-color: transparent; 
+    border-radius: 10%;
+    width: 80px; 
+    height: 40px; 
+    color: white; 
+    background-color: #000C79
+}
+.parent_bottom {
+    padding-top: 2%; 
+    display: flex
+}
+
+.filterbar_search {
+    margin-top: 1%; 
+    margin-right: 1%;  
+    width: 30%;
+    font-size: 18px; 
+    color: black; 
+    padding: 5px 15px;
+    border-color: transparent; 
+    border-radius: 10px;
+    background-color: #FFFF;
+    font-family: 'Inter', sans-serif;
+}
+
+
 
 .participantitem {
     margin: 0 auto;
@@ -55,7 +120,6 @@
     font-family: 'Inter', sans-serif;
     display:flexbox;
     place-items: center;
-
 
 }
 
