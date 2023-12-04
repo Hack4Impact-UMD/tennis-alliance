@@ -1,0 +1,185 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    margin: 0 auto;
+    max-width: 750px;
+    font-family: sans-serif;
+    background-color: white;
+}
+
+.container hr {
+    border-top: 3px solid;
+    color: rgba(0, 0, 0, 0.1);
+    margin: 1.5em 0em;
+}
+
+.container label,
+.container legend {
+    margin-bottom: 0.75em;
+    font-size: 20px;
+}
+
+.container input {
+    width: 100%;
+    padding: 0.6em 1em;
+    margin-bottom: 1em;
+    border: 1px solid #cdcdcd;
+    border-radius: 12px;
+    outline: none;
+    font-size: 18px;
+}
+
+.container textarea {
+    width: 100%;
+    height: 8em;
+    margin: 0em 0em 1.5em;
+    padding: 16px;
+    background-color: rgba(224, 243, 246, 1);
+    border: 0px;
+    border-radius: 12px;
+    outline: none;
+    resize: none;
+    font-size: 18px;
+    font-family: "Inter", sans-serif;
+}
+
+.container .email {
+    padding-left: 40px;
+    background-image: url("../assets/email.png");
+    background-position: 10px;
+    background-repeat: no-repeat;
+}
+
+.container .phone {
+    padding-left: 40px;
+    background-image: url("../assets/phone.png");
+    background-position: 10px;
+    background-repeat: no-repeat;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2em 0em 0.5em;
+}
+
+.top > h1 {
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.container > img {
+    margin: 0.5em 0em 2em;
+}
+
+.container h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 1em;
+}
+
+.fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5em;
+}
+
+.fields > div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.editChildren {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: -1em;
+}
+
+.editChildren > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.editChildren label {
+    margin: 0em;
+    line-height: 2em;
+}
+
+.child {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox > input[type="checkbox"] {
+    padding: 0.6em;
+    margin: 0em;
+    width: 18px;
+    height: 18px;
+    border: 0px;
+    border-radius: 3px;
+    background-color: rgba(224, 243, 246, 1);
+    outline: none;
+    appearance: none;
+    vertical-align: middle;
+}
+
+.checkbox {
+    margin-bottom: 1.25em;
+}
+
+.checkbox label {
+    vertical-align: middle;
+    margin-left: 0.75em;
+}
+
+.checkbox input[type="checkbox"]:checked {
+    background-color: #77dd77;
+    border: 0px;
+}
+
+.container > button {
+    height: 3em;
+    width: 7em;
+    margin: 0.5em 0em 1.5em;
+    border: 1px solid #cdcdcd;
+    border-radius: 13px;
+    outline: none;
+    background-color: rgba(1, 137, 202, 1);
+    color: rgba(255, 255, 255, 1);
+    font-size: 20px;
+    font-weight: 500;
+}
+
+@media screen and (max-width: 1000px) {
+    .container {
+        width: calc(100% - 120px);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .container {
+        width: calc(100% - 80px);
+    }
+
+    .fields {
+        flex-direction: column;
+        gap: 0em;
+    }
+
+    .editChildren label {
+        line-height: normal;
+        text-align: center;
+        margin-bottom: 0.25em;
+    }
+
+    .editChildren img {
+        display: none;
+    }
+}
