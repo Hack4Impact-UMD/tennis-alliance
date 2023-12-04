@@ -1,7 +1,7 @@
 import Image from "next/image";
 import style from "@/styles/settings.module.css";
-import tennis from "@/assets/tennispic.png";
-import profile from "@/assets/Vector.png";
+import minilogo from "@/assets/minilogo.png";
+import profile from "@/assets/profile.png";
 import ChildForm from "@/components/childForm";
 
 const Settings = () => {
@@ -9,7 +9,7 @@ const Settings = () => {
         <form className={style.container}>
             <div className={style.top}>
                 <h1>Account</h1>
-                <Image src={tennis} alt="tennis" />
+                <Image src={minilogo} alt="tennis" />
             </div>
             <hr />
             <Image src={profile} alt="profile" priority={false} />

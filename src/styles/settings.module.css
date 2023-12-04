@@ -47,14 +47,14 @@
 
 .container .email {
     padding-left: 40px;
-    background-image: url("../assets/evaEmailFill2.png");
+    background-image: url("../assets/email.png");
     background-position: 10px;
     background-repeat: no-repeat;
 }
 
 .container .phone {
     padding-left: 40px;
-    background-image: url("/phone.png");
+    background-image: url("../assets/phone.png");
     background-position: 10px;
     background-repeat: no-repeat;
 }
@@ -104,7 +104,7 @@
 .editChildren > div {
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 0.5em;
 }
 
 .editChildren label {
@@ -176,6 +176,7 @@
     .editChildren label {
         line-height: normal;
         text-align: center;
+        margin-bottom: 0.25em;
     }
 
     .editChildren img {
