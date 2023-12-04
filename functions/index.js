@@ -18,7 +18,7 @@ exports.createUser = functions
 
             // Adds user to authetication
             await auth.createUser({
-                email: user.data.newEmail,
+                email: user.data.email,
                 password: user.data.password,
             });
 
@@ -31,6 +31,9 @@ exports.createEvent = functions
     .https.onRequest((req, res) => {
         corsHandler(req, res, async () => {
             const event = req.body;
+
+            // TODO: Validate event data
+
             await db.collection("events").add(event);
             res.json({ result: event });
         });
@@ -41,16 +44,8 @@ exports.updateEvent = functions
     .https.onRequest((req, res) => {
         corsHandler(req, res, async () => {
             try {
-                const { eventId, updatedData } = req.body;
-
-                if (!eventId || !updatedData) {
-                    res.status(400).json({
-                        error: "Bad Request: eventId and updatedData are required.",
-                    });
-                    return;
-                }
-
-                const eventRef = db.collection("events").doc(eventId);
+                const { id, data } = req.body;
+                const eventRef = db.collection("events").doc(id);
                 const eventDoc = await eventRef.get();
 
                 if (!eventDoc.exists) {
@@ -58,7 +53,7 @@ exports.updateEvent = functions
                     return;
                 }
 
-                await eventRef.update(updatedData);
+                await eventRef.update(data);
                 res.json({ result: "Event updated successfully." });
             } catch (error) {
                 console.error("Error updating event:", error);
@@ -72,16 +67,8 @@ exports.deleteEvent = functions
     .https.onRequest((req, res) => {
         corsHandler(req, res, async () => {
             try {
-                const { eventId } = req.body;
-
-                if (!eventId) {
-                    res.status(400).json({
-                        error: "Bad Request: eventId is required.",
-                    });
-                    return;
-                }
-
-                const eventRef = db.collection("events").doc(eventId);
+                const { id } = req.body;
+                const eventRef = db.collection("events").doc(id);
                 const eventDoc = await eventRef.get();
 
                 if (!eventDoc.exists) {

@@ -316,7 +316,7 @@
 
 .textbox {
     background-color: transparent;
-    background-image: url("/evaEmailFill2.png");
+    background-image: url("../assets/email.png");
     background-position: 10px;
     background-repeat: no-repeat;
     padding-left: 20px;
@@ -344,7 +344,7 @@
 }
 
 .phone {
-    background-image: url("/phone.png");
+    background-image: url("../assets/phone.png");
     background-position: 10px;
     background-repeat: no-repeat !important;
     padding-left: 20px;

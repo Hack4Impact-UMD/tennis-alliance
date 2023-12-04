@@ -1,7 +1,7 @@
-import style from "@/styles/home.module.css";
-import { createUser, authenticateUser, logOut } from "../api/auth";
-import { user } from "../api/test";
 import { useState } from "react";
+import { createUser, authenticateUser, logOut } from "@/api/auth";
+import { user } from "@/tests/mock";
+import style from "@/styles/home.module.css";
 
 const Home = () => {
     const [email, setEmail] = useState("");

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import classes from "@/styles/tennisBackground.module.css";
-import Background from "../assets/tennis-background.png";
+import Background from "@/assets/tennis-background.png";
 
 interface TennisBackgroundProps {
     title: string;
