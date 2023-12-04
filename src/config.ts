@@ -5,7 +5,7 @@ import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 const firebaseConfig = {
     projectId: "tennis-alliance",
-    apiKey: "fakeApiKey"
+    apiKey: "fakeApiKey",
 };
 
 // Initialize Firebase
