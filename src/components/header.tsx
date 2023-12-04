@@ -16,6 +16,7 @@ const Header = () => {
     const base = "https://tennisallianceaac.org";
 
     const toggleMenu = () => {
+        console.log("toggle menu");
         setToggleNav(!toggleNav);
     };
 
@@ -33,59 +34,63 @@ const Header = () => {
     return (
         <nav className={classes.header}>
             <Image
-                className={classes.hamburger}
+                className={`${classes.hamburger} ${
+                    toggleNav ? classes.active : ""
+                }`}
                 src={Hamburger}
                 onClick={toggleMenu}
                 alt="hamburger"
             />
             <Image className={classes.logo} src={Logo} alt="Logo" />
 
-            {toggleNav && (
-                <div className={classes.overlay}>
-                    <div className={classes.menu}>
-                        <Image src={XButton} onClick={toggleMenu} alt="exit" />
-                        <div className={classes.profile}>
-                            <Image src={Profile} alt="profile" />
-                            <p className={classes.name}>First Last</p>
-                            <p className={classes.email}>email@test.com</p>
-                        </div>
-
-                        <p>Event Registration</p>
-                        <div onClick={() => handleClick("/registration")}>
-                            Register
-                        </div>
-                        <div onClick={() => handleClick("/")}>Events</div>
-                        <div onClick={() => handleClick("/settings")}>
-                            Settings
-                        </div>
-                        <p>Information</p>
-                        <div onClick={() => handleClick(base)}>Home</div>
-                        <div onClick={() => handleClick(`${base}/about-us`)}>
-                            About Us
-                        </div>
-                        <div
-                            onClick={() =>
-                                handleClick(`${base}/tennis-center-updates`)
-                            }
-                        >
-                            Tennis Center
-                        </div>
-                        <div onClick={() => handleClick(`${base}/programs`)}>
-                            Programs and Events
-                        </div>
-                        <div onClick={() => handleClick(`${base}/outreach`)}>
-                            Outreach
-                        </div>
-                        <div onClick={() => handleClick(`${base}/support`)}>
-                            Support
-                        </div>
-                        <div onClick={() => handleClick(`${base}/contact-us`)}>
-                            Contact Us
-                        </div>
+            <div
+                className={`${classes.overlay} ${
+                    toggleNav ? classes.active : ""
+                }`}
+            >
+                <div
+                    className={`${classes.menu} ${
+                        toggleNav ? classes.active : ""
+                    }`}
+                >
+                    <Image src={XButton} onClick={toggleMenu} alt="exit" />
+                    <div className={classes.profile}>
+                        <Image src={Profile} alt="profile" />
+                        <p>First Last</p>
+                        <p>email@test.com</p>
                     </div>
-                    <div className={classes.background} onClick={toggleMenu} />
+
+                    <p>Event Registration</p>
+                    <Link href="/registration" onClick={toggleMenu}>
+                        Registration
+                    </Link>
+                    <Link href="/events" onClick={toggleMenu}>
+                        Events
+                    </Link>
+                    <Link href="/dashboard" onClick={toggleMenu}>
+                        Dashboard
+                    </Link>
+                    <Link href="/settings" onClick={toggleMenu}>
+                        Settings
+                    </Link>
+                    <Link href="/registration" onClick={toggleMenu}>
+                        Sign Out
+                    </Link>
+                    <p>Information</p>
+                    <Link href={base}>Home</Link>
+                    <Link href={`${base}/about-us`}>About Us</Link>
+                    <Link href={`${base}/tennis-center-updates`}>
+                        Tennis Center
+                    </Link>
+                    <Link href={`${base}/programs`}>Programs and Events</Link>
+                    <Link href={`${base}/outreach`}>Outreach</Link>
+                    <Link href={`${base}/support`}>Support</Link>
+                    <Link href={`${base}/contact-us`}>Contact Us</Link>
                 </div>
-            )}
+                {toggleNav && (
+                    <div className={classes.background} onClick={toggleMenu} />
+                )}
+            </div>
         </nav>
     );
 };
