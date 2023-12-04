@@ -1,7 +1,3 @@
-import { functions, auth } from "../config";
-
-import { httpsCallable } from "firebase/functions";
-import { type AuthError } from "@firebase/auth";
 import {
     signInWithEmailAndPassword,
     // getAuth,
@@ -10,26 +6,10 @@ import {
     UserCredential,
     onAuthStateChanged,
 } from "firebase/auth";
-
-type Children = {
-    firstName: string;
-    lastName: string;
-    age: number;
-    birthYear: number;
-    school: string;
-};
-
-type User = {
-    uid: number;
-    newEmail: string;
-    password: string;
-    newFirstName: string;
-    newLastName: string;
-    phoneNumber: number;
-    zipCode: number;
-    children: Children[];
-    notifcations: boolean;
-};
+import { httpsCallable } from "firebase/functions";
+import { type AuthError } from "@firebase/auth";
+import { functions, auth } from "@/config";
+import { type User } from "@/types";
 
 // Create user and logs them in
 export function createUser(user: User): Promise<void> {
@@ -39,7 +19,7 @@ export function createUser(user: User): Promise<void> {
             .then(() => {
                 console.log(user);
                 // Logs user after creating account
-                authenticateUser(user.newEmail, user.password);
+                authenticateUser(user.email, user.password);
                 resolve();
             })
             .catch((error: string) => {
