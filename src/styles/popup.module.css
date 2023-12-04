@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Inter');
-
 .popupButton {
-    background: #0E8FCC;
+    background: #0e8fcc;
     border: none;
     border-radius: 15px;
     padding: 15px;
@@ -19,19 +17,18 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.5);
-    font-family: 'Inter';
+    font-family: "Inter";
 }
-  
+
 .popupInner {
     position: relative;
     padding: 40px;
     width: 90%;
     max-width: 400px;
-    background: #AACDEE;
+    background: #aacdee;
     border-radius: 10px;
-    align-items: center;
 }
-  
+
 .closeButton {
     position: absolute;
     top: 10px;
@@ -41,9 +38,9 @@
     mix-blend-mode: multiply;
 }
 
-.xMark {
-    width: 20px;
-    height: 20px;
+.closeButton > img {
+    width: 18px;
+    height: 18px;
     background-color: transparent;
     mix-blend-mode: multiply;
 }
@@ -82,7 +79,7 @@
     height: 32px;
     border-radius: 12px;
     border: none;
-    background: #000C79;
+    background: #000c79;
     color: white;
     font-size: 14.75px;
     display: inline-block;
@@ -104,7 +101,8 @@
     justify-content: center;
 }
 
-.timeInput, .maxInput {
+.timeInput,
+.maxInput {
     width: 40px;
     padding: 5px;
     margin: 0 5px;
@@ -114,7 +112,8 @@
     padding: 5px;
 }
 
-.colon, .dash {
+.colon,
+.dash {
     color: white;
     font-size: 30px;
     font-weight: bold;
@@ -140,9 +139,10 @@
     align-items: center;
     margin-top: 10px;
     margin-bottom: 10px;
-  }
-  
-.calendarMonth, .calendarYear {
+}
+
+.calendarMonth,
+.calendarYear {
     width: 50%;
     height: 50%;
     padding: 5px;
@@ -156,7 +156,8 @@
     font-size: 15px;
 }
 
-.monthPicker, .yearPicker {
+.monthPicker,
+.yearPicker {
     position: absolute;
     background: white;
     border: 1px solid #ccc;
@@ -167,17 +168,19 @@
     overflow: scroll;
 }
 
-.monthPicker div:hover, .yearPicker div:hover {
+.monthPicker div:hover,
+.yearPicker div:hover {
     background-color: #f0f0f0;
 }
 
 .selectedDay {
-    background-color: #000C79 !important;
+    background-color: #000c79 !important;
     color: white !important;
-    border-radius: 50%; 
+    border-radius: 50%;
 }
 
 .deleteText {
+    padding-bottom: 16px;
     font-size: 30px;
     color: white;
     align-items: center;
@@ -187,15 +190,16 @@
 .confirmButtonContainer {
     display: flex;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
 }
 
-.confirmButton, .sendButton {
+.confirmButton,
+.sendButton {
     width: 100px;
     height: 32px;
     border-radius: 12px;
     border: none;
-    background: #000C79;
+    background: #000c79;
     color: white;
     font-size: 14.75px;
 }
@@ -214,6 +218,7 @@
     display: flex;
     justify-content: right;
     align-items: right;
+    padding-top: 16px;
 }
 
 .maxSelect {

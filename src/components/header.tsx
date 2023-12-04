@@ -5,7 +5,7 @@ import classes from "@/styles/header.module.css";
 import Hamburger from "@/assets/hamburger.svg";
 import Logo from "@/assets/logo.png";
 import Profile from "@/assets/profile.png";
-import XButton from "@/assets/x_button.svg";
+import XButton from "@/assets/x_white.svg";
 
 const Header = () => {
     const [toggleNav, setToggleNav] = useState(false);
