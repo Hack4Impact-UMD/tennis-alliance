@@ -11,15 +11,10 @@
         "lint:fix": "next lint --fix"
     },
     "dependencies": {
-        "cors": "^2.8.5",
-        "encoding": "^0.1.13",
         "firebase": "^10.5.2",
-        "firebase-admin": "^11.11.0",
-        "firebase-functions": "^4.5.0",
         "next": "^13.5.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "swr": "^2.2.4",
         "typescript": "^5.2.2"
     },
     "devDependencies": {
