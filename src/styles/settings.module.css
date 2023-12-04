@@ -1,305 +1,184 @@
-
-.body {
-    font-family: sans-serif;
-    font-weight: 400;
+.container {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    background-color: white;
     height: 100%;
-    
+    margin: 0 auto;
+    max-width: 750px;
+    font-family: sans-serif;
+    background-color: white;
 }
 
-.allDivs {
-    margin: 0 auto;
-    width: 752px;
-    position: relative;
+.container hr {
+    border-top: 3px solid;
+    color: rgba(0, 0, 0, 0.1);
+    margin: 1.5em 0em;
+}
+
+.container label,
+.container legend {
+    margin-bottom: 0.75em;
+    font-size: 20px;
+}
+
+.container input {
+    width: 100%;
+    padding: 0.6em 1em;
+    margin-bottom: 1em;
+    border: 1px solid #cdcdcd;
+    border-radius: 12px;
+    outline: none;
+    font-size: 18px;
+}
+
+.container textarea {
+    width: 100%;
+    height: 8em;
+    margin: 0em 0em 1.5em;
+    padding: 16px;
+    background-color: rgba(224, 243, 246, 1);
+    border: 0px;
+    border-radius: 12px;
+    outline: none;
+    resize: none;
+    font-size: 18px;
+    font-family: "Inter", sans-serif;
+}
+
+.container .email {
+    padding-left: 40px;
+    background-image: url("../assets/evaEmailFill2.png");
+    background-position: 10px;
+    background-repeat: no-repeat;
+}
+
+.container .phone {
+    padding-left: 40px;
+    background-image: url("/phone.png");
+    background-position: 10px;
+    background-repeat: no-repeat;
 }
 
 .top {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1em;
-    margin-bottom:1em;
+    margin: 2em 0em 0.5em;
 }
 
-
-
-.accHead {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    font-weight: 500;
-    line-height: 30px;
-    letter-spacing: 0em;
-    text-align: center;
+.top > h1 {
+    font-size: 36px;
+    font-weight: 600;
 }
 
-.hhhr {
-    margin: 0 auto;
-    border: none;
-    border-top: 2px solid ; /* Set border properties */
-    color: rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5em;
+.container > img {
+    margin: 0.5em 0em 2em;
 }
 
-/* Style for first and last name text boxes */
-.individualNames {
-    width: 27em;
-    height: 3em;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius:13px;
-    outline: none;
-    border: 1px solid #cdcdcd;
-    transition: width 0.3s ease;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top:1em;
-}
-
-/* Row ordering for name text boxes */
-.textNames {
-    /* margin: 0 auto; Add this line to center the container horizontally */
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.container h3 {
+    font-size: 24px;
+    font-weight: 600;
     margin-bottom: 1em;
-    margin-top: 1em;
-    margin-bottom: 1.5em;
-    /* margin: 0 auto; */
 }
 
-.nameTitles {
+.fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5em;
+}
+
+.fields > div {
     display: flex;
     flex-direction: column;
-    
+    width: 100%;
 }
-
-.numTitles {
-    display: flex;
-    flex-direction: column;
-    margin-left: 1em;
-}
-
-
-.personal {
-    display: flex;
-    flex-direction: column;
-    margin-top:1em;
-}
-
-.textbox {
-    background-color: transparent ;
-    background-image: url("../assets/evaEmailFill2.png");
-    background-position: 10px ;
-    background-repeat:no-repeat;
-    padding-left:20px;
-    height: 3em;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius:13px;
-    outline: none;
-    border: 1px solid #cdcdcd;
-    transition: width 0.3s ease;
-    padding-left: 40px;    
-    padding-right: 10px;
-    margin-top: 1em;
-}
-.textbox:focus {
-    color: black; /* Set text color to be visible */
-}
-
 
 .editChildren {
-    display:flex;
-    align-items: center;
+    display: flex;
     justify-content: space-between;
-    margin-top:.5em;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: -1em;
 }
 
-.add {
-    padding-right: 10px;
+.editChildren > div {
+    display: flex;
+    align-items: center;
+    gap: 1em;
 }
 
-.additional {
-    margin-top: 1em;
+.editChildren label {
+    margin: 0em;
+    line-height: 2em;
 }
 
-.phone {
-    background-image: url("/phone.png");
-    background-position: 10px;
-    background-repeat:no-repeat;
-    width: 27em;
-    height: 3em;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius:13px;
-    outline: none;
-    border: 1px solid #cdcdcd;
-    transition: width 0.3s ease;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top:1em;
-}
-.phone:focus {
-    color: black; /* Set text color to be visible */
+.child {
+    display: flex;
+    flex-direction: column;
 }
 
-
-
-.zip {
-    width: 22em;
-    height: 3em;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius:13px;
-    outline: none;
-    border: 1px solid #cdcdcd;
-    transition: width 0.3s ease;
-    margin-top: 1em;
-}
-
-
-/* Styling the text area */
-#textarea {
-    width: 100%;
-    resize: none;
-    width: 100%;
-    height: 8em;
-    background-color: rgba(224, 243, 246, 1);
-    border-radius:13px;
-    outline: none;
-    border: 0px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    margin-top: .5em;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-bottom: 1.5em;
-    margin-top: 1.5em;
-}
-
-.labelSpace {
-    margin-bottom:1em;
-}
-
-/* Spacing the check boxes */
-.checkbox {
-    margin-top:1em;
-    margin-bottom: 1.2em;
-}
-
-/* Style of unchecked state of checkbox */
-.checkbox input[type="checkbox"] {
-    appearance: none;
+.checkbox > input[type="checkbox"] {
+    padding: 0.6em;
+    margin: 0em;
     width: 18px;
     height: 18px;
+    border: 0px;
     border-radius: 3px;
     background-color: rgba(224, 243, 246, 1);
-    border: 0px;
     outline: none;
+    appearance: none;
     vertical-align: middle;
 }
 
-/* Style the label associated with the checkbox */
+.checkbox {
+    margin-bottom: 1.25em;
+}
+
 .checkbox label {
     vertical-align: middle;
-    margin-left: 5px; /* Add some spacing between the checkbox and the label */
+    margin-left: 0.75em;
 }
 
-/* Add styles for the checked state of the checkbox */
 .checkbox input[type="checkbox"]:checked {
-    background-color: #77DD77; /* Change the background color when checked */
-    border: 0px ; /* Change the border color when checked */
+    background-color: #77dd77;
+    border: 0px;
 }
 
-/* -------- SUBMIT BUTTON -------- */
-
-.submitLocation {
-    float: right;
-}
-
-/* Style submit button */
-.submitButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(1, 137, 202, 1);
-    color: rgba(255, 255, 255, 1);
-
+.container > button {
     height: 3em;
     width: 7em;
+    margin: 0.5em 0em 1.5em;
+    border: 1px solid #cdcdcd;
     border-radius: 13px;
     outline: none;
-    border: 1px solid #cdcdcd;
+    background-color: rgba(1, 137, 202, 1);
+    color: rgba(255, 255, 255, 1);
     font-size: 20px;
     font-weight: 500;
-    line-height: 24px;
-    letter-spacing: 0em;
-    text-align: center;
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
 }
 
-
-/*  -------- SCREEN SIZE -------- */
-
-
-/* Make adjustments to divs based on screen size */
-@media screen and (max-width: 857px) {
-    .allDivs {
-        width: 90%;
+@media screen and (max-width: 1000px) {
+    .container {
+        width: calc(100% - 120px);
     }
-
 }
 
-@media screen and (max-width: 752px) {
-    .allDivs {
-        width: 80%;
-    }
-    .individualNames {
-        width: 20em;
-    }
-    .phone {
-        width: 20em;
+@media screen and (max-width: 500px) {
+    .container {
+        width: calc(100% - 80px);
     }
 
-}
-
-@media screen and (max-width: 683px) {
-    .allDivs {
-        width: 70%;
-    }
-    .individualNames {
-        width: 15em;
-    }
-    .phone {
-        width: 15em;
+    .fields {
+        flex-direction: column;
+        gap: 0em;
     }
 
-}
-
-@media screen and (max-width: 600px) {
-    
-    .individualNames {
-        width: 12em;
-    }
-    .phone {
-        width: 12em;
+    .editChildren label {
+        line-height: normal;
+        text-align: center;
     }
 
-}
-
-@media screen and (max-width: 564px){
-    .allDivs {
-        width: 65%;
-    }
-    .individualNames {
-        width: 10em;
-    }
-    .phone {
-        width: 10em;
+    .editChildren img {
+        display: none;
     }
 }
