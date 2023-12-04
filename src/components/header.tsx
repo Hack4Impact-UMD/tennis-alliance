@@ -1,28 +1,18 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import classes from "@/styles/header.module.css";
-// import about_icon from "../../assets/about_icon.svg";
 import Hamburger from "@/assets/hamburger.svg";
 import Logo from "@/assets/logo.png";
 import Profile from "@/assets/profile.png";
 import XButton from "@/assets/x_button.svg";
-// import signout_icon from "../../assets/signout_icon.svg";
 
 const Header = () => {
-    const router = useRouter();
     const [toggleNav, setToggleNav] = useState(false);
     const base = "https://tennisallianceaac.org";
 
     const toggleMenu = () => {
-        console.log("toggle menu");
         setToggleNav(!toggleNav);
-    };
-
-    const handleClick = (page: string) => {
-        toggleMenu();
-        router.push(page);
     };
 
     useEffect(() => {
