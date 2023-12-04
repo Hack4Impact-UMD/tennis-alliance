@@ -1,14 +1,94 @@
+.logo {
+    margin-right: 36px;
+}
+
 .header {
     position: fixed;
-    top: 0px;
+    z-index: 100;
+    top: 0;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    width: 100%;
+    width: 100vw;
     height: 120px;
-    padding: 16px 32px;
     background-color: #b7f4ff;
 }
 
-.logo {
-    margin-left: auto;
+.hamburger {
+    position: fixed;
+    left: 40px;
+    height: 60px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100vw;
+    height: 100%;
+}
+
+.menu {
+    position: fixed;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    width: 480px;
+    height: 100%;
+    padding: 120px 80px;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 60px rgba(46, 45, 43, 0.6);
+    background: #93bce1;
+}
+
+.menu > img {
+    position: fixed;
+    top: 46px;
+    left: 46px;
+    width: 28px;
+    height: 28px;
+}
+
+.profile {
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.name {
+    margin: 8px 0px 4px;
+    font-weight: 700;
+    font-size: 32px;
+}
+
+.email {
+    font-weight: 500;
+    font-size: 32px;
+}
+
+.menu > p {
+    padding-bottom: 24px;
+    font-weight: 700;
+    font-size: 32px;
+}
+
+.menu > div {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    font-weight: 500;
+    font-size: 28px;
+}
+
+.background {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: gray;
+    opacity: 0.6;
 }
