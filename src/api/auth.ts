@@ -1,16 +1,15 @@
-import { functions, app, auth } from "../config";
+import { functions, auth } from "../config";
 
 import { httpsCallable } from "firebase/functions";
-import { type AuthError } from '@firebase/auth';
+import { type AuthError } from "@firebase/auth";
 import {
-  signInWithEmailAndPassword,
-  getAuth,
-  signOut,
-  sendPasswordResetEmail,
-  UserCredential,
-  onAuthStateChanged,
-} from 'firebase/auth';
-
+    signInWithEmailAndPassword,
+    // getAuth,
+    signOut,
+    // sendPasswordResetEmail,
+    UserCredential,
+    onAuthStateChanged,
+} from "firebase/auth";
 
 type Children = {
     firstName: string;
@@ -31,15 +30,11 @@ type User = {
     children: Children[];
     notifcations: boolean;
 };
-  
 
-// Create user and logs them in.
+// Create user and logs them in
 export function createUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
-        const createUserCloudFunction = httpsCallable(
-            functions,
-            "createUser"
-        );
+        const createUserCloudFunction = httpsCallable(functions, "createUser");
         createUserCloudFunction(user)
             .then(() => {
                 console.log(user);
@@ -54,71 +49,49 @@ export function createUser(user: User): Promise<void> {
     });
 }
 
-
 // Log in
 export function authenticateUser(
-  email: string,
-  password: string,
+    email: string,
+    password: string
 ): Promise<UserCredential> {
-  return new Promise(async (resolve, reject) => {
-    
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential.user)
-        monitorAuthState();
-        resolve(userCredential);
-      })
-      .catch((error: AuthError) => {
-        reject(error);
-      });
-  });
+    return new Promise((resolve, reject) => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                console.log(userCredential.user);
+                monitorAuthState();
+                resolve(userCredential);
+            })
+            .catch((error: AuthError) => {
+                reject(error);
+            });
+    });
 }
 
-export const monitorAuthState = async () => {
-  await onAuthStateChanged(auth, user => {
-    if (user) {
-      // Needs to implement transition to user dashboard IF Just logged in
-      // I think it shouldn't do anything if already logged in
-      console.log(user)
-      console.log("logged in! switch to user dashboard page")
-      
-    } else {
-      // If not logged in, current page should be the login page
-      console.log("you are not logged in")
-    }
-  });
-}
-
-
+export const monitorAuthState = () => {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // Needs to implement transition to user dashboard IF Just logged in
+            // I think it shouldn't do anything if already logged in
+            console.log(user);
+            console.log("logged in! switch to user dashboard page");
+        } else {
+            // If not logged in, current page should be the login page
+            console.log("you are not logged in");
+        }
+    });
+};
 
 // Log out
 export function logOut(): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-  await signOut(auth)
-      .then(() => {
-        console.log("logged out!")
-        monitorAuthState();
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+    return new Promise((resolve, reject) => {
+        signOut(auth)
+            .then(() => {
+                console.log("logged out!");
+                monitorAuthState();
+                resolve();
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
 }
-
-
-
-
-
-// const submitting = async (email: string, password: string) => {
-//   console.log('email:', email);
-//     try {
-//       const userCred: UserCredential = await signInWithEmailAndPassword(auth, email, password);
-//       console.log(userCred.user);
-//     } catch (error) {
-//       console.error('Error signing in:', error);
-//     }
-
-// };
-
-// export default submitting;

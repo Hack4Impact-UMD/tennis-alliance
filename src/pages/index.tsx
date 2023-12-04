@@ -7,8 +7,6 @@ const Home = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const [loggedIn, setLoggedIn] = useState(false);
-
     return (
         <main className={style.main}>
             <div className={style.description}>
@@ -51,7 +49,6 @@ const Home = () => {
                                 type="button"
                                 onClick={() => {
                                     authenticateUser(email, password);
-                                    setLoggedIn(true);
                                 }}
                                 className={style.submitButton}
                             >
@@ -62,7 +59,6 @@ const Home = () => {
                                 type="button"
                                 onClick={() => {
                                     logOut();
-                                    setLoggedIn(false);
                                 }}
                                 className={style.submitButton}
                             >
