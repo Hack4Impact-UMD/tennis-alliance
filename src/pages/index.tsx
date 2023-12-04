@@ -1,31 +1,32 @@
+import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
+import os from "os";
+import { createEvent, getEvents } from "@/api/event";
+import { event } from "@/tests/mock";
+import { type Event } from "@/types";
 import styles from "@/styles/home.module.css";
 
-import { createEvent, getEvents } from "../api/event";
-import { useState, useEffect, useRef } from "react";
-import os from "os";
-
-const json2csv = (json) => {
-    const fields = Object.keys(json[0]);
-    const csv = json.map((row) => fields.map((i) => row[i]).join(","));
+const events2csv = (events: Event[]): string => {
+    const fields = Object.keys(events[0]);
+    const csv = events.map((event) => Object.values(event).join(","));
     csv.unshift(fields.join(","));
     return csv.join(os.EOL);
 };
 
 const Home = () => {
-    const [download, setDownload] = useState([]);
-    const downloadLink = useRef();
+    const [download, setDownload] = useState("");
+    const downloadLink = useRef<HTMLAnchorElement>(null);
 
     const downloadMyCollection = async () => {
-        const events = await getEvents();
-        console.log(events);
-        setDownload(json2csv(events.data.map((event) => event.data)));
+        const { data: eventData } = await getEvents();
+        const events = eventData.map((event) => event.data);
+        setDownload(events2csv(events));
     };
 
     useEffect(() => {
         if (download.length > 0) {
-            downloadLink?.current?.click();
-            setDownload([]);
+            downloadLink.current?.click();
+            setDownload("");
         }
     }, [download]);
 
@@ -51,12 +52,7 @@ const Home = () => {
                             height: "40px",
                             margin: "10px",
                         }}
-                        onClick={() =>
-                            createEvent({
-                                name: "test event 2",
-                                description: "test description 2",
-                            })
-                        }
+                        onClick={() => createEvent(event)}
                     >
                         Create Test Event
                     </button>

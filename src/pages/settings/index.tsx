@@ -1,8 +1,8 @@
 import Image from "next/image";
+import ChildForm from "@/components/childForm";
 import style from "@/styles/settings.module.css";
 import minilogo from "@/assets/minilogo.png";
 import profile from "@/assets/profile.png";
-import ChildForm from "@/components/childForm";
 
 const Settings = () => {
     return (

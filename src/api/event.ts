@@ -17,7 +17,7 @@ export const deleteEvent = async (id: number) => {
     return await deleteEventCloudFunction(id);
 };
 
-export const getEvents = async () => {
+export const getEvents = async (): Promise<{ data: { data: Event }[] }> => {
     const getEventsCloudFunction = httpsCallable(functions, "getEvents");
-    return await getEventsCloudFunction();
+    return (await getEventsCloudFunction()) as { data: { data: Event }[] };
 };
