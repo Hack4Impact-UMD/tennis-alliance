@@ -167,3 +167,176 @@ p.blue-border {
     background-color: transparent;
     border: none;
 }
+
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
+:root {
+    --fc-today-bg-color: #AACDEE;
+}
+
+.fc {
+    background-color: #0E8FCC;
+    border-radius: 2%;
+    overflow: hidden;
+} 
+
+.fc-dayGridMonth-view .fc-day, .fc-dayGridWeek-view .fc-day {
+    background-color: white;
+    border-color: black;
+}
+
+.fc-toolbar {
+    height: 30px;
+    font-size: 35px;
+    margin-top: 50px;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    font-family: 'Inter';
+}
+
+#calendar {
+    width: 800px;
+    outline: 1px solid black;
+    border-radius: 2%;
+    box-shadow: 5px 5px lightblue;
+}
+
+p.blue-border {
+    width: 25%;
+    border-radius: 15px;
+    padding: 15px;
+    background-color: #0E8FCC;
+    text-align: center;
+    font-size: 20px;
+}
+
+.today-events-container {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #93BCE1;
+    border-style: hidden;
+    padding: 200px;
+    width: 100%;
+}
+
+.upcoming-events-container-both {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #b7dde6;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+}
+
+.upcoming-events-container-volunteer {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #e6e6b7;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+}
+
+.upcoming-events-container-participant {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #C7DCC5;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+}
+
+.event-td {
+    border: 1px solid black;
+    text-align: left;
+    padding: 15px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.left-td {
+    width: 30%;
+}
+
+ .small-font {
+    font-size: 15px;
+}
+
+.button-event {
+    background-color: #9acfce;
+    border-radius: 30px;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 4px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.radio {
+    margin: 4px 20px;
+}
+
+.checkbox {
+    margin: 4px 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: right; /* Centers the button horizontally */
+    padding-top: 20px; 
+}
+
+.submit-button {
+    background-color: #9acfce;
+    border-radius: 30px;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 4px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.event-text {
+    position: absolute;
+    right: 100%;
+    font-size: 15px; /* Adjust size as needed */
+    margin-top: auto; 
+    white-space: nowrap;
+    color: white;
+}
+
+.fc-daygrid-day.has-event {
+    background-color: #0E8FCC; /* Your desired background color */
+}
+
+.arrow-down {
+    rotate: 270deg;
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.x {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.disclosure-toggle {
+    margin-left: 90%; /* Pushes the button to the right */
+    order: 2;
+    border: none;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}

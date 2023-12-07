@@ -63,6 +63,9 @@ const Header = () => {
                     <Link href="/settings" onClick={toggleMenu}>
                         Settings
                     </Link>
+                    <Link href="/admin_dash" onClick={toggleMenu}>
+                        Admin Dashboard
+                    </Link>
                     <Link href="/registration" onClick={toggleMenu}>
                         Sign Out
                     </Link>
