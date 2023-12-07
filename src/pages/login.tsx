@@ -1,76 +1,78 @@
-import { useState } from "react";
-import { createUser, authenticateUser, logOut } from "@/api/auth";
-import { user } from "@/tests/mock";
-import style from "@/styles/home.module.css";
 
-const Home = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+"use client";
+import React, { useState } from "react";
+import styles from "./page.module.css";
+
+const UIPage = () => {
+    const [inputText1, setInputText1] = useState("");
+    const [inputText2, setInputText2] = useState("");
+
+
+    const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputText1(e.target.value);
+    };
+
+
+    const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputText2(e.target.value);
+    };
+
 
     return (
-        <main className={style.main}>
-            <div className={style.description}>
-                <div>
-                    <button onClick={() => createUser(user)}>CLICK ME</button>
-                    <br />
-                    <form>
-                        <div className={style.personal}>
-                            <label htmlFor="email">Email</label>
-                            <br />
-                            <input
-                                type="text"
-                                id="email"
-                                onChange={(event) =>
-                                    setEmail(event.target.value)
-                                }
-                                className={style.textbox}
-                                required
-                            />
-                            <br />
-                            <div className={style.textNames}>
-                                <div className={style.nameTitles}>
-                                    <label htmlFor="password">Password</label>
-                                    <br />
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        onChange={(event) =>
-                                            setPassword(event.target.value)
-                                        }
-                                        className={style.phone}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        </div>
+        <div className={styles.loginContainer}>
+            <div className={styles.minilogo}></div>
+            <div className={styles.boxContainer}>
 
-                        <div className={style.submitLocation}>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    authenticateUser(email, password);
-                                }}
-                                className={style.submitButton}
-                            >
-                                Log In
-                            </button>
-                            <br />
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    logOut();
-                                }}
-                                className={style.submitButton}
-                            >
-                                Sign Out
-                            </button>
-                            <br />
-                        </div>
-                    </form>
+
+                <div className={styles.email}>Email</div>
+                <input
+                    type="text"
+                    value={inputText1}
+                    onChange={handleInputChange1}
+                    style={{
+                        width: "80%",
+                        height: "10%",
+                        border: "none",
+                        borderRadius: "10.689px",
+                        outline: "none",
+                        paddingLeft: "10px", // Adjust this value based on your design
+
+                        color: "#000000",
+                    }}
+                />
+
+                <div className={styles.pw}>Password</div>
+                <input
+                    type="text"
+                    value={inputText2}
+                    onChange={handleInputChange2}
+                    style={{
+                        width: "80%",
+                        height: "10%",
+                        border: "none",
+                        borderRadius: "10.689px",
+                        outline: "none",
+                        paddingLeft: "10px",
+
+                        color: "#000000",
+                    }}
+                />
+                <a href="#" className={styles.forgotPasswordLink}> Forgot password?</a>
+                <div
+                    className={styles.submitButtonContainer}
+                    onClick={() => console.log("Submit button clicked")}
+                >
+                    <div className={styles.logoImage}></div>
+                    <div className={styles.submitText}>Submit</div>
                 </div>
+                <div className={styles.bottomText}><a href="#" className={styles.genLink}>Sign up </a>for an account/One time event <a href="#" className={styles.genLink}>sign up</a></div>
             </div>
-        </main>
+        </div>
+
     );
 };
 
-export default Home;
+
+export default UIPage;
+
+
