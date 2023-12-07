@@ -27,6 +27,6 @@ type Event = {
     description: string;
     participants: number[];
     slots: number;
-}
+};
 
 export type { User, Children, Event };

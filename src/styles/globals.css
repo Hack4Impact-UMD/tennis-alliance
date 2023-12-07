@@ -34,3 +34,136 @@ button {
     -webkit-transform: scale(1.05);
     transform: scale(1.05);
 }
+
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
+:root {
+    --fc-today-bg-color: #AACDEE;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+    font-family: 'Inter';
+}
+
+p.blue-border {
+    width: 25%;
+    border-radius: 15px;
+    padding: 15px;
+    background-color: #0E8FCC;
+    text-align: center;
+    font-size: 20px;
+}
+
+.event-td {
+    border: 1px solid black;
+    text-align: left;
+    padding: 5px;
+    font-size: 24px;
+    vertical-align: text-top;
+    text-align: center;
+}
+
+.right-td {
+    display: grid;
+    text-align: center;
+    font-size: 24px;
+    border-left: 1px solid black;
+    align-items: center;
+}
+
+.left-td {
+    width: 30%;
+}
+
+ .small-font {
+    font-size: 15px;
+}
+
+#icon-and-name {
+    width: 75%;
+    gap: 10px;
+    align-self: right;
+}
+
+.name-div {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+
+.button-event {
+    background-color: #AACDEE;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 20px;
+    text-align: center;
+    justify-self: center;
+    text-decoration: none;
+    width: 20%;
+    font-size: 16px;
+}
+
+.radio {
+    margin: 4px 20px;
+}
+
+.checkbox {
+    margin: 4px 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: right; /* Centers the button horizontally */
+    padding-top: 20px; 
+}
+
+.submit-button {
+    background-color: #9acfce;
+    border-radius: 30px;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 4px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+
+.registered-full-container {
+    display: grid;
+    row-gap: 20px;
+    border-width: 10px;
+    width: 800px;
+}
+
+.registered-event {
+    border-collapse: collapse;
+    border-radius: 15px;
+    border-style: hidden;
+    padding: 20px;
+    width: 100%;
+}
+
+.registered-event-participant {
+    background-color: #E4F5E2;
+
+}
+
+.registered-event-volunteer {
+    background-color: #FCF7CE;
+}
+
+.event-arrow {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}

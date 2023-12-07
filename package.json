@@ -11,6 +11,8 @@
         "lint:fix": "next lint --fix"
     },
     "dependencies": {
+        "@headlessui/react": "^1.7.17",
+        "@heroicons/react": "^2.0.18",
         "date-fns": "^2.30.0",
         "firebase": "^10.5.2",
         "next": "^13.5.4",
