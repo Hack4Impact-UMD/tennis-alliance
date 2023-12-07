@@ -1,0 +1,39 @@
+.loginContainer {
+  background-color: white;
+  width: 100vw;
+  position: relative; /* Make sure this is relative so absolute children relate to it */
+  overflow: hidden; /* This will ensure no child elements stick out */
+}
+
+.topRectangle {
+  position: relative;
+  width: 100%; /* Full width of the parent container */
+  background-color: white; /* Ensures the background is white */
+}
+
+
+.logo {
+  position: absolute;
+  left: 80%; /* Center horizontally relative to the parent element */
+  top: 50%; /* Center vertically relative to the parent element */
+  transform: translate(-50%, -50%); /* Adjusts the positioning to truly center the element */
+  max-width: 50vw; /* Sets a maximum width relative to the viewport width */
+
+}
+
+.menuContainer {
+  position: absolute;
+  left: 0;
+  top: 50%; /* Adjust if necessary */
+  transform: translateY(-50%); /* Center vertically */
+  margin-left: 5%;
+}
+.menuItems {
+  position: relative;
+  display: block;
+  margin-bottom: 10px;
+  width: 76px;
+  height: 14px;
+  left: 45px;
+  border-radius: 15px;
+}

@@ -51,6 +51,9 @@ const Header = () => {
                     </div>
 
                     <p>Event Registration</p>
+                    <Link href="/login" onClick={toggleMenu}>
+                        Login
+                    </Link>
                     <Link href="/registration" onClick={toggleMenu}>
                         Registration
                     </Link>

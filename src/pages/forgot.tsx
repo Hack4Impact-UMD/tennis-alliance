@@ -1,7 +1,7 @@
 
 "use client";
 import React, { useState } from "react";
-import styles from "./page.module.css";
+import styles from "./forgot.module.css";
 
 const UIPage = () => {
     const [inputText1, setInputText1] = useState("");
