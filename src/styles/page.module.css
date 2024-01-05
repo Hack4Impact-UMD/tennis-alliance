@@ -1,0 +1,63 @@
+.background {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-image: url("../assets/tennis3.jpg"); 
+   background-position: center;
+   background-repeat: no-repeat;
+   background-attachment: fixed;
+   background-size: cover;
+   min-height: 100vh; 
+   flex-direction: column;
+ }
+ 
+.title {
+   font-family: "Inter";
+   font-size: 34px;
+   margin-bottom: 30px;
+}
+
+.resetForm {
+   display: flex;
+   width: 520px;
+   height: 430px;
+   flex-direction: column;
+   padding: 35px;
+   border-radius: 10px;
+   background-color: rgba(255, 255, 255, 0.51);
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.resetTitle {
+   font-family: "Inter";
+   font-size: 34px;
+   text-align: left;
+   margin-top: 5px;
+   margin-bottom: 5px;
+}
+
+.resetInput {
+   width: 100%;
+   height: 50%;
+   background: white;
+   border: none;
+   border-radius: 10px;
+   text-indent: 5px;
+   font-size: 20px;
+   margin-top: 10px;
+   margin-bottom: 30px;
+}
+
+.button {
+   background-color: #93BCE1;
+   border-radius: 10px;
+   border: none;
+   text-align: center;
+   font-size: 34px;
+   width: fit-content;
+   padding-left: 40px;
+   padding-right: 40px;
+   padding-top: 5px;
+   padding-bottom: 5px;
+   margin: auto;
+}
