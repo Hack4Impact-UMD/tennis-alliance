@@ -1,78 +1,36 @@
+import React from "react";
+import Image from "next/image";
+import styles from "@/styles/page.module.css";
+import miniLogo from "@/assets/mini_logo.png";
+import tennisBalls from "@/assets/TennisBalls.png";
 
-"use client";
-import React, { useState } from "react";
-import styles from "./page.module.css";
-
-const UIPage = () => {
-    const [inputText1, setInputText1] = useState("");
-    const [inputText2, setInputText2] = useState("");
-
-
-    const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputText1(e.target.value);
-    };
-
-
-    const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputText2(e.target.value);
-    };
-
-
+const LoginPage = () => {
     return (
-        <div className={styles.loginContainer}>
-            <div className={styles.minilogo}></div>
-            <div className={styles.boxContainer}>
+        <div className={styles.background}>
+            <Image className={styles.miniLogo} src={miniLogo} alt="miniLogo" />
+            <form className={styles.loginForm}>
+                <p className={styles.email}>Email</p>
+                <input type="email" className={styles.inputBox} required/>
+                <p className={styles.pw}>Password</p>
+                <input type="password" className={styles.inputBox} required />
 
+                <a href="#" className={styles.forgotPasswordLink}>Forgot password?</a>
 
-                <div className={styles.email}>Email</div>
-                <input
-                    type="text"
-                    value={inputText1}
-                    onChange={handleInputChange1}
-                    style={{
-                        width: "80%",
-                        height: "10%",
-                        border: "none",
-                        borderRadius: "10.689px",
-                        outline: "none",
-                        paddingLeft: "10px", // Adjust this value based on your design
-
-                        color: "#000000",
-                    }}
-                />
-
-                <div className={styles.pw}>Password</div>
-                <input
-                    type="text"
-                    value={inputText2}
-                    onChange={handleInputChange2}
-                    style={{
-                        width: "80%",
-                        height: "10%",
-                        border: "none",
-                        borderRadius: "10.689px",
-                        outline: "none",
-                        paddingLeft: "10px",
-
-                        color: "#000000",
-                    }}
-                />
-                <a href="#" className={styles.forgotPasswordLink}> Forgot password?</a>
-                <div
-                    className={styles.submitButtonContainer}
-                    onClick={() => console.log("Submit button clicked")}
-                >
-                    <div className={styles.logoImage}></div>
-                    <div className={styles.submitText}>Submit</div>
+                <div className={styles.align}>
+                    <button className={styles.button}>
+                        <Image className={styles.tennisBalls} src={tennisBalls} alt="tennisBalls" />Submit
+                    </button>
                 </div>
-                <div className={styles.bottomText}><a href="#" className={styles.genLink}>Sign up </a>for an account/One time event <a href="#" className={styles.genLink}>sign up</a></div>
-            </div>
-        </div>
 
+                <span className={styles.bottomText}>
+                    <a href="#" className={styles.signUpLink}>Sign up</a> for an account/One time event <a href="#" className={styles.signUpLink}>sign up</a>
+                </span>
+            </form>
+        </div>
     );
 };
 
 
-export default UIPage;
+export default LoginPage;
 
 

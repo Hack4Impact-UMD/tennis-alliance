@@ -1,0 +1,97 @@
+.background {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../assets/Group27.png");
+    background-repeat: no-repeat;
+    background-position: top 110px center;
+    flex-direction: column;
+    height: 100vh;
+    padding-top: 80px;
+}
+
+.miniLogo {
+    margin-bottom: 20px;
+}
+
+.loginForm {
+    display: flex;
+    width: 520px;
+    height: 430px;
+    flex-direction: column;
+    padding: 35px;
+    border-radius: 10px;
+    background: #93BCE1;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.tennisBalls {
+    width: 40px;
+    height: 40px;
+}
+
+.button {
+    background-color: white;
+    border-radius: 10px;
+    border: none;
+    text-align: center;
+    font-size: 34px;
+    width: fit-content;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.email, .pw {
+    font-family: 'Inter';
+    font-size: 34px;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.forgotPasswordLink {
+    font-family: 'Inter';
+    font-size: 21px;
+    color: #122286;
+    text-decoration: underline;
+    text-align: right;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.inputBox {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-indent: 5px;
+    font-size: 20px;
+}
+
+.signUpLink {
+    font-family: 'Inter';
+    font-size: 20px;
+    color: #000C79;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.bottomText {
+    font-family: 'Inter';
+    font-size: 20px;
+    text-align: center;
+}
+
+.align {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
