@@ -1,0 +1,219 @@
+.container {
+    display: flex;
+    justify-content: center;
+    font-family: 'Inter';
+}
+
+.calendar {
+    width: 800px;
+    outline: 1px solid black;
+    border-radius: 2%;
+    box-shadow: 5px 5px lightblue;
+}
+
+p.blueBorder {
+    width: 25%;
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background-color: #0E8FCC;
+    text-align: center;
+    font-size: 20px;
+}
+
+.todayEventsContainer {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #93BCE1;
+    border-style: hidden;
+    padding: 200px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.upcomingEventsContainerBoth {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #b7dde6;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.upcomingEventsContainerVolunteer {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #e6e6b7;
+    border-style: hidden;
+    padding: 100px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.upcomingEventsContainerParticipant {
+    border-collapse: collapse;
+    border-radius: 15px;
+    background-color: #C7DCC5;
+    border-style: hidden;
+    padding: 100px;
+    padding-bottom: 100px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.eventTd {
+    padding: 15px;
+}
+
+.eventLeftTd {
+    border: 1px solid black;
+    text-align: left;
+    padding: 15px;
+    font-size: 24px;
+    text-align: center;
+    width: 30%;
+}
+
+.bigFont {
+    font-size: 24px;
+    text-align: center;
+}
+
+.smallFont {
+    font-size: 16px;
+    text-align: center;
+}
+
+.buttonEvent {
+    background-color: #9acfce;
+    border-radius: 30px;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 4px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.form {
+    margin: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.radio {
+    margin: 20px;
+}
+
+.radio input[type="radio"] {
+    appearance: none;
+    border: none;
+    width: 25px; 
+    height: 25px;
+    border-radius: 50%;
+    outline: none;
+    background-color: white;
+}
+
+.radio input[type="radio"]:checked {
+    background-color: #0E8FCC; 
+}
+
+.checkbox {
+    margin: 20px;
+}
+
+.checkbox input[type="checkbox"] {
+    appearance: none;
+    border: none;
+    width: 25px; 
+    height: 25px;
+    outline: none;
+    background-color: white;
+}
+
+.checkbox input[type="checkbox"]:checked {
+    background-color: #0E8FCC;
+}
+
+.space {
+    margin-left: 50px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center; 
+    padding-top: 20px; 
+}
+
+.submitButton {
+    background-color: #9acfce;
+    border-radius: 30px;
+    border: none;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 4px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    float: right;
+}
+
+.eventText {
+    position: absolute;
+    right: 100%;
+    font-size: 15px; 
+    margin-top: auto; 
+    white-space: nowrap;
+    color: white;
+}
+
+.todayEventText {
+    position: absolute;
+    right: 100%;
+    font-size: 15px; 
+    margin-top: auto; 
+    white-space: nowrap;
+    color: black;
+}
+
+.racket {
+    width: 30px;
+    height: 40px;
+    margin-left: 10px;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.arrowDown {
+    rotate: 270deg;
+    width: 30px;
+    height: 30px;
+    opacity: 0.5;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.x {
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.disclosureToggle {
+    margin-right: 10px;
+    float: right;
+    order: 2;
+    border: none;
+    background-color: transparent;
+    mix-blend-mode: multiply;
+}

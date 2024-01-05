@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Inter');
 
 * {
     box-sizing: border-box;
@@ -32,4 +33,30 @@ button {
 .button:hover {
     -webkit-transform: scale(1.05);
     transform: scale(1.05);
+}
+
+/* Full Calendar Module CSS */
+:root {
+    --fc-today-bg-color: #AACDEE;
+}
+
+.fc {
+    background-color: #0E8FCC;
+    border-radius: 2%;
+    overflow: hidden;
+} 
+
+.fc-dayGridMonth-view .fc-day, .fc-dayGridWeek-view .fc-day {
+    background-color: white;
+    border-color: black;
+}
+
+.fc-toolbar {
+    height: 30px;
+    font-size: 35px;
+    margin-top: 50px;
+}
+
+.fc-daygrid-day.has-event {
+    background-color: #0E8FCC; 
 }

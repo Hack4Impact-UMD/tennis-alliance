@@ -11,6 +11,11 @@
         "lint:fix": "next lint --fix"
     },
     "dependencies": {
+        "@fullcalendar/core": "^6.1.10",
+        "@fullcalendar/daygrid": "^6.1.10",
+        "@fullcalendar/interaction": "^6.1.10",
+        "@fullcalendar/react": "^6.1.10",
+        "@headlessui/react": "^1.7.17",
         "firebase": "^10.5.2",
         "next": "^13.5.4",
         "react": "^18.2.0",
