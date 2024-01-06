@@ -1,11 +1,35 @@
+import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
+import os from "os";
+import { createEvent, getEvents } from "@/api/event";
+import { event } from "@/tests/mock";
+import { type Event } from "@/types";
 import styles from "@/styles/home.module.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const events2csv = (events: Event[]): string => {
+    const fields = Object.keys(events[0]);
+    const csv = events.map((event) => Object.values(event).join(","));
+    csv.unshift(fields.join(","));
+    return csv.join(os.EOL);
+};
 
-export default function Home() {
+const Home = () => {
+    const [download, setDownload] = useState("");
+    const downloadLink = useRef<HTMLAnchorElement>(null);
+
+    const downloadMyCollection = async () => {
+        const { data: eventData } = await getEvents();
+        const events = eventData.map((event) => event.data);
+        setDownload(events2csv(events));
+    };
+
+    useEffect(() => {
+        if (download.length > 0) {
+            downloadLink.current?.click();
+            setDownload("");
+        }
+    }, [download]);
+
     return (
         <>
             <Head>
@@ -20,104 +44,41 @@ export default function Home() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main className={`${styles.main} ${inter.className}`}>
-                <div className={styles.description}>
-                    <p>
-                        Get started by editing&nbsp;
-                        <code className={styles.code}>src/pages/index.tsx</code>
-                    </p>
-                    <div>
-                        <a
-                            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            By{" "}
-                            <Image
-                                src="/vercel.svg"
-                                alt="Vercel Logo"
-                                className={styles.vercelLogo}
-                                width={100}
-                                height={24}
-                                priority
-                            />
-                        </a>
-                    </div>
-                </div>
-
-                <div className={styles.center}>
-                    <Image
-                        className={styles.logo}
-                        src="/next.svg"
-                        alt="Next.js Logo"
-                        width={180}
-                        height={37}
-                        priority
-                    />
-                </div>
-
-                <div className={styles.grid}>
-                    <a
-                        href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        className={styles.card}
-                        target="_blank"
-                        rel="noopener noreferrer"
+            <main className={styles.main}>
+                <div>
+                    <button
+                        style={{
+                            width: "160px",
+                            height: "40px",
+                            margin: "10px",
+                        }}
+                        onClick={() => createEvent(event)}
                     >
-                        <h2>
-                            Docs <span>-&gt;</span>
-                        </h2>
-                        <p>
-                            Find in-depth information about Next.js features
-                            and&nbsp;API.
-                        </p>
-                    </a>
-
-                    <a
-                        href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        className={styles.card}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        Create Test Event
+                    </button>
+                    <button
+                        style={{
+                            width: "160px",
+                            height: "40px",
+                            margin: "10px",
+                        }}
+                        className="downloadButton"
+                        onClick={downloadMyCollection}
                     >
-                        <h2>
-                            Learn <span>-&gt;</span>
-                        </h2>
-                        <p>
-                            Learn about Next.js in an interactive course
-                            with&nbsp;quizzes!
-                        </p>
-                    </a>
-
+                        Download Events
+                    </button>
                     <a
-                        href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        className={styles.card}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h2>
-                            Templates <span>-&gt;</span>
-                        </h2>
-                        <p>
-                            Discover and deploy boilerplate example
-                            Next.js&nbsp;projects.
-                        </p>
-                    </a>
-
-                    <a
-                        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        className={styles.card}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h2>
-                            Deploy <span>-&gt;</span>
-                        </h2>
-                        <p>
-                            Instantly deploy your Next.js site to a shareable
-                            URL with&nbsp;Vercel.
-                        </p>
-                    </a>
+                        href={`data:text/csv;charset=utf-8,${encodeURIComponent(
+                            download
+                        )}`}
+                        download="events.csv"
+                        hidden={true}
+                        ref={downloadLink}
+                    ></a>
                 </div>
             </main>
         </>
     );
-}
+};
+
+export default Home;
