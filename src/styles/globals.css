@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Inter');
+@import url("https://fonts.googleapis.com/css?family=Inter");
 
 * {
     box-sizing: border-box;
@@ -8,7 +8,7 @@
 
 body {
     overflow-x: hidden;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
 }
 
 a {
