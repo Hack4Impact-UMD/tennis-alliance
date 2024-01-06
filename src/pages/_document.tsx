@@ -4,7 +4,7 @@ const Document = () => {
     return (
         <Html lang="en">
             <Head />
-            <body style={{ marginTop: "100px" }}>
+            <body>
                 <Main />
                 <NextScript />
             </body>
