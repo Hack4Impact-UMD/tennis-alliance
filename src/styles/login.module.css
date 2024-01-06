@@ -1,0 +1,109 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background-image: url("../assets/circles.png");
+    background-repeat: no-repeat;
+    background-position: center calc(50% + 50px);
+    height: 100vh;
+}
+
+.form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 520px;
+    margin: 16px;
+    padding: 24px 32px;
+    border-radius: 10px;
+    background: #93bce1;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
+}
+
+.form > img:first-of-type {
+    position: absolute;
+    top: -100px;
+    width: auto;
+    height: 80px;
+}
+
+.form p {
+    align-self: flex-start;
+    font-size: 28px;
+}
+
+.password {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.password > span {
+    font-size: 20px;
+    text-align: right;
+    color: #122286;
+    cursor: pointer;
+}
+
+.form > input {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    padding: 4px 8px;
+    text-indent: 5px;
+    font-size: 20px;
+    background: white;
+}
+
+.form > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    height: 60px;
+    margin: 8px 0px;
+    padding: 16px 12px;
+    border: none;
+    border-radius: 16px;
+    background-color: white;
+    font-size: 28px;
+}
+
+.form > button > img {
+    width: auto;
+    height: 40px;
+}
+
+.form > span {
+    font-size: 20px;
+    text-align: center;
+}
+
+.form > span > a {
+    font-size: 20px;
+    color: #000c79;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.forgot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 64px;
+}
+
+.x {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: auto;
+    height: 36px;
+}

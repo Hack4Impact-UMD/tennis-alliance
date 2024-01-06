@@ -17,8 +17,8 @@ const Header = () => {
 
     useEffect(() => {
         toggleNav
-            ? (document.body.style.overflow = "hidden")
-            : (document.body.style.overflow = "scroll");
+            ? (document.body.style.overflowY = "hidden")
+            : (document.body.style.overflowY = "inherit");
     }, [toggleNav]);
 
     return (
