@@ -1,13 +1,13 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, FormEvent } from "react";
 import Image from "next/image";
-// import { createUser, authenticateUser, logOut } from "@/api/auth";
+// import { authenticateUser } from "@/api/auth";
 import styles from "@/styles/login.module.css";
 import miniLogo from "@/assets/mini_logo.png";
 import tennisBalls from "@/assets/tennis_balls.png";
 import circleX from "@/assets/circle_x.png";
 
 const LoginPage = () => {
-    const ref = useRef(null);
+    const ref = useRef<HTMLFormElement>(null);
     const [forgotPassword, setForgotPassword] = useState(false);
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
@@ -15,15 +15,30 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
 
     useEffect(() => {
-        setWidth(ref.current?.clientWidth | 0);
-        setHeight(ref.current?.clientHeight | 0);
-    }, [ref]);
+        if (ref.current === null) return;
+        const rect = ref.current.getBoundingClientRect();
+        if (rect.width !== width) setWidth(rect.width);
+        if (rect.height !== height) setHeight(rect.height);
+    }, [ref, width, height]);
+
+    const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("login");
+        console.log(email, password);
+        // authenticateUser(email, password);
+    };
+
+    const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("forgot password");
+    };
 
     return (
         <div className={styles.container}>
             {forgotPassword ? (
                 <form
                     className={`${styles.form} ${styles.forgot}`}
+                    onSubmit={(e) => handleForgotPassword(e)}
                     style={{ width: width, height: height }}
                 >
                     <Image src={miniLogo} alt="mini logo" />
@@ -51,7 +66,7 @@ const LoginPage = () => {
                     </button>
                 </form>
             ) : (
-                <form className={styles.form} ref={ref}>
+                <form ref={ref} className={styles.form} onSubmit={handleLogin}>
                     <Image src={miniLogo} alt="miniLogo" />
                     <p>Email</p>
                     <input
