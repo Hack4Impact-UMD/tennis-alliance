@@ -1,107 +1,88 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap');
-
-
 .search {
-    margin-left: 25.7%; 
-    margin-top: 1%; 
+    margin-left: 25.7%;
+    margin-top: 1%;
     width: 30%;
-    font-size: 18px; 
-    color: black; 
+    font-size: 18px;
+    color: black;
     padding: 12px 15px;
-    border-color: transparent; 
+    border-color: transparent;
     border-radius: 10px;
-    background-color: #0E8FCC;
-    font-family: 'Inter', sans-serif;
+    background-color: #0e8fcc;
 }
 
 .filter {
-
     width: 18%;
-    font-size: 18px; 
-    color: black; 
+    font-size: 18px;
+    color: black;
     padding: 12px 15px;
-    border-color: transparent; 
+    border-color: transparent;
     border-radius: 10px;
-    background-color: #0E8FCC;
-    font-family: 'Inter', sans-serif;
-    margin-left: 0.5%; 
+    background-color: #0e8fcc;
+    margin-left: 0.5%;
     text-align: left;
 }
-
-
-
-
 
 .label {
     display: flexbox;
     place-items: center;
-    margin-left: 370px; 
+    margin-left: 370px;
     border-radius: 10px;
-    background-color: #0E8FCC;
-    font-family: 'Inter', sans-serif;
+    background-color: #0e8fcc;
     font-size: 15px;
     padding: 12px 15px;
-   
 }
 
-
 .parent {
-    display: flex; 
+    display: flex;
 }
 
 .filterbar {
-    font-family: 'Inter', sans-serif;
-    background-color: #AACDEE;
-    border-radius: 20px; 
+    background-color: #aacdee;
+    border-radius: 20px;
     padding-bottom: 1.5%;
-    padding-left: 20px;  
-    width: 60%; 
-    margin-left: 300px; 
-
+    padding-left: 20px;
+    width: 60%;
+    margin-left: 300px;
 }
 
 .checkbox {
-    margin-right: 15px; 
-    margin-left: 5px; 
+    margin-right: 15px;
+    margin-left: 5px;
 }
 .box {
-    margin-top: -20px; 
+    margin-top: -20px;
 }
 .button {
-    margin-left: 56%; 
+    margin-left: 56%;
 }
 .apply {
-    font-family: 'Inter', sans-serif;
-    border-color: transparent; 
+    border-color: transparent;
     border-radius: 10%;
-    width: 80px; 
-    height: 40px; 
-    color: white; 
-    background-color: #000C79
+    width: 80px;
+    height: 40px;
+    color: white;
+    background-color: #000c79;
 }
 .parent_bottom {
-    padding-top: 2%; 
-    display: flex
+    padding-top: 2%;
+    display: flex;
 }
 
 .filterbar_search {
-    margin-top: 1%; 
-    margin-right: 1%;  
+    margin-top: 1%;
+    margin-right: 1%;
     width: 30%;
-    font-size: 18px; 
-    color: black; 
+    font-size: 18px;
+    color: black;
     padding: 5px 15px;
-    border-color: transparent; 
+    border-color: transparent;
     border-radius: 10px;
-    background-color: #FFFF;
-    font-family: 'Inter', sans-serif;
+    background-color: #ffff;
 }
-
-
 
 .participantitem {
     margin: 0 auto;
-    background-color: #E4F5E2;
+    background-color: #e4f5e2;
     border-radius: 15px;
     border: none;
     color: rgb(0, 0, 0);
@@ -113,26 +94,20 @@
 }
 
 .participantcontainer {
-    
-    margin-left: 350px; 
-    margin-right: 350px; 
+    margin-left: 350px;
+    margin-right: 350px;
     border-radius: 5px;
-    font-family: 'Inter', sans-serif;
-    display:flexbox;
+    display: flexbox;
     place-items: center;
-
 }
 
 .name {
-    margin-right: 10%; 
-
+    margin-right: 10%;
 }
-
 
 .email {
-    margin-right: 10%; 
+    margin-right: 10%;
 }
-
 
 .participantitem1 {
     margin: 0 auto;
