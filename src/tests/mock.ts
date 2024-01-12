@@ -39,4 +39,28 @@ const event: Event = {
     slots: 10,
 };
 
-export { user, event };
+const users = [
+    {
+        first_name: "John",
+        last_name: "Doe",
+        email: "johndoe@gmail.com",
+        type: "Volunteer",
+        age: "18",
+    },
+    {
+        first_name: "Jane",
+        last_name: "Dame",
+        email: "janedoe@gmail.com",
+        type: "Participant",
+        age: "11",
+    },
+    {
+        first_name: "Jason",
+        last_name: "Doe",
+        email: "jasondoe@gmail.com",
+        type: "Participant",
+        age: "15",
+    },
+];
+
+export { user, event, users };
