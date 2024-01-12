@@ -1,0 +1,144 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 140px 64px 64px;
+}
+
+.table {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 800px;
+}
+
+.table > p {
+    width: fit-content;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    background-color: #0e8fcc;
+}
+
+.search {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.search > input {
+    width: 100%;
+    padding: 12px 24px 12px 60px;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    background-color: #0e8fcc;
+    background-image: url("../assets/search.png");
+    background-repeat: no-repeat;
+    background-position: 24px;
+    background-size: 24px;
+}
+
+.search > input::placeholder {
+    color: black;
+}
+
+.search > select {
+    flex: 1 1 180px;
+    padding: 12px 24px 12px 48px;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    background-color: #0e8fcc;
+    background-image: url("../assets/filter.png");
+    background-repeat: no-repeat;
+    background-position: 24px;
+    background-size: 20px;
+}
+
+.data {
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: #aacdee;
+}
+
+/* placeholder */
+.header > div:first-of-type {
+    flex: 0 0 20px;
+}
+
+.header > div:nth-of-type(2) {
+    flex: 0 0 17px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0px 32px 0px 64px;
+    border-radius: 12px;
+}
+
+.row > span {
+    flex-basis: 30%;
+    padding: 12px 0px;
+}
+
+.row > span:nth-of-type(2) {
+    flex-basis: 40%;
+}
+
+.row > span:nth-of-type(3) {
+    flex-basis: 20%;
+}
+
+.row > button {
+    border: none;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.buttons > button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    background-color: #0e8fcc;
+}
+
+@media screen and (max-width: 700px) {
+    .container {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+    .row {
+        gap: 8px;
+        padding-left: 5%;
+    }
+
+    .row > span {
+        padding-left: 0px;
+        overflow-y: hidden;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .row > span {
+        font-size: 12px;
+    }
+}
