@@ -1,9 +1,28 @@
+import { createUser } from "@/backend/CloudFunctionsCalls";
 import TennisBackground from "@/components/tennisBackground";
-import classes from "@/styles/registration.module.css";
+import { User } from "@/types";
+import { useState } from "react";
+import styles from "../registration.module.css";
 
 const Adult = () => {
+  const [user, setUser] = useState<User>({
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: 0,
+    zip: 0,
+    notifications: false,
+    events: [],
+  });
+  const handleSubmit = () => {
+    createUser(user)
+      .then(() => {
+        console.log("done");
+      })
+      .catch((err) => console.log(err));
+  };
   return (
-    <div className={classes.container}>
+    <div className={styles.container}>
       <TennisBackground
         title="Create an Adult Account"
         subtitle="Please fill out the following sections"
@@ -53,7 +72,7 @@ const Adult = () => {
           events and tennis community news.
         </label>
         <input id="notification" type="checkbox" />
-        <button className="button" type="submit">
+        <button className="button" type="submit" onClick={handleSubmit}>
           Submit
         </button>
       </form>

@@ -1,32 +1,42 @@
 type User = {
-    id: number;
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    phone: number;
-    zip: number;
-    children: Children[];
-    notifications: boolean;
+  auth_id?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: number;
+  zip: number;
+  notifications: boolean;
+  events: {
+    id: string;
+    participants: { firstName: string; lastName: string }[];
+  }[];
+  children?: Children[];
+  adults?: { name: string; email: string }[];
 };
 
 type Children = {
-    id: number;
-    firstName: string;
-    lastName: string;
-    age: number;
-    birthYear: number;
-    school: string;
+  firstName: string;
+  lastName: string;
+  age: number;
+  school: string;
 };
 
-type Event = {
-    id: number;
-    title: string;
-    startDate: Date;
-    endDate: Date;
-    description: string;
-    participants: number[];
-    slots: number;
-}
+type CustomEvent = {
+  id?: string;
+  title: string;
+  // yyyy-mm-dd format
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+  participants: {
+    email: string;
+    mainId: string;
+    mainFirstName: string;
+    mainLastName: string;
+    otherMembers: { firstName: string; lastName: string }[];
+  }[];
+  slots: number;
+};
 
-export type { User, Children, Event };
+export type { CustomEvent, User };

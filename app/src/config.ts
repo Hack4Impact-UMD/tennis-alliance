@@ -1,22 +1,31 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
+import { getStorage } from "firebase/storage";
+
+// TODO: Add SDKs for Firebase products that you want to use
+
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 const firebaseConfig = {
-    projectId: "tennis-alliance",
-    apiKey: "fakeApiKey",
+  apiKey: "AIzaSyDd0SAfQhm-LBDi3Obejkf9yxhnYEtRloE",
+  authDomain: "tennis-alliance.firebaseapp.com",
+  projectId: "tennis-alliance",
+  storageBucket: "tennis-alliance.appspot.com",
+  messagingSenderId: "343999289926",
+  appId: "1:343999289926:web:fae3c6f9d9f0afe8bb4847",
+  measurementId: "G-FKWPZG3GKD",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-const functions = getFunctions(app, "us-east4");
-const auth = getAuth();
-const db = getFirestore();
-
-connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-connectAuthEmulator(auth, "http://127.0.0.1:9099");
-connectFirestoreEmulator(db, "127.0.0.1", 8080);
-
-export { functions, auth, db, app };
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const functions = getFunctions(app, "us-east4");
+export default app;
