@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import TennisBackground from "@/components/tennisBackground";
-import classes from "@/styles/registration.module.css";
+import classes from "./registration.module.css";
 import Tennis1 from "@/assets/tennis1.jpg";
 import Tennis2 from "@/assets/tennis2.jpg";
 
