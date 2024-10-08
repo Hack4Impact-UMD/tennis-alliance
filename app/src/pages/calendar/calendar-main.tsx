@@ -69,23 +69,23 @@ const MyCalendar: React.FC = () => {
       }));
 
       const ec = new Calendar({
-        target: calendarRef.current, // Render in the specified div
+        target: calendarRef.current, 
         props: {
           plugins: [TimeGrid],
           options: {
             view: 'timeGridWeek',
-            events: calendarEvents, // Pass the transformed events here
+            events: calendarEvents, 
           },
         },
       });
 
       return () => {
-        ec.destroy(); // Clean up calendar on unmount
+        ec.destroy();
       };
     }
   }, []);
 
-  return <div ref={calendarRef}></div>; // Return the div where the calendar will be rendered
+  return <div ref={calendarRef}></div>;
 };
 
 export default MyCalendar;
