@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Calendar from '@event-calendar/core';
 import TimeGrid from '@event-calendar/time-grid';
+import DayGrid from '@event-calendar/day-grid';
 import { type CustomEvent } from "@/types";
 import '@event-calendar/core/index.css';
 
@@ -57,24 +58,57 @@ const MyCalendar: React.FC = () => {
           ],
           slots: 8,
         },
+        {
+          id: '3',
+          title: 'Coaching Tennis Lessons',
+          date: '2024-10-11',
+          startTime: '18:00',
+          endTime: '20:00',
+          description: 'A group learning session for advanced tennis players.',
+          participants: [
+            {
+              email: 'participant3@example.com',
+              mainId: '458',
+              mainFirstName: 'John',
+              mainLastName: 'Davis',
+              otherMembers: [{ firstName: 'Sam', lastName: 'Smith' }],
+            },
+          ],
+          slots: 6,
+        },
       ];
 
       // Transform CustomEvent to the structure that the Calendar library expects
-      const calendarEvents = customEvents.map((event) => ({
-        id: event.id,
-        title: event.title,
-        start: `${event.date}T${event.startTime}`,
-        end: `${event.date}T${event.endTime}`,
-        description: event.description,
-      }));
+      const calendarEvents: CalendarEvent[] = [];
+      const eventCountByDate: { [key: string]: number } = {};
 
+      // Count events per date and create aggregated event entries
+      customEvents.forEach(event => {
+        const dateKey = event.date; // Get the date (YYYY-MM-DD)
+        eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
+      });
+
+      // Create aggregated events for the calendar
+      Object.keys(eventCountByDate).forEach(date => {
+        calendarEvents.push({
+          id: date, // Use date as a unique ID
+          title: `${eventCountByDate[date]} event${eventCountByDate[date] > 1 ? 's' : ''}`,
+          start: `${date}T00:00`, // Set a dummy start time
+          end: `${date}T23:59`, // Set a dummy end time
+        });
+      });
+
+      // Initialize the calendar
       const ec = new Calendar({
-        target: calendarRef.current, 
+        target: calendarRef.current,
         props: {
-          plugins: [TimeGrid],
+          plugins: [TimeGrid, DayGrid],
           options: {
-            view: 'timeGridWeek',
-            events: calendarEvents, 
+            view: 'dayGridMonth',
+            events: calendarEvents,
+            eventContent: (info) => {
+              return info.event.title; // Use the aggregated title
+            },
           },
         },
       });
