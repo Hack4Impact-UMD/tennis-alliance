@@ -5,6 +5,7 @@ import { users } from "@/tests/mock";
 import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
+import Popup from "./admin-event-create-popup";
 
 const FILTERS = {
     "All Users": "all",
@@ -52,6 +53,9 @@ const AdminDashboard = () => {
     return (
         <div className={styles.container}>
             <div className={styles.table}>
+                <div className={styles.createContainer}>
+                    {<Popup/>}
+                </div>
                 <p>All Users</p>
                 <div className={styles.search}>
                     <input

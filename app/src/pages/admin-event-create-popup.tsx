@@ -169,6 +169,7 @@ const Popup = () => {
     return (
         <>
             <button onClick={openPopup} className={styles.popupButton}>
+                <div className={styles.plus}>+</div>
                 Create New Event
             </button>
             {visible && (

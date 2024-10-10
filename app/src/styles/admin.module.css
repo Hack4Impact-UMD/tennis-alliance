@@ -30,6 +30,12 @@
     width: 100%;
 }
 
+.createContainer {
+    width: full;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .search > input {
     width: 100%;
     padding: 12px 24px 12px 60px;
