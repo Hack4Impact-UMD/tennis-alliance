@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Calendar from '@event-calendar/core';
 import TimeGrid from '@event-calendar/time-grid';
 import DayGrid from '@event-calendar/day-grid';
+import Interaction from '@event-calendar/interaction'
 import { type CustomEvent } from "@/types";
 import '@event-calendar/core/index.css';
 
@@ -11,10 +12,13 @@ interface CalendarEvent {
   title: string;
   start: string;
   end: string;
+  description: string;
 }
 
 const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -81,11 +85,24 @@ const MyCalendar: React.FC = () => {
       // Transform CustomEvent to the structure that the Calendar library expects
       const calendarEvents: CalendarEvent[] = [];
       const eventCountByDate: { [key: string]: number } = {};
+      const eventsByDate: { [key: string]: CalendarEvent[]} = {};
 
       // Count events per date and create aggregated event entries
       customEvents.forEach(event => {
         const dateKey = event.date; // Get the date (YYYY-MM-DD)
         eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
+        if(!eventsByDate[dateKey]) {
+          eventsByDate[dateKey] = [];
+        }
+        if(event.id){
+          eventsByDate[dateKey].push({
+            id: event.id,
+            title: event.title,
+            start: `${event.date}T${event.startTime}`,
+            end: `${event.date}T${event.endTime}`,
+            description: event.description
+          });
+        }
       });
 
       // Create aggregated events for the calendar
@@ -95,6 +112,7 @@ const MyCalendar: React.FC = () => {
           title: `${eventCountByDate[date]} event${eventCountByDate[date] > 1 ? 's' : ''}`,
           start: `${date}T00:00`, // Set a dummy start time
           end: `${date}T23:59`, // Set a dummy end time
+          description: 'temporary description',
         });
       });
 
@@ -102,13 +120,19 @@ const MyCalendar: React.FC = () => {
       const ec = new Calendar({
         target: calendarRef.current,
         props: {
-          plugins: [TimeGrid, DayGrid],
+          plugins: [TimeGrid, DayGrid, Interaction],
           options: {
             view: 'dayGridMonth',
             events: calendarEvents,
             eventContent: (info) => {
               return info.event.title; // Use the aggregated title
             },
+            dateClick: (info) => {
+              const clickedDate = info.date.toISOString().split('T')[0];
+              setSelectedDate(clickedDate);
+              setEventsForSelectedDate(eventsByDate[clickedDate] || []);
+              console.log("Date Event List:", eventsForSelectedDate);
+            }
           },
         },
       });
@@ -119,7 +143,28 @@ const MyCalendar: React.FC = () => {
     }
   }, []);
 
-  return <div ref={calendarRef}></div>;
+  return (
+    <div>
+      <div ref={calendarRef}></div>
+      {selectedDate && (
+        <div>
+          <h3>Events for {selectedDate}:</h3>
+          {eventsForSelectedDate.length > 0 ? (
+            <ul>
+              {eventsForSelectedDate.map(event => (
+                <li key={event.id}>
+                  <strong>{event.title}</strong> ({event.start} - {event.end})
+                  <p>{event.description}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No events for this day.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default MyCalendar;

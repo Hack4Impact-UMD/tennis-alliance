@@ -26,6 +26,7 @@
     },
     "devDependencies": {
         "@types/event-calendar__day-grid": "^3.4.0",
+        "@types/event-calendar__interaction": "^3.4.0",
         "@types/node": "^20.8.10",
         "@types/react": "^18.2.27",
         "@types/react-dom": "^18.2.12",
