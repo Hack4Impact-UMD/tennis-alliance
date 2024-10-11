@@ -47,7 +47,7 @@ const LoginPage = () => {
   };
 
   const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
-    sendResetEmail("randomEmail");
+    sendResetEmail(email);
   };
 
   return (
