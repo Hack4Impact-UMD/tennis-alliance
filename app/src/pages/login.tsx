@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 const LoginPage = () => {
   const ref = useRef<HTMLFormElement>(null);
   const [forgotPassword, setForgotPassword] = useState(false);
+  const [checkInbox, setCheckInbox] = useState(false);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [email, setEmail] = useState("");
@@ -46,8 +47,13 @@ const LoginPage = () => {
       });
   };
 
-  const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    setCheckInbox(false)
+  }, [forgotPassword, false]);
+
+  const handleForgotPassword = async () => {
     sendResetEmail(email);
+    setCheckInbox(true);
   };
 
   return (
@@ -57,7 +63,7 @@ const LoginPage = () => {
           className={`${styles.form} ${styles.forgot}`}
           onSubmit={(e) => {
             e.preventDefault();
-            handleForgotPassword(e);
+            handleForgotPassword();
           }}
           style={{ width: width, height: height }}
         >
@@ -84,6 +90,11 @@ const LoginPage = () => {
             />
             Submit
           </button>
+          {checkInbox ? (<div className={styles.checkInbox}><p>Please check your inbox.</p><span onClick={() =>
+            setForgotPassword(false)}>
+            Return to login.
+          </span></div>
+          ) : <div></div>}
         </form>
       ) : (
         <form
