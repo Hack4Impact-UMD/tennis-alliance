@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@event-calendar/core": "^3.6.1",
+    "@event-calendar/day-grid": "^3.6.1",
+    "@event-calendar/interaction": "^3.6.1",
+    "@event-calendar/list": "^3.6.1",
+    "@event-calendar/resource-time-grid": "^3.6.1",
+    "@event-calendar/resource-timeline": "^3.6.1",
+    "@event-calendar/time-grid": "^3.6.1",
+    "@types/event-calendar__core": "^3.4.2",
+    "@types/event-calendar__time-grid": "^3.4.0"
+  }
+}
