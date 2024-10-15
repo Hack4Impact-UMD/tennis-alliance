@@ -4,6 +4,7 @@ import TimeGrid from '@event-calendar/time-grid';
 import DayGrid from '@event-calendar/day-grid';
 import Interaction from '@event-calendar/interaction'
 import { type CustomEvent } from "@/types";
+import {fetchEvents} from '@/backend/CloudFunctionsCalls';
 import '@event-calendar/core/index.css';
 
 // Define the event type structure (optional, but useful for type safety)
@@ -19,8 +20,65 @@ const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CalendarEvent[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
+    const fetchAndSetEvents = async () => {
+      console.log("Fetching events...");
+      try {
+        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
+        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
+        console.log(priorEvents, registeredUpcoming, upcoming);
+        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
+        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
+            id: event.id,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            /*start: `${event.date}T${event.startTime}`,
+            end: `${event.date}T${event.endTime}`,*/
+            description: event.description,
+            /*date: event.date,
+            participants: event.participants,
+            slots: event.slots,*/
+        }));
+        setCalendarEvents(mappedEvents);
+      } catch (error) {
+        console.error("Fetch Events Error:", error);
+      }
+    };
+    fetchAndSetEvents();
+  }, []);
+
+  useEffect(() => {
+    if(calendarRef.current && calendarEvents.length > 0){
+      const ec = new Calendar({
+        target: calendarRef.current,
+        props: {
+          plugins: [TimeGrid, DayGrid, Interaction],
+          options: {
+            view: 'dayGridMonth',
+            events: calendarEvents,
+            eventContent: (info) => {
+              return info.event.title; // Use the aggregated title
+            },
+            dateClick: (info) => {
+              const clickedDate = info.date.toISOString().split('T')[0];
+              const eventsOnThisDate = calendarEvents.filter(event => event.start.startsWith(clickedDate));
+              setSelectedDate(clickedDate);
+              setEventsForSelectedDate(eventsOnThisDate);
+            },
+          },
+        },
+    });
+
+    return () => {
+      ec.destroy();
+    };
+  }
+  }, [calendarEvents]);
+
+  /*useEffect(() => {
     if (calendarRef.current) {
       const customEvents: CustomEvent[] = [
         {
@@ -131,7 +189,6 @@ const MyCalendar: React.FC = () => {
               const clickedDate = info.date.toISOString().split('T')[0];
               setSelectedDate(clickedDate);
               setEventsForSelectedDate(eventsByDate[clickedDate] || []);
-              console.log("Date Event List:", eventsForSelectedDate);
             }
           },
         },
@@ -141,7 +198,7 @@ const MyCalendar: React.FC = () => {
         ec.destroy();
       };
     }
-  }, []);
+  }, []);*/
 
   return (
     <div>
