@@ -57,10 +57,32 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
       .catch((e) => reject());
   });
 }
-export function adminCreateEvent(event: CustomEvent): Promise<void> {
+
+export function adminCreateEvent(
+  eventName: string,
+  startTime: { hours: string; minutes: string; period: string },
+  endTime: { hours: string; minutes: string; period: string },
+  selectedDay: Date,
+  maxParticipants: number,
+  maxVolunteers: number,
+  description: string
+): Promise<void> {
   return new Promise((resolve, reject) => {
+    const formattedDate = selectedDay.toISOString().split('T')[0];
+
+    const event: CustomEvent = {
+      title: eventName,
+      date: formattedDate,
+      startTime: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
+      endTime: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
+      description,
+      participants: [],
+      maxParticipants: maxParticipants,
+      maxVolunteers: maxVolunteers,
+    };
+
     addDoc(collection(db, "Events"), event)
-      .then((docRef) => {
+      .then(() => {
         resolve();
       })
       .catch((e) => {
@@ -68,6 +90,7 @@ export function adminCreateEvent(event: CustomEvent): Promise<void> {
       });
   });
 }
+
 
 export function adminUpdateEvent(
   event: CustomEvent,

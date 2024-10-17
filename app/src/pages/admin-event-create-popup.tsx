@@ -8,6 +8,8 @@ import setMonth from "date-fns/setMonth";
 import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
 import "react-day-picker/dist/style.css";
+import { adminCreateEvent } from "@/backend/FirestoreCalls";
+import { create } from "domain";
 
 const Popup = () => {
     const [visible, setVisible] = useState(false);
@@ -27,6 +29,9 @@ const Popup = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [showMonthPicker, setShowMonthPicker] = useState(false);
     const [showYearPicker, setShowYearPicker] = useState(false);
+    const [maxParticipants, setMaxParticipants] = useState(0);
+    const [maxVolunteers, setMaxVolunteers] = useState(0);
+    const [description, setDescription] = useState("");
 
     /* PopUp Button */
     const openPopup = () => setVisible(true);
@@ -41,8 +46,20 @@ const Popup = () => {
     const submitEvent = () => {
         // Handle the submission logic
         closePopup();
+        adminCreateEvent(
+            eventName,
+            startTime,
+            endTime,
+            selectedDay,
+            maxParticipants,
+            maxVolunteers,
+            description
+        );
         setStartTime({ hours: "10", minutes: "30", period: "AM" });
         setEndTime({ hours: "1", minutes: "30", period: "PM" });
+        setMaxParticipants(0);
+        setMaxVolunteers(0);
+        setDescription("");
         setEventName("");
     };
 
@@ -107,6 +124,16 @@ const Popup = () => {
             return !currentShowYearPicker;
         });
     };
+
+    const handleParticipantsChange = (num: number) => {
+        setMaxParticipants(num);
+        console.log(num);
+    }
+
+    const handleVolunteersChange = (num: number) => {
+        setMaxVolunteers(num);
+        console.log(num);
+    }
 
     const customCaption = ({ displayMonth }: CaptionProps) => {
         const currentYear = getYear(displayMonth);
@@ -268,6 +295,7 @@ const Popup = () => {
                                 type="number"
                                 className={styles.maxInput}
                                 min={0}
+                                onChange={(e) => handleParticipantsChange(parseInt(e.target.value))}
                             />
                             <p className={styles.maxTitle}>
                                 Max # of Volunteers
@@ -276,6 +304,7 @@ const Popup = () => {
                                 type="number"
                                 className={styles.maxInput}
                                 min={0}
+                                onChange={(e) => handleVolunteersChange(parseInt(e.target.value))}
                             />
                         </div>
                         <div className={styles.submitCancelContainer}>
