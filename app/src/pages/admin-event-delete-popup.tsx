@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
+import { adminDeleteEvent } from "@/backend/FirestoreCalls";
+import { adminGetEvents } from "@/backend/FirestoreCalls";
 
-const DeletePopUp = () => {
+interface DeletePopUpProps {
+    eventID: string;
+}
+
+const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID }) => {
     const [visible, setVisible] = useState(false);
 
     const openPopup = () => setVisible(true);
     const closePopup = () => setVisible(false);
+    const [event, setEvent] = useState<CustomEvent | null>(null);
+
+    const deleteEvent = () => {
+        adminDeleteEvent(eventID);
+        closePopup();
+    }
 
     return (
         <>
@@ -30,7 +42,7 @@ const DeletePopUp = () => {
                         <p className={styles.deleteText}>Cancel Event?</p>
                         <div className={styles.confirmButtonContainer}>
                             <button
-                                onClick={closePopup}
+                                onClick={deleteEvent}
                                 className={styles.confirmButton}
                             >
                                 Confirm
