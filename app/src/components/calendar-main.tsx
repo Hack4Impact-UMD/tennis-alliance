@@ -5,6 +5,9 @@ import DayGrid from '@event-calendar/day-grid';
 import Interaction from '@event-calendar/interaction'
 import { type CustomEvent } from "@/types";
 import '@event-calendar/core/index.css';
+import { adminDeleteEvent, adminUpdateEvent } from '@/backend/FirestoreCalls';
+import DeletePopUp from '@/pages/admin-event-delete-popup';
+import EditPopup from '@/pages/admin-event-edit-popup';
 
 // Define the event type structure (optional, but useful for type safety)
 interface CalendarEvent {
@@ -155,6 +158,16 @@ const MyCalendar: React.FC = () => {
                 <li key={event.id}>
                   <strong>{event.title}</strong> ({event.start} - {event.end})
                   <p>{event.description}</p>
+                  <div>
+                    <DeletePopUp
+                      eventID={event.id}
+                    />
+                  </div>
+                  <div>
+                    <EditPopup
+                      eventID={event.id}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>

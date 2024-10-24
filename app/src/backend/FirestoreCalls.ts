@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  deleteDoc,
   runTransaction,
   updateDoc,
   writeBatch,
@@ -58,6 +59,27 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
   });
 }
 
+export function adminGetEventById(eventId: string): Promise<CustomEvent> {
+  return new Promise((resolve, reject) => {
+    if (!eventId) {
+      reject(new Error("Invalid event id"));
+      return;
+    }
+
+    const eventRef = doc(db, "Events", eventId);
+    getDoc(eventRef)
+      .then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const event = docSnapshot.data() as CustomEvent;
+          resolve(event);
+        } else {
+          reject(new Error("Event not found"));
+        }
+      })
+      .catch((e) => reject(e));
+  });
+}
+
 export function adminCreateEvent(
   eventName: string,
   startTime: { hours: string; minutes: string; period: string },
@@ -93,8 +115,14 @@ export function adminCreateEvent(
 
 
 export function adminUpdateEvent(
-  event: CustomEvent,
-  eventId: string
+  eventId: string,
+  eventName: string,
+  startTime: { hours: string; minutes: string; period: string },
+  endTime: { hours: string; minutes: string; period: string },
+  selectedDay: Date,
+  maxParticipants: number,
+  maxVolunteers: number,
+  description: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     if (!eventId) {
@@ -102,8 +130,21 @@ export function adminUpdateEvent(
       return;
     }
 
+    const formattedDate = selectedDay.toISOString().split('T')[0];
+
+    const updatedEvent: CustomEvent = {
+      title: eventName,
+      date: formattedDate,
+      startTime: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
+      endTime: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
+      description,
+      participants: [],
+      maxParticipants: maxParticipants,
+      maxVolunteers: maxVolunteers,
+    };
+
     const eventRef = doc(db, "Events", eventId);
-    updateDoc(eventRef, { ...event })
+    updateDoc(eventRef, { ...updatedEvent })
       .then(() => {
         resolve();
       })
@@ -164,50 +205,61 @@ export function adminDeleteParticipant(
 }
 
 export function adminDeleteEvent(
-  event: CustomEvent,
+  // event: CustomEvent,
   eventId: string,
-  email: boolean
+  // email: boolean
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     if (!eventId) {
       reject(new Error("Invalid id"));
       return;
     }
-    const eventEmails = event.participants.map((e) => e.email);
-    if (email) {
-      const sendEmailCloud = httpsCallable(functions, "sendEmail");
-      sendEmailCloud({
-        text: `The ${event.title} event has been cancelled.`,
-        bcc: [eventEmails],
-        reason: "Event Cancellation",
-      }).catch((error: any) => {
-        reject(error);
-      });
-    }
 
-    runTransaction(db, async (transaction) => {
-      const getPromises: Promise<any>[] = [];
-      event.participants.forEach((participant) => {
-        getPromises.push(transaction.get(doc(db, "Users", participant.mainId)));
-      });
-      const users: User[] = await Promise.all(getPromises).then((res) => {
-        return res.map((doc) => doc.data());
-      });
-      const writePromises: any[] = [];
-      users.forEach((user) => {
-        user.events = user.events.filter((e) => e.id !== eventId);
-        writePromises.push(
-          transaction.update(doc(db, "Users", user.auth_id!), { ...user })
-        );
-      });
-      await Promise.all(writePromises);
-      transaction.delete(doc(db, "Events", eventId));
-    })
+    const eventDocRef = doc(collection(db, "Events"), eventId);
+    getDoc(eventDocRef)
+      .then(async (eventSnapshot) => {
+        if (!eventSnapshot.exists()) {
+          reject(new Error("Event not found"));
+          return;
+        }
+
+        const eventData = eventSnapshot.data();
+        const participants = eventData?.participants || [];
+
+        if (participants.length > 0) {
+          const participantEmails = participants.map((p: any) => p.email);
+
+          const sendEmailCloud = httpsCallable(functions, "sendEmail");
+          await sendEmailCloud({
+            text: `The ${eventData.title} event has been cancelled.`,
+            bcc: participantEmails,
+            reason: "Event Cancellation",
+          });
+        }
+
+        await runTransaction(db, async (transaction) => {
+          for (const participant of participants) {
+            const userDocRef = doc(db, "Users", participant.mainId);
+            const userSnapshot = await transaction.get(userDocRef);
+
+            if (userSnapshot.exists()) {
+              const userData = userSnapshot.data();
+              const updatedRegisteredEvents = (userData?.registeredEvents || []).filter(
+                (event: string) => event !== eventId
+              );
+
+              transaction.update(userDocRef, { registeredEvents: updatedRegisteredEvents });
+            }
+          }
+
+          transaction.delete(eventDocRef);
+        });
+      })
       .then(() => {
         resolve();
       })
-      .catch((e) => {
-        reject();
+      .catch((error) => {
+        reject(error);
       });
   });
 }
