@@ -4,10 +4,11 @@ import TimeGrid from '@event-calendar/time-grid';
 import DayGrid from '@event-calendar/day-grid';
 import Interaction from '@event-calendar/interaction'
 import TodayEvents from './today-events';
+import { RegisteredEvents } from './registered-events';
 import UpcomingEvents from './upcoming-events';
 import { type CustomEvent } from "@/types";
 import styles from "@/styles/calendar-main.module.css";
-import {fetchEvents} from '@/backend/CloudFunctionsCalls';
+import {fetchEvents, deleteUserFromEvent} from '@/backend/CloudFunctionsCalls';
 import '@event-calendar/core/index.css';
 
 // Define the event type structure (optional, but useful for type safety)
@@ -26,6 +27,7 @@ const MyCalendar: React.FC = () => {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [todayEvents, setTodayEvents] = useState<CalendarEvent[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([]);
+  const [registeredEvents, setRegisteredEvents] = useState<CalendarEvent[]>([]);
 
   /*useEffect(() => {
     const fetchAndSetEvents = async () => {
@@ -82,6 +84,36 @@ const MyCalendar: React.FC = () => {
     };
   }
   }, [calendarEvents]);*/
+
+  useEffect(() => {
+    const fetchAndSetEvents = async () => {
+      console.log("Fetching events...");
+      try {
+        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
+        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
+        const res = await fetchEvents(auth_id);
+        // console.log("res: ", JSON.stringify(res));
+        console.log(priorEvents, registeredUpcoming, upcoming);
+        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
+        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
+            id: event.id,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            start: `${event.date}T${event.startTime}`,
+            end: `${event.date}T${event.endTime}`,
+            description: event.description,
+            date: event.date,
+            participants: event.participants,
+            slots: event.slots,
+        }));
+        setCalendarEvents(mappedEvents);
+      } catch (error) {
+        console.error("Fetch Events Error:", error);
+      }
+    };
+    fetchAndSetEvents();
+  }, []);
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -289,6 +321,24 @@ const MyCalendar: React.FC = () => {
           ],
           slots: 10,
         },
+        {
+          id: '20',
+          title: 'Tennis Clinic',
+          date: '2024-10-30',
+          startTime: '10:00',
+          endTime: '12:00',
+          description: 'A tennis clinic to help players improve their techniques.',
+          participants: [
+            {
+              email: 'participant7@example.com',
+              mainId: '792',
+              mainFirstName: 'George',
+              mainLastName: 'King',
+              otherMembers: [{ firstName: 'Helen', lastName: 'Smith' }],
+            },
+          ],
+          slots: 15,
+        },
 
       ];
 
@@ -303,6 +353,9 @@ const MyCalendar: React.FC = () => {
 
       const todayEventList: CalendarEvent[] = [];
       const upcomingEventList: CalendarEvent[] = [];
+      const registeredEventList: CalendarEvent[] = [];
+      
+      const registeredEventIDs = ['1', '3', '5', '12', '10', '20'];
 
 
       // Count events per date and create aggregated event entries
@@ -332,6 +385,9 @@ const MyCalendar: React.FC = () => {
         if(dateKey === today){
           todayEventList.push(eventObj);
         }
+        if(registeredEventIDs.includes(eventObj.id) && dateKey >= today){
+          registeredEventList.push(eventObj);
+        }
 
         const eventDate = new Date(dateKey);
         console.log("eventDate: ", eventDate);
@@ -353,9 +409,11 @@ const MyCalendar: React.FC = () => {
         });
       });
 
+
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+      setRegisteredEvents(registeredEventList);
 
       // Initialize the calendar
       const ec = new Calendar({
@@ -388,9 +446,9 @@ const MyCalendar: React.FC = () => {
       {/*div for registered events container*/}
       <div className = {styles.registeredContainer}>
         <div className = {styles.eventRegisteredBox}>
-          <p>Events Registered</p>
+          <p>Events Registered:</p>
         </div>
-        {/* add registered events in here*/}
+        <RegisteredEvents events={registeredEvents}/>
       </div>
       {/*div for new events header*/}
       <div className = {styles.eventNewBox}>
