@@ -7,7 +7,8 @@ import TodayEvents from './today-events';
 import UpcomingEvents from './upcoming-events';
 import { type CustomEvent } from "@/types";
 import styles from "@/styles/calendar-main.module.css";
-import {fetchEvents} from '@/backend/CloudFunctionsCalls';
+import {fetchEvents, addUserToEvent, sendEmail} from '@/backend/CloudFunctionsCalls';
+import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
 
 // Define the event type structure (optional, but useful for type safety)
@@ -26,6 +27,7 @@ const MyCalendar: React.FC = () => {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [todayEvents, setTodayEvents] = useState<CalendarEvent[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<CustomEvent[]>([]);
 
   /*useEffect(() => {
     const fetchAndSetEvents = async () => {
@@ -83,7 +85,60 @@ const MyCalendar: React.FC = () => {
   }
   }, [calendarEvents]);*/
 
+  /*useEffect(() => {
+
+    const getAllEvents = async () => {
+      try {
+        console.log("fetching adminGetEvents");
+        const fetchedEvents = await adminGetEvents();
+        console.log("fetchedEvents: ", fetchedEvents);
+      } catch (e) {
+        console.error("Get All Eventgs Error:", e);
+      }
+    };
+
+    const fetchAllEvents = async () => {
+
+      try {
+        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
+        console.log("fetching fetchEvents");
+        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
+        console.log("priorEvents: ", priorEvents);
+        console.log("registeredUpcoming: ", registeredUpcoming);
+        console.log("upcoming: ", upcoming);
+      } catch (e) {
+        console.error("Fetch Events Error:", e);
+      }
+    };
+
+    getAllEvents(); // Call the async function
+    fetchAllEvents(); // Call the async function
+  }, []);*/
+
+
   useEffect(() => {
+    /*const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
+    const fetchAndSetEvents = async () => {
+      console.log("Fetching events...");
+      try {
+        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
+        console.log("Fetched Events: ", priorEvents, registeredUpcoming, upcoming);
+        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
+        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
+            id: event.id,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            description: event.description,
+        }));
+        setCalendarEvents(mappedEvents);
+      } catch (error) {
+        console.error("Fetch Events Error:", error);
+      }
+    };
+
+    fetchAndSetEvents();*/
+
     if (calendarRef.current) {
       const customEvents: CustomEvent[] = [
         {
@@ -368,11 +423,11 @@ const MyCalendar: React.FC = () => {
             eventContent: (info) => {
               return info.event.title; // Use the aggregated title
             },
-            /*dateClick: (info) => {
+            dateClick: (info) => {
               const clickedDate = info.date.toISOString().split('T')[0];
               setSelectedDate(clickedDate);
               setEventsForSelectedDate(eventsByDate[clickedDate] || []);
-            }*/
+            }
           },
         },
       });
