@@ -1,0 +1,103 @@
+.todayEventsContainer {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 700px;
+  }
+  .individualEvent {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5%;
+    background-color: #d9f1f4;
+  }
+  .dateSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .dateSection h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .dateSection p {
+    margin-top: 10px;
+    font-size: 1.25rem;
+    color: #555;
+  }
+  
+  .eventInformation {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .eventInformation h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #004d40;
+  }
+  
+  .eventInformation p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #004d40;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  
+  .registerBtn, .cancelBtn {
+    background-color: #81d4fa;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 30px;
+    font-size: 1rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .registerBtn:hover {
+    background-color: #0288d1;
+  }
+  
+  .cancelBtn {
+    background-color: #ef5350;
+  }
+  
+  .cancelBtn:hover {
+    background-color: #c62828;
+  }
+
+  .titleButtonContainer {
+    display: flex;
+    justify-content: flex-end; /* Align items to the left and right */
+  }
+  
+  .toggleButton {
+    /* Add any desired styles for the button */
+    margin-left: auto; /* Push button to the right */
+    background: transparent; /* Transparent background */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Adjust font size as needed */
+    padding: 20px 0 20px 30px; /* No padding */
+  }
+  
+  @media (max-width: 768px) {
+    .todayEventsContainer {
+      flex-direction: column;
+    }
+  }
+  
