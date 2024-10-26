@@ -477,7 +477,7 @@ const MyCalendar: React.FC = () => {
         )}*/}
       </div>
 
-      {/* Section for selected date's events
+      {/* Section for selected date's events */}
       {selectedDate && (
         <div>
           <h3>Events for {selectedDate}:</h3>
@@ -494,7 +494,7 @@ const MyCalendar: React.FC = () => {
             <p>No events for this day.</p>
           )}
         </div>
-          )}*/}
+          )}
     </div>
   );
 };
