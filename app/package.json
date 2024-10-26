@@ -15,6 +15,7 @@
         "@emotion/styled": "^11.13.0",
         "@mui/icons-material": "^5.16.7",
         "@mui/material": "^5.16.7",
+        "cors": "^2.8.5",
         "date-fns": "^2.30.0",
         "firebase": "^10.5.2",
         "next": "^13.5.4",

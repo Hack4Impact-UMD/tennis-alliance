@@ -57,7 +57,7 @@
   margin-top: 10px;
 }
 
-.registerBtn, .cancelBtn {
+.registerBtn, .cancelBtn, .submitBtn {
   background-color: #81d4fa;
   border: none;
   border-radius: 25px;
@@ -78,6 +78,35 @@
 
 .cancelBtn:hover {
   background-color: #c62828;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end; /* Aligns the submit button to the right */
+  margin-top: 1rem; /* Adds some space above the button */
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  margin-top: 10px; /* Add some space between the group and other elements */
+}
+
+.checkboxGroup label {
+  margin-bottom: 8px; /* Space between checkboxes */
+}
+
+.radioButtonRow {
+  display: flex;
+  justify-content: center; /* Centers the items horizontally */
+  gap: 1rem; /* Adds space between the labels */
+  margin: 0.5rem 0; /* Optional: adds some space above and below */
+}
+
+.radioButtonRow label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* Adds space between the radio button and label text */
 }
 
 @media (max-width: 768px) {

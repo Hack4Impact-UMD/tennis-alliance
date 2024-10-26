@@ -14,6 +14,9 @@ interface TodayEventsProps {
 }
 
 const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
+
+  const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
+
   // Function to get the correct ordinal suffix for the day
   const getOrdinalSuffix = (day: number) => {
     if (day > 3 && day < 21) return 'th'; // Special case for numbers 11-20
@@ -61,9 +64,53 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
               <p>{event.description}</p>
               <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
               <div className={styles.buttonGroup}>
-                <button className={styles.registerBtn}>Register</button>
+                <button 
+                  className={styles.registerBtn}
+                  onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id)}
+                >                  
+                {expandedEventId === event.id ? "Hide Details" : "Register"}
+                </button>
                 <button className={styles.cancelBtn}>Cancel</button>
               </div>
+              {expandedEventId === event.id && (
+                <div className={styles.registrationForm}>
+                  <p>Would you like to register as a participant or volunteer?</p>
+                  <div className={styles.radioButtonRow}>
+                  <label>
+                    <input type="radio" name="role" value="participant" />
+                      Participant
+                  </label>
+                  <label>
+                    <input type="radio" name="role" value="volunteer" />
+                      Volunteer
+                  </label>
+                </div>
+                <p>Please select the names of the people in your group who will be participating:</p>
+                <div className={styles.checkboxGroup}>
+                  {/*{participants.map((name, index) => (
+                    <label key={index}>
+                      <input type="checkbox" name={`participant-${index}`} />
+                      {name}
+                    </label>
+                  ))}*/}
+                  <label>
+                    <input type = "checkbox" name = "participant-1" />
+                    John Doe
+                  </label>
+                  <label>
+                    <input type = "checkbox" name = "participant-2" />
+                    Jane Doe
+                  </label>
+                  <label>
+                    <input type = "checkbox" name = "participant-3" />
+                    Alex Smith
+                  </label>
+                </div>
+                <div className = {styles.buttonWrapper}>
+                  <button className={styles.submitBtn}>Submit</button>
+                </div>
+                </div>
+              )}
             </div>
           </div>
         ))
