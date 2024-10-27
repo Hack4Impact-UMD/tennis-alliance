@@ -68,7 +68,6 @@ const Settings = () => {
               <Image src={minilogo} alt="tennis" />
             </div>
             <hr />
-            <Image src={profile} alt="profile" priority={false} />
             <h3>Full Name</h3>
             <button
               className={style.save}
