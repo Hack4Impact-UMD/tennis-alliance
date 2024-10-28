@@ -184,12 +184,13 @@ exports.getEvents = onCall(
           data.auth_id != null &&
           auth &&
           auth.token &&
-          auth.token.role.toLowerCase() == "user"
+          (auth.token.role.toLowerCase() == "user" ||
+            auth.token.role.toLowerCase() == "admin")
         ) {
           const priorEvents = [];
           const registeredUpcoming = [];
-          const upcoming = [];
-          const querySnapshot = await db
+          const upcomingEvents = [];
+          await db
             .collection("Events")
             .get()
             .then((snapshot) => {
@@ -205,46 +206,42 @@ exports.getEvents = onCall(
                 }).format(date);
                 const eventData = { ...doc.data(), id: doc.id };
                 const upcoming = eventData.date >= formattedDate;
-                if (
-                  eventData.participants.find(
-                    (participant) => participant.mainId == data.auth_id
-                  )
-                ) {
-                  if (!upcoming) {
-                    eventData.participants.forEach((participant) => {
-                      if (participant.mainId != eventData.auth_id) {
-                        participant.email = "email";
-                        participant.mainId = "mainId";
-                        participant.mainFirstName = "mainFirstName";
-                        participant.mainLastName = "mainLastName";
-                        participant.otherMembers.forEach((member) => {
-                          member.firstName = "firstName";
-                          member.lastName = "lastName";
-                        });
-                      }
-                    });
-                    priorEvents.push(eventData);
+                if (auth.token.role.toLowerCase() == "admin") {
+                  if (upcoming) {
+                    upcoming.push(eventData);
                   } else {
-                    registeredUpcoming.push(eventData);
+                    priorEvents.push(eventData);
                   }
-                }
-                if (upcoming) {
-                  eventData.participants.forEach((participant) => {
-                    participant.email = "email";
-                    participant.mainId = "mainId";
-                    participant.mainFirstName = "mainFirstName";
-                    participant.mainLastName = "mainLastName";
-                    participant.otherMembers.forEach((member) => {
-                      member.firstName = "firstName";
-                      member.lastName = "lastName";
-                    });
+                } else {
+                  eventData.participants.forEach((participant, index) => {
+                    if (participant.mainId != data.auth_id) {
+                      participant.email = "email";
+                      participant.mainId = "mainId";
+                      participant.otherMembers.forEach((member) => {
+                        member.firstName = "firstName";
+                        member.lastName = "lastName";
+                      });
+                    }
+                    eventData[index] = participant;
                   });
-                  upcoming.push(eventData);
+
+                  const userInEvent = eventData.participants.find(
+                    (participant) => participant.mainId == data.auth_id
+                  );
+                  if (!upcoming && userInEvent) {
+                    priorEvents.push(eventData);
+                  } else if (upcoming) {
+                    if (userInEvent) {
+                      registeredUpcoming.push(eventData);
+                    } else {
+                      upcomingEvents.push(eventData);
+                    }
+                  }
                 }
               });
             });
 
-          resolve({ priorEvents, registeredUpcoming, upcoming });
+          resolve({ priorEvents, registeredUpcoming, upcomingEvents });
         }
       } catch (error) {
         console.log(error);
