@@ -36,7 +36,8 @@ type CustomEvent = {
     mainLastName: string;
     otherMembers: { firstName: string; lastName: string }[];
   }[];
-  slots: number;
+  maxParticipants: number;
+  maxVolunteers: number;
 };
 
 export type { CustomEvent, User };
