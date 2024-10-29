@@ -208,7 +208,7 @@ exports.getEvents = onCall(
                 const upcoming = eventData.date >= formattedDate;
                 if (auth.token.role.toLowerCase() == "admin") {
                   if (upcoming) {
-                    upcoming.push(eventData);
+                    upcomingEvents.push(eventData);
                   } else {
                     priorEvents.push(eventData);
                   }
