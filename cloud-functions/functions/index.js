@@ -175,6 +175,7 @@ exports.updateUserEmail = onCall(
   }
 );
 
+
 exports.getEvents = onCall(
   { region: "us-east4", cors: true },
   async ({ auth, data }) => {
@@ -242,6 +243,9 @@ exports.getEvents = onCall(
             });
 
           resolve({ priorEvents, registeredUpcoming, upcomingEvents });
+        } else {
+          console.log("Failed prior checks");
+          reject();
         }
       } catch (error) {
         console.log(error);
