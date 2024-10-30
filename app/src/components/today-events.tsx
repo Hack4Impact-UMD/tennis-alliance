@@ -1,5 +1,7 @@
 import React from 'react';
 import styles from "@/styles/today-events.module.css";
+import { type CustomEvent } from "@/types";
+
 
 interface CalendarEvent {
   id: string;
@@ -10,7 +12,7 @@ interface CalendarEvent {
 }
 
 interface TodayEventsProps {
-  events: CalendarEvent[];
+  events: CustomEvent[];
 }
 
 const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
@@ -60,13 +62,13 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
             </div>
             <div className={styles.eventInformation}>
               <h3>{event.title}</h3>
-              <p>Time: {formatTimeToEST(event.start)}</p> {/* Convert and display time in EST */}
+              <p>Time: {event.start}</p> {/* Convert and display time in EST */}
               <p>{event.description}</p>
               <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
               <div className={styles.buttonGroup}>
                 <button 
                   className={styles.registerBtn}
-                  onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id)}
+                  onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)}
                 >                  
                 {expandedEventId === event.id ? "Hide Details" : "Register"}
                 </button>

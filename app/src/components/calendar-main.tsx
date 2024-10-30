@@ -10,137 +10,47 @@ import styles from "@/styles/calendar-main.module.css";
 import {fetchEvents, addUserToEvent, sendEmail} from '@/backend/CloudFunctionsCalls';
 import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
+import { useAuth } from '@/auth/AuthProvider';
 
 // Define the event type structure (optional, but useful for type safety)
-interface CalendarEvent {
-  id: string;
-  title: string;
-  start: string;
-  end: string;
-  description: string;
-}
+
 
 const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CalendarEvent[]>([]);
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
-  const [todayEvents, setTodayEvents] = useState<CalendarEvent[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([]);
+  const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CustomEvent[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CustomEvent[]>([]);
+  const [todayEvents, setTodayEvents] = useState<CustomEvent[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<CustomEvent[]>([]);
   const [events, setEvents] = useState<CustomEvent[]>([]);
-
-  /*useEffect(() => {
-    const fetchAndSetEvents = async () => {
-      console.log("Fetching events...");
-      try {
-        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
-        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
-        console.log(priorEvents, registeredUpcoming, upcoming);
-        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
-        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
-            id: event.id,
-            title: event.title,
-            start: event.start,
-            end: event.end,
-            /*start: `${event.date}T${event.startTime}`,
-            end: `${event.date}T${event.endTime}`,
-            description: event.description,
-            date: event.date,
-            participants: event.participants,
-            slots: event.slots,
-        }));
-        setCalendarEvents(mappedEvents);
-      } catch (error) {
-        console.error("Fetch Events Error:", error);
-      }
-    };
-    fetchAndSetEvents();
-  }, []);*/
-
-  /*useEffect(() => {
-    if(calendarRef.current && calendarEvents.length > 0){
-      const ec = new Calendar({
-        target: calendarRef.current,
-        props: {
-          plugins: [TimeGrid, DayGrid, Interaction],
-          options: {
-            view: 'dayGridMonth',
-            events: calendarEvents,
-            eventContent: (info) => {
-              return info.event.title; // Use the aggregated title
-            },
-            dateClick: (info) => {
-              const clickedDate = info.date.toISOString().split('T')[0];
-              const eventsOnThisDate = calendarEvents.filter(event => event.start.startsWith(clickedDate));
-              setSelectedDate(clickedDate);
-              setEventsForSelectedDate(eventsOnThisDate);
-            },
-          },
-        },
-    });
-
-    return () => {
-      ec.destroy();
-    };
-  }
-  }, [calendarEvents]);*/
-
-  /*useEffect(() => {
-
-    const getAllEvents = async () => {
-      try {
-        console.log("fetching adminGetEvents");
-        const fetchedEvents = await adminGetEvents();
-        console.log("fetchedEvents: ", fetchedEvents);
-      } catch (e) {
-        console.error("Get All Eventgs Error:", e);
-      }
-    };
-
-    const fetchAllEvents = async () => {
-
-      try {
-        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
-        console.log("fetching fetchEvents");
-        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
-        console.log("priorEvents: ", priorEvents);
-        console.log("registeredUpcoming: ", registeredUpcoming);
-        console.log("upcoming: ", upcoming);
-      } catch (e) {
-        console.error("Fetch Events Error:", e);
-      }
-    };
-
-    getAllEvents(); // Call the async function
-    fetchAllEvents(); // Call the async function
-  }, []);*/
-
+  const auth = useAuth();
 
   useEffect(() => {
-    /*const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
-    const fetchAndSetEvents = async () => {
-      console.log("Fetching events...");
-      try {
-        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
-        console.log("Fetched Events: ", priorEvents, registeredUpcoming, upcoming);
-        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
-        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
-            id: event.id,
-            title: event.title,
-            start: event.start,
-            end: event.end,
-            description: event.description,
-        }));
-        setCalendarEvents(mappedEvents);
-      } catch (error) {
-        console.error("Fetch Events Error:", error);
-      }
-    };
+    const fetchAllEvents = async () => {
 
-    fetchAndSetEvents();*/
+      if(!auth.loading){
+        console.log("Auth user: ", auth.user);
+        const await_response = await fetchEvents(auth.user.uid);
+        console.log("Await response: ", await_response);
+        console.log("Await upcoming array: ", await_response[2]);
+        setEvents(await_response[2]);
+        /*setEvents(await_response[0][1]);*/
+
+
+        /*const response = fetchEvents(auth.user.uid).then((res) => {
+          console.log("Response Promise: ", res);   
+        })
+        console.log("Response: ", response);*/
+      }
+    }
+
+    fetchAllEvents();
+  }, [auth.loading]);
+
+  useEffect(() => {
 
     if (calendarRef.current) {
-      const customEvents: CustomEvent[] = [
+      /*const customEvents: CustomEvent[] = [
   {
     id: '1',
     title: 'Beginner Tennis Session',
@@ -324,24 +234,25 @@ const MyCalendar: React.FC = () => {
     ],
     slots: 20,
   },
-];
+];*/
 
 
       // Transform CustomEvent to the structure that the Calendar library expects
-      const calendarEvents: CalendarEvent[] = [];
+      const calendarEvents: CustomEvent[] = [];
       const eventCountByDate: { [key: string]: number } = {};
-      const eventsByDate: { [key: string]: CalendarEvent[]} = {};
+      const eventsByDate: { [key: string]: CustomEvent[]} = {};
 
       const today = new Date().toISOString().split('T')[0];
       const oneWeekLater = new Date();
       oneWeekLater.setDate(oneWeekLater.getDate() + 7);
 
-      const todayEventList: CalendarEvent[] = [];
-      const upcomingEventList: CalendarEvent[] = [];
+      const todayEventList: CustomEvent[] = [];
+      const upcomingEventList: CustomEvent[] = [];
 
 
       // Count events per date and create aggregated event entries
-      customEvents.forEach(event => {
+      console.log("events: ", events);
+      events.forEach(event => {
         const dateKey = event.date; // Get the date (YYYY-MM-DD)
         eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
         let eventObj = {
@@ -350,6 +261,10 @@ const MyCalendar: React.FC = () => {
           start: '',
           end: '',
           description: '',
+          date: '',
+          /*participants: [],*/
+          maxParticipants: 0,
+          maxVolunteers: 0,
         };
         if(!eventsByDate[dateKey]) {
           eventsByDate[dateKey] = [];
@@ -358,9 +273,13 @@ const MyCalendar: React.FC = () => {
             eventObj = {
             id: event.id,
             title: event.title,
-            start: `${event.date}T${event.startTime}`,
-            end: `${event.date}T${event.endTime}`,
+            start: `${event.date}T${event.start}`,
+            end: `${event.date}T${event.end}`,
             description: event.description,
+            date: event.date,
+            /*participants: event.participants,*/
+            maxParticipants: event.maxParticipants,
+            maxVolunteers: event.maxVolunteers,
           };
         }
         eventsByDate[dateKey].push(eventObj);
@@ -369,11 +288,11 @@ const MyCalendar: React.FC = () => {
         }
 
         const eventDate = new Date(dateKey);
-        console.log("eventDate: ", eventDate);
-        console.log("oneWeekLate: ", oneWeekLater);
+        /*console.log("eventDate: ", eventDate);
+        console.log("oneWeekLate: ", oneWeekLater);*/
         if(eventDate > new Date(today) && eventDate <= oneWeekLater){
           upcomingEventList.push(eventObj);
-          console.log("upcomingEventList: ", upcomingEventList);
+          /*console.log("upcomingEventList: ", upcomingEventList);*/
         }
       });
 
@@ -385,8 +304,14 @@ const MyCalendar: React.FC = () => {
           start: `${date}T00:00`, // Set a dummy start time
           end: `${date}T23:59`, // Set a dummy end time
           description: 'temporary description',
+          date: date,
+          /*participants: [],*/
+          maxParticipants: 0,
+          maxVolunteers: 0,
         });
       });
+
+      console.log("calendar Events: ", calendarEvents);
 
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
@@ -416,7 +341,7 @@ const MyCalendar: React.FC = () => {
         ec.destroy();
       };
     }
-  }, []);
+  }, [events]);
 
   return (
     <div>

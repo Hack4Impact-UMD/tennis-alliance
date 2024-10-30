@@ -1,16 +1,9 @@
 import React from 'react';
 import styles from "@/styles/today-events.module.css";
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  start: string; // ISO 8601 string or other compatible date format
-  end: string;
-  description: string;
-}
+import { type CustomEvent } from "@/types";
 
 interface UpcomingEventsProps {
-  events: CalendarEvent[];
+  events: CustomEvent[];
 }
 
 const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
@@ -64,12 +57,12 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
                   {/* Square button next to event title */}
                   <button 
                     className={styles.toggleButton}
-                    onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id)}
+                    onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)}
                   >
                   ▼
                   </button>
                 </div>                
-                <p>Time: {formatTimeToEST(event.start)}</p> {/* Convert and display time in EST */}
+                <p>Time: {event.start}</p> {/* Convert and display time in EST */}
                 <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
                 {expandedEventId === event.id && (
                   <div className={styles.registrationForm}>
