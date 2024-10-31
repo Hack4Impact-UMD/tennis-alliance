@@ -12,9 +12,6 @@ import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
 import { useAuth } from '@/auth/AuthProvider';
 
-// Define the event type structure (optional, but useful for type safety)
-
-
 const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -34,13 +31,6 @@ const MyCalendar: React.FC = () => {
         console.log("Await response: ", await_response);
         console.log("Await upcoming array: ", await_response[2]);
         setEvents(await_response[2]);
-        /*setEvents(await_response[0][1]);*/
-
-
-        /*const response = fetchEvents(auth.user.uid).then((res) => {
-          console.log("Response Promise: ", res);   
-        })
-        console.log("Response: ", response);*/
       }
     }
 
@@ -282,17 +272,15 @@ const MyCalendar: React.FC = () => {
             maxVolunteers: event.maxVolunteers,
           };
         }
+        console.log("eventObj: ", eventObj);
         eventsByDate[dateKey].push(eventObj);
         if(dateKey === today){
           todayEventList.push(eventObj);
         }
 
         const eventDate = new Date(dateKey);
-        /*console.log("eventDate: ", eventDate);
-        console.log("oneWeekLate: ", oneWeekLater);*/
         if(eventDate > new Date(today) && eventDate <= oneWeekLater){
           upcomingEventList.push(eventObj);
-          /*console.log("upcomingEventList: ", upcomingEventList);*/
         }
       });
 
@@ -310,12 +298,14 @@ const MyCalendar: React.FC = () => {
           maxVolunteers: 0,
         });
       });
-
-      console.log("calendar Events: ", calendarEvents);
-
+      
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+
+      console.log("todayEvents: ", todayEvents);
+      console.log("upcomingEvents: ", upcomingEvents);
+      console.log("calendarEvents: ", calendarEvents);
 
       // Initialize the calendar
       const ec = new Calendar({
