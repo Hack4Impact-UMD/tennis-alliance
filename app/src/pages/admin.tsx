@@ -8,6 +8,7 @@ import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
 import { adminGetEvents } from "@/backend/FirestoreCalls";
 import { getUserWithId } from "@/backend/FirestoreCalls";
+import { set } from "date-fns";
 
 const FILTERS = {
     "All Users": "all",
@@ -23,6 +24,7 @@ const AdminDashboard = () => {
     const downloadLink = useRef<HTMLAnchorElement>(null);
     const [eventData, setEventData] = useState<any[]>([]);
     const [selectedID, setSelectedID] = useState<string | null>(null);
+    const [selectedEventTitle, setSelectedEventTitle] = useState("");
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -85,7 +87,7 @@ const AdminDashboard = () => {
             );
     
             setData(participantsData.filter(user => user !== null));
-            console.log("Fetched participants data:", participantsData);
+            setSelectedEventTitle(event.title);
         } catch (error) {
             console.error("Error fetching participants data:", error);
         }
@@ -108,6 +110,9 @@ const AdminDashboard = () => {
                         ))}
                     </div>
                 )}
+                {selectedEventTitle != "" ? <h3>You have selected {selectedEventTitle}.</h3> :
+                    <h3>No event selected.</h3>
+                }
                 <p>All Users</p>
                 <div className={styles.search}>
                     <input
