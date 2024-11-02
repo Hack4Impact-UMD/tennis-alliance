@@ -52,7 +52,7 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
         const events: CustomEvent[] = querySnapshot.docs.map(
           (doc) => doc.data() as CustomEvent
         );
-        return events;
+        resolve(events);
       })
       .catch((e) => reject());
   });
