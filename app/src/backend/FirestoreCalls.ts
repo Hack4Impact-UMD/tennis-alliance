@@ -12,20 +12,17 @@ import {
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
-export function getUserWithId(id: string): Promise<User> {
-  return new Promise((resolve, reject) => {
-    getDoc(doc(db, "Users", id))
-      .then((user) => {
-        if (user.exists()) {
-          resolve(user.data() as User);
-        } else {
-          reject(new Error("User does not exist"));
-        }
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
+export async function getUserWithId(id: string): Promise<User> {
+  try {
+    const userDoc = await getDoc(doc(db, "Users", id));
+    if (userDoc.exists()) {
+      return userDoc.data() as User;
+    } else {
+      throw new Error("User does not exist");
+    }
+  } catch (e) {
+    throw e;
+  }
 }
 
 export function updateUser(user: User): Promise<void> {

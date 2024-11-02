@@ -7,6 +7,7 @@ import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
 import { adminGetEvents } from "@/backend/FirestoreCalls";
+import { getUserWithId } from "@/backend/FirestoreCalls";
 
 const FILTERS = {
     "All Users": "all",
@@ -67,10 +68,28 @@ const AdminDashboard = () => {
         return index % 2 == 0 ? "#E4F5E2" : "#FCF7CE";
     };
 
-    const handleSelectEvent = (event: any) => {
-        setData(event.participants);
-        console.log(event.participants);
-    }
+    const handleSelectEvent = async (event: any) => {
+        try {
+            const participantsData = await Promise.all(
+                event.participants.map(async (participantObj: any) => {
+                    const participantId = String(participantObj.mainId);
+                    try {
+                        console.log(participantObj);
+                        const user = await getUserWithId(participantId);
+                        return user;
+                    } catch (error) {
+                        console.error(`Failed to fetch user with ID ${participantId}:`, error);
+                        return null;
+                    }
+                })
+            );
+    
+            setData(participantsData.filter(user => user !== null));
+            console.log("Fetched participants data:", participantsData);
+        } catch (error) {
+            console.error("Error fetching participants data:", error);
+        }
+    };
 
     return (
         <div className={styles.container}>
