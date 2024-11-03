@@ -4,32 +4,66 @@ import {
     EmailAuthProvider,
     getAuth,
     reauthenticateWithCredential,
+    createUserWithEmailAndPassword,
     sendPasswordResetEmail,
 } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
-
 /*
- * Creates a user and sends a password reset email to that user.
- */
-export function createUser(user: User): Promise<void> {
+export function createUserWithEmailAndPassword(user: User, password: string): Promise<void>{
     return new Promise((resolve, reject) => {
-        const createUserCloudFunction = httpsCallable(functions, "createUser");
+        const createUserCloudFunction = httpsCallable(functions, "createUserWithEmailAndPassword");
         const auth = getAuth(app);
         console.log(user);
-        createUserCloudFunction({ email: user.email, user: user })
-            /*.then(async () => {
-                await sendPasswordResetEmail(auth, user.email)
-                    .then(() => {
-                        resolve();
-                    })
-                    .catch((error) => {
-                        reject();
-                    });
-            })*/ 
+        createUserCloudFunction({email: user.email, password})
             //above code making problems, ask to resolve
             .catch((error) => {
                 console.log(error);
                 reject();
+            });
+    });
+}*/
+/*
+ * Creates a user and sends a password reset email to that user.
+ */
+/*export function createUser(user: User, password:string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const createUserCloudFunction = httpsCallable(functions, "createUser");
+        const auth = getAuth(app);
+        console.log(user);
+        await createUserCloudFunction({ auth, email: user.email, password: password, user: user })
+        resolve();
+            /*.then(async () => {
+            // Attempt to send password reset email after user creation
+                try {
+                    await sendPasswordResetEmail(auth, user.email);
+                    resolve();
+                } catch (error) {
+                    console.log("Error sending password reset email:", error);
+                    reject(error); // Pass the error along if there's an issue
+                }
+            })
+            //above code making problems, ask to resolve
+            .catch((error) => {
+                console.log(error);
+                reject(error);
+            });
+    });
+}*/
+
+export function createUser(user: User, password: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const createUserCloudFunction = httpsCallable(functions, "createUser");
+        const auth = getAuth(app);
+
+        console.log(user);
+
+        createUserCloudFunction({ auth, email: user.email, password, user })
+            .then(() => {
+                resolve(); // Resolve the promise after the cloud function succeeds
+            })
+            .catch((error) => {
+                console.log(error);
+                reject(error); // Reject the promise if there's an error
             });
     });
 }

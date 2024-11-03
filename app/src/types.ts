@@ -1,5 +1,6 @@
 type User = {
   auth_id?: string;
+  accountType: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -39,4 +40,4 @@ type CustomEvent = {
   slots: number;
 };
 
-export type { CustomEvent, User };
+export type { CustomEvent, User, Children };

@@ -1,11 +1,12 @@
-import { createUser } from "@/backend/CloudFunctionsCalls";
+import { createUser , createUserWithEmailAndPassword} from "@/backend/CloudFunctionsCalls";
 import TennisBackground from "@/components/tennisBackground";
 import { User } from "@/types";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import styles from "../registration.module.css";
 
 const Adult = () => {
     const [user, setUser] = useState<User>({
+        accountType: "adult",
         email: "",
         firstName: "",
         lastName: "",
@@ -14,10 +15,12 @@ const Adult = () => {
         notifications: false,
         events: [],
     });
-    
+    let pw = "";
+
     const handleSubmit = () => {
         console.log(user);
-        createUser(user)
+        //createUserWithEmailAndPassword(user, pw)
+        createUser(user, pw)
             .then(() => {
                 console.log("done");
             })
@@ -27,7 +30,13 @@ const Adult = () => {
     function handleChange(e) { 
         const value = e.target.value;
         const name = e.target.id;
-        setUser(prev => ({...prev, [name]: value}));
+        if (name == "password") {
+            pw = value;
+        }
+        else{
+            setUser(prev => ({...prev, [name]: value}));
+        }
+        console.log("chang in password");
     }
     return (
         <div className={styles.container}>
@@ -57,6 +66,8 @@ const Adult = () => {
                 </div>
                 <label htmlFor="email">Email</label>
                 <input id="email" type="email" placeholder="Email" onInput={handleChange} required />
+                <label htmlFor="password">Password</label>
+                <input id="password" type="text" placeholder="" onInput={handleChange} required />
                 <label htmlFor="phone">Phone Number</label>
                 <input id="phone" type="text" placeholder="Phone Number" onInput={handleChange} required />
                 <label htmlFor="zip">Zip Code</label>

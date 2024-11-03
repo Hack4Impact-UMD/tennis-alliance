@@ -41,6 +41,49 @@ const emailToUse = "";
 //   },
 // });
 
+
+/*
+ * Creates a new user with an email and password
+ * Takes an object as a parameter that should contain an email, user object, and password
+ * This function can only be called by a user with admin status
+ * Arguments: email: string, the user's email
+ *            user: User object, see types for definition
+ *            password: string
+ */
+exports.createUserWithEmailAndPassword = onCall(
+  { region: "us-east4", cors: true },
+  async ({ auth, data }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const authorization = admin.auth();
+        if (data.email != null && data.password != null && data.user != null) {
+          const userRecord = await authorization.createUserWithEmailAndPassword({
+            email: data.email,
+            password: data.password,
+          });
+          await authorization.setCustomUserClaims(userRecord.uid, {
+            role: "USER",
+          });
+          const collectionObject = {
+            ...data.user,
+            auth_id: userRecord.uid,
+          };
+          await db
+            .collection("Users")
+            .doc(userRecord.uid)
+            .set(collectionObject);
+
+          resolve();
+        }
+      } catch (error) {
+        console.log(error);
+        reject();
+      }
+    });
+  }
+);
+
+
 /*
  * Creates a new user.
  * Takes an object as a parameter that should contain an email, name, and a role field.
@@ -55,11 +98,11 @@ exports.createUser = onCall(
     return new Promise(async (resolve, reject) => {
       try {
         const authorization = admin.auth();
-        if (data.email != null && data.user != null) {
-          const pass = crypto.randomBytes(32).toString("hex");
+        if (data.email != null && data.password != null && data.user != null) {
+          // const pass = crypto.randomBytes(32).toString("hex");
           const userRecord = await authorization.createUser({
             email: data.email,
-            password: pass,
+            password: data.password,
           });
           await authorization.setCustomUserClaims(userRecord.uid, {
             role: "USER",

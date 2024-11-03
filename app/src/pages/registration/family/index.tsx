@@ -1,11 +1,12 @@
-import { createUser } from "@/backend/CloudFunctionsCalls";
+import { createUser, createUserWithEmailAndPassword } from "@/backend/CloudFunctionsCalls";
 import TennisBackground from "@/components/tennisBackground";
-import { User } from "@/types";
+import { User, Children } from "@/types";
 import { useState } from "react";
 import styles from "../registration.module.css";
 
 const Family = () => {
     const [user, setUser] = useState<User>({
+        accountType: "family",
         email: "",
         firstName: "",
         lastName: "",
@@ -16,9 +17,22 @@ const Family = () => {
         adults: [],
         children: [],
     });
+    let pw = "";
+    const [childFields, setChildFields] = useState<Children[]>();
+    let counter = 0;
+
+    const handleAddField = () => {
+        setChildFields([...childFields, { value: "firstName"+String(counter)}]);
+        setChildFields([...childFields, { value: "lasttName"+String(counter)}]);
+        setChildFields([...childFields, { value: "age"+String(counter)}]);
+        setChildFields([...childFields, { value: "school"+String(counter)}]);
+        counter++;
+    };
+
     const handleSubmit = () => {
         console.log(user);
-        createUser(user)
+        createUserWithEmailAndPassword(user, pw)
+        //createUser(user)
             .then(() => {
                 console.log("done");
             })
@@ -28,7 +42,19 @@ const Family = () => {
     function handleChange(e) { 
         const value = e.target.value;
         const name = e.target.id;
-        setUser(prev => ({...prev, [name]: value}));
+        if (name == "password") {
+            pw = value;
+        }
+        else if (name == "adults.name") {
+            setUser(prev => ({...prev, ["adults"]: [{["name"]:String(value), ["email"]:user.adults[0].email}]})); 
+        }
+        else if (name == "adults.email") {
+            setUser(prev => ({...prev, ["adults"]: [{["email"]:String(value), ["name"]:user.adults[0].name}]})); 
+        }
+        else {
+            setUser(prev => ({...prev, [name]: value}));
+        }
+        console.log(user);
     }
     return (
         <div className={styles.container}>
@@ -40,7 +66,7 @@ const Family = () => {
                 <label id="name">Name used to identify your Family Group</label>
                 <div>
                     <input
-                        id="first_name"
+                        id="firstName"
                         aria-labelledby="name"
                         type="text"
                         placeholder="First Name"
@@ -48,7 +74,7 @@ const Family = () => {
                         required
                     />
                     <input
-                        id="last_name"
+                        id="lastName"
                         aria-labelledby="name"
                         type="text"
                         placeholder="Last Name"
@@ -58,6 +84,8 @@ const Family = () => {
                 </div>
                 <label htmlFor="email">Family Group Email</label>
                 <input id="email" type="email" placeholder="Email" onInput={handleChange} required />
+                <label htmlFor="password">Password</label>
+                <input id="password" type="password" placeholder="" onInput={handleChange} required />
                 <label htmlFor="phone">Family Group Phone Number</label>
                 <input id="phone" type="text" placeholder="Phone Number" onInput={handleChange} required />
                 <label htmlFor="zip">Zip Code</label>
@@ -67,13 +95,13 @@ const Family = () => {
           Optional: Other name to be associated with your Family Group
           (spouse/guardian)
                 </label>
-                <input id="other_name" type="text" placeholder="Name" /> 
+                <input id="adults.name" type="text" placeholder="Name" onInput={handleChange}/> 
 
                 <label htmlFor="other_email">
           Optional: Other email to be associated with your Family Group
           (spouse/guardian)
                 </label>
-                <input id="other_email" type="email" placeholder="Email" />
+                <input id="adults.email" type="email" placeholder="Email" onInput={handleChange}/>
                 <label id="child1_name">Child Name</label>
                 <div>
                     <input
