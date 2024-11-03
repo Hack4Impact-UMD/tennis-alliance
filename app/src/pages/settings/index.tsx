@@ -1,4 +1,4 @@
-import minilogo from "@/assets/minilogo.png";
+import editButton from "@/assets/pen.png";
 import profile from "@/assets/profile.png";
 import { useAuth } from "@/auth/AuthProvider";
 import RequireAuth from "@/auth/RequireAuth/RequireAuth";
@@ -65,7 +65,7 @@ const Settings = () => {
           <form className={style.container}>
             <div className={style.top}>
               <h1>Account</h1>
-              <Image src={minilogo} alt="tennis" />
+              <Image src={editButton} alt="pencil" />
             </div>
             <hr />
             <h3>Full Name</h3>
@@ -75,15 +75,15 @@ const Settings = () => {
             >
               click me change password
             </button>
-            <button
+            {/* <button
               className={style.save}
               onClick={() => setOpenChangeEmailModal(true)}
             >
               click me to change email
-            </button>
-            <button className={style.save} onClick={() => handleSubmit()}>
+            </button> */}
+            {/* <button className={style.save} onClick={() => handleSubmit()}>
               click me to change email2
-            </button>
+            </button> */}
 
             <div className={style.fields}>
               <div>

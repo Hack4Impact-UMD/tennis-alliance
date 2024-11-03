@@ -110,6 +110,7 @@
 .editChildren label {
     margin: 0em;
     line-height: 2em;
+    cursor: pointer;
 }
 
 .child {

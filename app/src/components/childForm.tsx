@@ -2,6 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import style from "@/styles/settings.module.css";
 import plus from "@/assets/plus.png";
+import minus from "@/assets/minus.png";
 
 const ChildForm = () => {
     const [sections, setSections] = useState([{ id: 1 }]);
@@ -62,7 +63,7 @@ const ChildForm = () => {
                 </div>
                 <div onClick={() => removeSection(sections.length - 1)}>
                     <label htmlFor="name">Remove Child</label>
-                    <Image src={plus} alt="plus" />
+                    <Image src={minus} alt="minus" />
                 </div>
             </div>
         </div>
