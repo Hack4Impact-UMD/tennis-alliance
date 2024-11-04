@@ -11,6 +11,18 @@ import {fetchEvents, addUserToEvent, sendEmail} from '@/backend/CloudFunctionsCa
 import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
 import { useAuth } from '@/auth/AuthProvider';
+import { adminDeleteEvent, adminUpdateEvent } from '@/backend/FirestoreCalls';
+import DeletePopUp from '@/pages/admin-event-delete-popup';
+import EditPopup from '@/pages/admin-event-edit-popup';
+
+// Define the event type structure (optional, but useful for type safety)
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  description: string;
+}
 
 const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
