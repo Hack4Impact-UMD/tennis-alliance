@@ -307,6 +307,18 @@ const Popup = () => {
                                 onChange={(e) => handleVolunteersChange(parseInt(e.target.value))}
                             />
                         </div>
+                        <div>
+                            <div className={styles.title}>Description:</div>
+                            <textarea
+                                className={styles.descriptionInput}
+                                onChange={(e) => setDescription(e.target.value)}
+                                maxLength={500}
+                                value={description}
+                            />
+                            <div className={styles.charCounter}>
+                                {description.length}/500
+                            </div>
+                        </div>
                         <div className={styles.submitCancelContainer}>
                             <button
                                 onClick={submitEvent}

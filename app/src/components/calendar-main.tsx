@@ -10,6 +10,9 @@ import styles from "@/styles/calendar-main.module.css";
 import {fetchEvents, addUserToEvent, sendEmail} from '@/backend/CloudFunctionsCalls';
 import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
+import { adminDeleteEvent, adminUpdateEvent } from '@/backend/FirestoreCalls';
+import DeletePopUp from '@/pages/admin-event-delete-popup';
+import EditPopup from '@/pages/admin-event-edit-popup';
 
 // Define the event type structure (optional, but useful for type safety)
 interface CalendarEvent {

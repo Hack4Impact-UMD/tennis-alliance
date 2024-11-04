@@ -34,8 +34,10 @@
     padding: 40px;
     width: 90%;
     max-width: 400px;
+    max-height: 90%;
     background: #aacdee;
     border-radius: 10px;
+    overflow-y: auto;
 }
 
 .closeButton {
@@ -60,6 +62,25 @@
     width: 100%;
     height: 50px;
     padding: 10px;
+    outline: none;
+}
+
+.descriptionInput {
+    border: none;
+    border-radius: 15px;
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    resize: none;
+    overflow-y: auto;
+    text-align: left;
+    vertical-align: top;
+    outline: none;
+}
+
+.charCounter {
+    font-size: 12px;
+    margin-bottom: 15px;
 }
 
 .title {
@@ -119,6 +140,7 @@
     border: none;
     border-radius: 5px;
     padding: 5px;
+    outline: none;
 }
 
 .colon,
