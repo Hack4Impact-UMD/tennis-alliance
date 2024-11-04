@@ -36,6 +36,11 @@
     justify-content: flex-end;
 }
 
+.eventRow {
+    border: 1px solid #0e8fcc;
+    cursor: pointer;
+}
+
 .search > input {
     width: 100%;
     padding: 12px 24px 12px 60px;
