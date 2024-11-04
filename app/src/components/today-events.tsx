@@ -1,5 +1,7 @@
 import React from 'react';
 import styles from "@/styles/today-events.module.css";
+import { type CustomEvent } from "@/types";
+
 
 interface CalendarEvent {
   id: string;
@@ -10,7 +12,7 @@ interface CalendarEvent {
 }
 
 interface TodayEventsProps {
-  events: CalendarEvent[];
+  events: CustomEvent[];
 }
 
 const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
@@ -28,20 +30,10 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
     }
   };
 
-  // Function to convert the event's start time to EST and format it
-  const formatTimeToEST = (dateString: string) => {
-    const date = new Date(dateString);
-    
-    // Convert the time to EST (America/New_York timezone)
-    const estTime = new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-      timeZone: 'America/New_York', // EST timezone
-    }).format(date);
-
-    return estTime;
-  };
+const formatTime = (timeString: string) => {
+  const getTime = timeString.split('T')[1];
+  return getTime;
+};
 
   // Get today's date
   const today = new Date();
@@ -60,13 +52,13 @@ const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
             </div>
             <div className={styles.eventInformation}>
               <h3>{event.title}</h3>
-              <p>Time: {formatTimeToEST(event.start)}</p> {/* Convert and display time in EST */}
+              <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
               <p>{event.description}</p>
               <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
               <div className={styles.buttonGroup}>
                 <button 
                   className={styles.registerBtn}
-                  onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id)}
+                  onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)}
                 >                  
                 {expandedEventId === event.id ? "Hide Details" : "Register"}
                 </button>
