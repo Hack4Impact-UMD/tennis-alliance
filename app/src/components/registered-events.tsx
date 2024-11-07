@@ -10,7 +10,7 @@ interface CalendarEvent {
 }
 
 interface RegisteredEventsProp {
-    events: CalendarEvent[];
+    events: CustomEvent[];
 }
 
 export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events }) => {
@@ -25,19 +25,22 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events }) => 
     }
   };
 
-  // Function to convert the event's start time to EST and format it
-  const formatTimeToEST = (dateString: string) => {
-    const date = new Date(dateString);
-    
-    // Convert the time to EST (America/New_York timezone)
-    const estTime = new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-      timeZone: 'America/New_York', // EST timezone
-    }).format(date);
+  const formatTime = (timeString: string) => {
+    const getTime = timeString.split('T')[1];
+    return getTime;
+  };
 
-    return estTime;
+  // Function to convert the event's start time to EST and format it
+  const formatDate = (timeString: string) => {
+    const getDate = timeString.split('T')[0];
+    const year = getDate.split('-')[0];
+    const month = parseInt(getDate.split('-')[1], 10) - 1; // Convert to zero-based index for Date object
+    const day = parseInt(getDate.split('-')[2], 10);
+  
+    // Convert month to a string using the Date object
+    const monthName = new Date(parseInt(year, 10), month).toLocaleString('default', { month: 'long' });
+    
+    return `${monthName} ${day}${getOrdinalSuffix(day)}`;
   };
 
   return (
@@ -53,12 +56,12 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events }) => 
           return (
             <div key={event.id} className={styles.individualEvent}>
               <div className={styles.dateSection}>
-                <p>{`${eventMonth} ${eventDayWithSuffix}`}</p> {/* Display event's date */}
+                <p>{formatDate(event.start)}</p> {/* Display event's date */}
                 <p>Volunteer</p>
               </div>
               <div className={styles.eventInformation}>
                 <h3>{event.title}</h3>
-                <p>Time: {formatTimeToEST(event.start)}</p> {/* Convert and display time in EST */}
+                <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
                 <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
               </div>
             </div>
