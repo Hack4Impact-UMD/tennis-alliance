@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from "@/styles/today-events.module.css";
 import { type CustomEvent } from "@/types";
+import Racquet from "@/assets/tennis_racquet.png";
+import Image from "next/image";
 
 
 interface CalendarEvent {
@@ -47,22 +49,34 @@ const formatTime = (timeString: string) => {
         events.map(event => (
           <div key={event.id} className={styles.individualEvent}>
             <div className={styles.dateSection}>
-              <h2>Today's Events</h2>
+              <p>Today's Events</p>
               <p>{`${month} ${dayWithSuffix}`}</p> {/* Display today's date */}
             </div>
+
+            {/* Divider line */}
+            <div className={styles.divider}></div>
+
             <div className={styles.eventInformation}>
-              <h3>{event.title}</h3>
+              <div className={styles.titleButtonContainer}>
+                  <Image src={Racquet} alt="Racquet" />
+                  <p style={{ fontSize: '1.50rem'}}>{event.title}</p>
+              </div>    
               <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
               <p>{event.description}</p>
-              <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
+              <p>Slots open: {event.participants.length} out of {event.maxParticipants}</p> {/* This should also be dynamic */}
               <div className={styles.buttonGroup}>
-                <button 
-                  className={styles.registerBtn}
-                  onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)}
-                >                  
-                {expandedEventId === event.id ? "Hide Details" : "Register"}
-                </button>
-                <button className={styles.cancelBtn}>Cancel</button>
+                {/* Show "Register" and "Cancel" buttons only if the event is not expanded */}
+                {expandedEventId !== event.id && (
+                  <>
+                    <button 
+                      className={styles.registerBtn}
+                      onClick={() => setExpandedEventId(event.id ?? null)}
+                    >
+                      Register
+                    </button>
+                    <button className={styles.cancelBtn}>Cancel</button>
+                  </>
+                )}
               </div>
               {expandedEventId === event.id && (
                 <div className={styles.registrationForm}>
