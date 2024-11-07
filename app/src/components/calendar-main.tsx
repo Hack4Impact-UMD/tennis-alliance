@@ -30,19 +30,9 @@ const MyCalendar: React.FC = () => {
 
       if(!auth.loading){
         console.log("Auth user: ", auth.user);
-        // const await_create_user = await createUser({
-        //   email: "jventur6@terpmail.umd.edu",
-        //   firstName: "John",
-        //   lastName: "V",
-        //   phone: 1112223333,
-        //   zip: 20740,
-        //   notifications: true,
-        //   events: [],
-        // });
         const await_response = await fetchEvents(auth.user.uid);
         console.log("Await response: ", await_response);
         console.log("Await upcoming array: ", await_response[2]);
-        // console.log("await create user", await_create_user);
         setEvents(await_response[2]);
         setRegUpcomingEvents(await_response[1]);
       }
@@ -389,12 +379,10 @@ const MyCalendar: React.FC = () => {
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
-      setRegisteredEvents(registeredEventList);
 
       console.log("todayEvents: ", todayEvents);
       console.log("upcomingEvents: ", upcomingEvents);
       console.log("calendarEvents: ", calendarEvents);
-      console.log("registeredEvents", regUpcomingEvents);
 
       // Initialize the calendar
       const ec = new Calendar({
