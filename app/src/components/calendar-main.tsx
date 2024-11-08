@@ -12,6 +12,18 @@ import {fetchEvents, createUser, addUserToEvent, sendEmail, deleteUserFromEvent}
 import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
 import { useAuth } from '@/auth/AuthProvider';
+import { adminDeleteEvent, adminUpdateEvent } from '@/backend/FirestoreCalls';
+import DeletePopUp from '@/pages/admin-event-delete-popup';
+import EditPopup from '@/pages/admin-event-edit-popup';
+
+// Define the event type structure (optional, but useful for type safety)
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  description: string;
+}
 
 const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
@@ -39,11 +51,12 @@ const MyCalendar: React.FC = () => {
     }
 
     fetchAllEvents();
-  }, [auth.loading, auth.user]);
+  }, [auth.loading]);
 
   useEffect(() => {
 
     if (calendarRef.current) {
+      /*const customEvents: CustomEvent[] = [
       /*const customEvents: CustomEvent[] = [
   {
     id: '1',
@@ -297,6 +310,10 @@ const MyCalendar: React.FC = () => {
           /*participants: [],*/
           maxParticipants: 0,
           maxVolunteers: 0,
+          date: '',
+          /*participants: [],*/
+          maxParticipants: 0,
+          maxVolunteers: 0,
         };
         if(!eventsByDate[dateKey]) {
           eventsByDate[dateKey] = [];
@@ -307,13 +324,20 @@ const MyCalendar: React.FC = () => {
             title: event.title,
             start: `${event.date}T${event.start}`,
             end: `${event.date}T${event.end}`,
+            start: `${event.date}T${event.start}`,
+            end: `${event.date}T${event.end}`,
             description: event.description,
+            date: event.date,
+            /*participants: event.participants,*/
+            maxParticipants: event.maxParticipants,
+            maxVolunteers: event.maxVolunteers,
             date: event.date,
             /*participants: event.participants,*/
             maxParticipants: event.maxParticipants,
             maxVolunteers: event.maxVolunteers,
           };
         }
+        console.log("eventObj: ", eventObj);
         console.log("eventObj: ", eventObj);
         eventsByDate[dateKey].push(eventObj);
         if(dateKey === today){
@@ -372,10 +396,15 @@ const MyCalendar: React.FC = () => {
           /*participants: [],*/
           maxParticipants: 0,
           maxVolunteers: 0,
+          date: date,
+          /*participants: [],*/
+          maxParticipants: 0,
+          maxVolunteers: 0,
         });
       });
       
 
+      
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
