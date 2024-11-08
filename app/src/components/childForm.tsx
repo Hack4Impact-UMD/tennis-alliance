@@ -4,7 +4,11 @@ import style from "@/styles/settings.module.css";
 import plus from "@/assets/plus.png";
 import minus from "@/assets/minus.png";
 
-const ChildForm = () => {
+interface ChildFormProps {
+    isEditing: boolean;
+}
+
+const ChildForm = ({ isEditing }: ChildFormProps) => {
     const [sections, setSections] = useState([{ id: 1 }]);
 
     const addSection = () => {
@@ -38,6 +42,7 @@ const ChildForm = () => {
                                 type="text"
                                 placeholder=""
                                 className={style.individualNames}
+                                disabled={!isEditing}
                             />
                         </div>
                         <div>
@@ -49,11 +54,12 @@ const ChildForm = () => {
                                 type="text"
                                 placeholder=""
                                 className={style.individualNames}
+                                disabled={!isEditing}
                             />
                         </div>
                     </div>
                     <label htmlFor={`email_${section.id}`}>Email</label>
-                    <input id={`email_${section.id}`} type="text" />
+                    <input id={`email_${section.id}`} type="text" disabled={!isEditing} />
                 </div>
             ))}
             <div className={style.editChildren}>

@@ -1,6 +1,5 @@
 import editButton from "@/assets/pen.png";
 import exitButton from "@/assets/exit.png"
-import profile from "@/assets/profile.png";
 import { useAuth } from "@/auth/AuthProvider";
 import RequireAuth from "@/auth/RequireAuth/RequireAuth";
 import { getUserWithId, updateUser } from "@/backend/FirestoreCalls";
@@ -21,6 +20,7 @@ const Settings = () => {
   const [openChangePasswordModal, setOpenChangePasswordModal] =
     useState<boolean>(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
   const authContext = useAuth();
 
   // On page load, fetch the user
@@ -43,9 +43,17 @@ const Settings = () => {
     }
   }, [authContext.loading]);
 
+  const handleInputChange = (field: keyof User, value: string) => {
+    setUser((prevUser) => prevUser ? { ...prevUser, [field]: value } : prevUser);
+  };
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   }
+
+  const handleCheckboxChange = () => {
+    setIsOtherSelected(!isOtherSelected);
+  };
 
   const handleSubmit = () => {
     // Once the form is filled just use this to change the user in the backend
@@ -68,13 +76,19 @@ const Settings = () => {
             open={openChangePasswordModal}
             handleClose={() => setOpenChangePasswordModal(false)}
           />
-          <form className={style.container}>
+          <form className={style.container}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}>
             <div className={style.top}>
               <h1>Account</h1>
-              <button onClick={handleEditToggle}>
-                <Image src={isEditing ? exitButton : editButton}
+              <div className={style.buttonIcon}>
+                <Image
+                  src={isEditing ? exitButton : editButton}
+                  onClick={handleEditToggle}
                   alt={isEditing ? "exit" : "edit"} />
-              </button>
+              </div>
             </div>
             <hr />
             <h3>Full Name</h3>
@@ -91,18 +105,37 @@ const Settings = () => {
             <div className={style.fields}>
               <div>
                 <label htmlFor="firstnamename">First Name</label>
-                <input id="firstname" type="text" placeholder="" disabled={!isEditing} required />
+                <input
+                  id="firstname"
+                  type="text"
+                  value={user?.firstName || ""}
+                  disabled={!isEditing}
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
+                  required />
               </div>
               <div>
                 <label htmlFor="lastname">Last Name</label>
-                <input id="lastname" type="text" placeholder="" disabled={!isEditing} required />
+                <input
+                  id="lastname"
+                  type="text"
+                  value={user?.lastName || ""}
+                  disabled={!isEditing}
+                  onChange={(e) => handleInputChange("lastName", e.target.value)}
+                  required />
               </div>
             </div>
             <hr />
             <h3>Personal Info</h3>
             <label htmlFor="name">Email</label>
-            <input id="email" type="text" className={style.email} disabled={!isEditing} />
+            <input
+              id="email"
+              type="text"
+              className={style.email}
+              value={user?.email || ""}
+              disabled={!isEditing}
+              onChange={(e) => handleInputChange("email", e.target.value)} />
             <button
+              type="button"
               className={style.save}
               onClick={() => setOpenChangePasswordModal(true)}
             >
@@ -114,20 +147,27 @@ const Settings = () => {
                 <input
                   id="phone"
                   type="text"
-                  placeholder=""
+                  value={user?.phone || ""}
                   className={style.phone}
                   disabled={!isEditing}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
                   required
                 />
               </div>
               <div>
                 <label htmlFor="zip">Zip Code</label>
-                <input id="zip" type="text" placeholder="" disabled={!isEditing} required />
+                <input
+                  id="zip"
+                  type="text"
+                  value={user?.zip || ""}
+                  disabled={!isEditing}
+                  onChange={(e) => handleInputChange("zip", e.target.value)}
+                  required />
               </div>
             </div>
             <hr />
             <h3>Children Info</h3>
-            <ChildForm />
+            <ChildForm isEditing={isEditing} />
             <hr />
             <h3>Additional Info</h3>
             <label>Tell us about your background and interests</label>
@@ -161,11 +201,15 @@ const Settings = () => {
               <label htmlFor="event_planning">Event Planning</label>
             </div>
             <div className={style.checkbox}>
-              <input id="other" type="checkbox" name="skill" value="other" />
+              <input id="other" type="checkbox" name="skill" value="other" onClick={handleCheckboxChange} />
               <label htmlFor="other">Other</label>
             </div>
-            <label>If other, please specify</label>
-            <textarea rows={10} required />
+            {isOtherSelected && (
+              <div>
+                <label>If other, please specify</label>
+                <textarea rows={10} required />
+              </div>
+            )}
             <button>Save</button>
           </form>
         </>

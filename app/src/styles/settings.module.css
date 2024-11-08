@@ -158,6 +158,10 @@
     font-weight: 500;
 }
 
+.buttonIcon {
+    cursor: pointer;
+}
+
 @media screen and (max-width: 1000px) {
     .container {
         width: calc(100% - 120px);
