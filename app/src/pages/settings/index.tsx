@@ -1,4 +1,5 @@
 import editButton from "@/assets/pen.png";
+import exitButton from "@/assets/exit.png"
 import profile from "@/assets/profile.png";
 import { useAuth } from "@/auth/AuthProvider";
 import RequireAuth from "@/auth/RequireAuth/RequireAuth";
@@ -19,6 +20,7 @@ const Settings = () => {
     useState<boolean>(false);
   const [openChangePasswordModal, setOpenChangePasswordModal] =
     useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState(false);
   const authContext = useAuth();
 
   // On page load, fetch the user
@@ -40,6 +42,10 @@ const Settings = () => {
         });
     }
   }, [authContext.loading]);
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  }
 
   const handleSubmit = () => {
     // Once the form is filled just use this to change the user in the backend
@@ -65,16 +71,13 @@ const Settings = () => {
           <form className={style.container}>
             <div className={style.top}>
               <h1>Account</h1>
-              <Image src={editButton} alt="pencil" />
+              <button onClick={handleEditToggle}>
+                <Image src={isEditing ? exitButton : editButton}
+                  alt={isEditing ? "exit" : "edit"} />
+              </button>
             </div>
             <hr />
             <h3>Full Name</h3>
-            <button
-              className={style.save}
-              onClick={() => setOpenChangePasswordModal(true)}
-            >
-              click me change password
-            </button>
             {/* <button
               className={style.save}
               onClick={() => setOpenChangeEmailModal(true)}
@@ -88,17 +91,23 @@ const Settings = () => {
             <div className={style.fields}>
               <div>
                 <label htmlFor="firstnamename">First Name</label>
-                <input id="firstname" type="text" placeholder="" required />
+                <input id="firstname" type="text" placeholder="" disabled={!isEditing} required />
               </div>
               <div>
                 <label htmlFor="lastname">Last Name</label>
-                <input id="lastname" type="text" placeholder="" required />
+                <input id="lastname" type="text" placeholder="" disabled={!isEditing} required />
               </div>
             </div>
             <hr />
             <h3>Personal Info</h3>
             <label htmlFor="name">Email</label>
-            <input id="email" type="text" className={style.email} />
+            <input id="email" type="text" className={style.email} disabled={!isEditing} />
+            <button
+              className={style.save}
+              onClick={() => setOpenChangePasswordModal(true)}
+            >
+              click me change password
+            </button>
             <div className={style.fields}>
               <div>
                 <label htmlFor="name">Phone Number</label>
@@ -107,12 +116,13 @@ const Settings = () => {
                   type="text"
                   placeholder=""
                   className={style.phone}
+                  disabled={!isEditing}
                   required
                 />
               </div>
               <div>
                 <label htmlFor="zip">Zip Code</label>
-                <input id="zip" type="text" placeholder="" required />
+                <input id="zip" type="text" placeholder="" disabled={!isEditing} required />
               </div>
             </div>
             <hr />
