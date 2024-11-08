@@ -379,6 +379,7 @@ const MyCalendar: React.FC = () => {
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+      setRegisteredEvents(registeredEventList);
 
       console.log("todayEvents: ", todayEvents);
       console.log("upcomingEvents: ", upcomingEvents);

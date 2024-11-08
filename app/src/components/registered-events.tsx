@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "@/styles/today-events.module.css";
+import { type CustomEvent } from "@/types";
 
 interface CalendarEvent {
     id: string;
