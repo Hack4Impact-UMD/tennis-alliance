@@ -43,7 +43,6 @@ const AdminDashboard = () => {
                 console.error("Failed to fetch events or event IDs:", error);
             }
         };
-    
         fetchEvents();
     }, []);
 
@@ -100,7 +99,7 @@ const AdminDashboard = () => {
             console.error("Error fetching participants data:", error);
         }
     };
-
+  
     const handleRemoveParticipant = async (participantId: string, email: string) => {
         try {
             if (selectedEventTitle && participantId) {
@@ -119,7 +118,7 @@ const AdminDashboard = () => {
             console.error("Failed to remove participant:", error);
         }
     };
-
+  
     return (
         <div className={styles.container}>
             <div className={styles.table}>

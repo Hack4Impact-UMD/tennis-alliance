@@ -80,9 +80,10 @@ export function fetchEvents(auth_id: string): Promise<any> {
     getEvents({
       auth_id: auth_id,
     })
-      .then((res: any) =>
-        resolve([res.priorEvents, res.registeredUpcoming, res.upcoming])
-      )
+      .then((res: any) => {
+        console.log(res);
+        resolve([res.data.priorEvents, res.data.registeredUpcoming, res.data.upcomingEvents])
+      })
       .catch((error: any) => {
         reject(error);
       });
