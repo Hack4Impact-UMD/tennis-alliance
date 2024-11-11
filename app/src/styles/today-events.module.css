@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: row;
   margin-bottom: 5%;
-  background-color: #d9f1f4;
+  background-color: #E0F3F6;
 }
 .dateSection {
   display: flex;
@@ -18,19 +18,20 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
+  padding-bottom: 20%;
 }
 
 .dateSection h2 {
   margin: 0;
   font-size: 1.75rem;
   font-weight: bold;
-  color: #333;
+  color: #000;
 }
 
 .dateSection p {
   margin-top: 10px;
-  font-size: 1.25rem;
-  color: #555;
+  font-size: 1.75rem;
+  color: #000;
 }
 
 .eventInformation {
@@ -39,16 +40,22 @@
   margin-bottom: 15px;
 }
 
-.eventInformation h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: #004d40;
+.titleButtonContainer {
+  display: flex;
+  justify-content: center; /* Align items to the left and right */
 }
 
 .eventInformation p {
   margin: 5px 0;
   font-size: 1rem;
-  color: #004d40;
+  color: #000;
+}
+
+.divider {
+  width: 1px;
+  background-color: #000; /* Choose a color for the divider */
+  margin: 0 10px;
+  align-self: stretch;
 }
 
 .buttonGroup {
@@ -58,26 +65,14 @@
 }
 
 .registerBtn, .cancelBtn, .submitBtn {
-  background-color: #81d4fa;
+  background-color: #AACDEE;
   border: none;
   border-radius: 25px;
   padding: 10px 30px;
   font-size: 1rem;
-  color: #fff;
+  color: #000;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.registerBtn:hover {
-  background-color: #0288d1;
-}
-
-.cancelBtn {
-  background-color: #ef5350;
-}
-
-.cancelBtn:hover {
-  background-color: #c62828;
 }
 
 .buttonWrapper {

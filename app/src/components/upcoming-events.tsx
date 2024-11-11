@@ -1,6 +1,9 @@
 import React from 'react';
 import styles from "@/styles/today-events.module.css";
 import { type CustomEvent } from "@/types";
+import Arrow from "@/assets/down_arrow.png";
+import Racquet from "@/assets/tennis_racquet.png";
+import Image from "next/image";
 
 interface UpcomingEventsProps {
   events: CustomEvent[];
@@ -61,19 +64,19 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
                 <p>{formatDate(event.start)}</p> {/* Display event's date */}
                 <p>Volunteer</p>
               </div>
+
+              {/* Divider line */}
+              <div className={styles.divider}></div>
+
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
-                  <h3 style={{ display: 'inline' }}>{event.title}</h3>
+                  <Image src={Racquet} alt="Racquet" />
+                  <p style={{ display: 'inline' }}>{event.title}</p>
                   {/* Square button next to event title */}
-                  <button 
-                    className={styles.toggleButton}
-                    onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)}
-                  >
-                  ▼
-                  </button>
+                  <Image src = {Arrow} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
                 </div>                
                 <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
-                <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
+                <p>Slots open: {event.participants.length} out of {event.maxParticipants}</p> {/* This should also be dynamic */}
                 {expandedEventId === event.id && (
                   <div className={styles.registrationForm}>
                     <p>Would you like to register as a participant or volunteer?</p>

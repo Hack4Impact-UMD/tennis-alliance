@@ -1,13 +1,12 @@
 .registeredContainer {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column; /* Stack items vertically */
     margin-top: 20px;
     margin-bottom: 20px;
 }
 
 .eventRegisteredBox {
-    background-color: #007BFF; /* Blue background */
+    background-color: #0E8FCC; /* Blue background */
     padding: 20px;
     border-radius: 15px; /* Circular edges */
     color: black;
@@ -17,9 +16,24 @@
     width: 35%;
     justify-content: left;
     display: flex;
-  }
+}
+
+.noEventsContainer {
+    display: flex;
+    flex-direction: row;
+    background-color: #AACDEE;
+    justify-content: flex-start;
+    border-radius: 10px;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px; /* Space below the Events Registered header */
+}
+.noEventsText {
+    padding-left: 10%;
+}
+
 .eventNewBox {
-    background-color: #007BFF; /* Blue background */
+    background-color: #0E8FCC; /* Blue background */
     padding: 20px;
     border-radius: 15px; /* Circular edges */
     color: black;
@@ -31,7 +45,7 @@
     display: flex;
 }
 .upcomingBox {
-    background-color: #007BFF; /* Blue background */
+    background-color: #0E8FCC; /* Blue background */
     padding: 20px;
     border-radius: 15px; /* Circular edges */
     color: black;

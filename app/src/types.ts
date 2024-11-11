@@ -29,13 +29,13 @@ type CustomEvent = {
   start: string;
   end: string;
   description: string;
-  /*participants: {
+  participants: {
     email: string;
     mainId: string;
     mainFirstName: string;
     mainLastName: string;
     otherMembers: { firstName: string; lastName: string }[];
-  }[];*/
+  }[];
   maxParticipants: number;
   maxVolunteers: number;
 };
