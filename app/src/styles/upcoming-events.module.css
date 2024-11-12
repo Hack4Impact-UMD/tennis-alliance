@@ -40,11 +40,19 @@
     margin: 0 10px;
     align-self: stretch;
   }
+
+  .divider {
+    width: 1px;
+    background-color: #000; /* Choose a color for the divider */
+    margin: 0 10px;
+    align-self: stretch;
+  }
   
   .eventInformation {
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 15px;
+    width: auto;
   }
   
   .titleButtonContainer {

@@ -97,7 +97,7 @@ const MyCalendar: React.FC = () => {
       events.forEach(event => {
         const dateKey = event.date;
         eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
-
+              
         let eventObj: CustomEvent = {
           id: '',
           title: '',
