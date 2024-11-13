@@ -81,7 +81,6 @@ export function fetchEvents(auth_id: string): Promise<any> {
       auth_id: auth_id,
     })
       .then((res: any) => {
-        console.log(res);
         resolve([res.data.priorEvents, res.data.registeredUpcoming, res.data.upcomingEvents])
       })
       .catch((error: any) => {

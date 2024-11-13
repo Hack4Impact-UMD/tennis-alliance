@@ -92,8 +92,8 @@ export function adminCreateEvent(
     const event: CustomEvent = {
       title: eventName,
       date: formattedDate,
-      startTime: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
-      endTime: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
+      start: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
+      end: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
       description,
       participants: [],
       maxParticipants: maxParticipants,
@@ -132,8 +132,8 @@ export function adminUpdateEvent(
     const updatedEvent: CustomEvent = {
       title: eventName,
       date: formattedDate,
-      startTime: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
-      endTime: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
+      start: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
+      end: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
       description,
       participants: [],
       maxParticipants: maxParticipants,

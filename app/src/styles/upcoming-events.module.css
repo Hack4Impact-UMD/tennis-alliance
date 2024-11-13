@@ -32,11 +32,19 @@
     font-size: 1.25rem;
     color: #555;
   }
+
+  .divider {
+    width: 1px;
+    background-color: #000; /* Choose a color for the divider */
+    margin: 0 10px;
+    align-self: stretch;
+  }
   
   .eventInformation {
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 15px;
+    width: auto;
   }
   
   .eventInformation h3 {
@@ -82,18 +90,19 @@
 
   .titleButtonContainer {
     display: flex;
-    justify-content: flex-end; /* Align items to the left and right */
-  }
-  
-  .toggleButton {
-    /* Add any desired styles for the button */
-    margin-left: auto; /* Push button to the right */
-    background: transparent; /* Transparent background */
-    border: none; /* No border */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Adjust font size as needed */
-    padding: 20px 0 20px 30px; /* No padding */
-  }
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.toggleButton {
+    margin-left: auto;
+    padding: 10px;
+    font-size: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
   
   @media (max-width: 768px) {
     .todayEventsContainer {
