@@ -4,11 +4,12 @@ import TimeGrid from '@event-calendar/time-grid';
 import DayGrid from '@event-calendar/day-grid';
 import Interaction from '@event-calendar/interaction';
 import TodayEvents from './today-events';
+import { RegisteredEvents } from './registered-events';
 import UpcomingEvents from './upcoming-events';
 import { type CustomEvent, type User } from "@/types";
 import styles from "@/styles/calendar-main.module.css";
-import { fetchEvents } from '@/backend/CloudFunctionsCalls';
-import { adminGetEvents } from '@/backend/FirestoreCalls';
+import {fetchEvents, createUser, addUserToEvent, sendEmail, deleteUserFromEvent} from '@/backend/CloudFunctionsCalls';
+import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
 import { useAuth } from '@/auth/AuthProvider';
 import { getUserWithId } from '@/backend/FirestoreCalls';
@@ -47,6 +48,9 @@ const MyCalendar: React.FC = () => {
   const [priorEvents, setPriorEvents] = useState<CustomEvent[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [displayedDate, setDisplayedDate] = useState<string>('');  // State for the displayed date
+  const [registeredEvents, setRegisteredEvents] = useState<CustomEvent[]>([]);
+  const [regUpcomingEvents, setRegUpcomingEvents] = useState<CustomEvent[]>([]);
+  const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
   const auth = useAuth();
 
   useEffect(() => {
@@ -56,6 +60,7 @@ const MyCalendar: React.FC = () => {
         const combinedEvents = [...await_response[0], ...await_response[2]];
         setPriorEvents(await_response[0]);
         setEvents(combinedEvents);
+        setRegUpcomingEvents(await_response[1]);
       }
     };
 
@@ -96,6 +101,8 @@ const MyCalendar: React.FC = () => {
 
       const todayEventList: CustomEvent[] = [];
       const upcomingEventList: CustomEvent[] = [];
+      const registeredEventList: CustomEvent[] = [];
+
 
       events.forEach(event => {
         const dateKey = event.date;
@@ -143,6 +150,42 @@ const MyCalendar: React.FC = () => {
         }
       });
 
+      // Aggregate Registered Upcoming Events
+      regUpcomingEvents.forEach(event => {
+        const dateKey = event.date; // Get the date (YYYY-MM-DD)
+        eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
+        let eventObj: CustomEvent = {
+          id: '',
+          title: '',
+          start: '',
+          end: '',
+          description: '',
+          date: '',
+          participants: [],
+          maxParticipants: 0,
+          maxVolunteers: 0,
+        };
+        if(!eventsByDate[dateKey]) {
+          eventsByDate[dateKey] = [];
+        }
+        if(event.id){
+            eventObj = {
+            id: event.id,
+            title: event.title,
+            start: `${event.date}T${event.start}`,
+            end: `${event.date}T${event.end}`,
+            description: event.description,
+            date: event.date,
+            participants: event.participants,
+            maxParticipants: event.maxParticipants,
+            maxVolunteers: event.maxVolunteers,
+          };
+        }
+        registeredEventList.push(eventObj);
+      });
+
+      // Create aggregated events for the calendar
+      
       Object.keys(eventCountByDate).forEach(date => {
         calendarEvents.push({
           id: date,
@@ -161,6 +204,7 @@ const MyCalendar: React.FC = () => {
       upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+      setRegisteredEvents(registeredEventList);
 
       const ec = new Calendar({
         target: calendarRef.current,
@@ -183,7 +227,7 @@ const MyCalendar: React.FC = () => {
         ec.destroy();
       };
     }
-  }, [events]);
+  }, [events, regUpcomingEvents]);
 
   useEffect(() => {
     setDisplayedDate(selectedDate || formatDate(new Date().toISOString().split('T')[0]));
@@ -194,8 +238,7 @@ const MyCalendar: React.FC = () => {
       <div className={styles.registeredContainer}>
         <div className={styles.eventRegisteredBox}>
           <p>Events Registered</p>
-        </div>
-        
+        </div>        
         <div className={styles.noEventsContainer}>
           <div className={styles.iconContainer}>
             <Image src={TennisBalls} alt="LogoIcon" width={50} height={50} style={{ borderRadius: '50%' }} />
@@ -204,6 +247,7 @@ const MyCalendar: React.FC = () => {
             <p>Nothing planned for {formatDate(displayedDate)}</p>
           </div>
         </div>
+        <RegisteredEvents events={registeredEvents}/>
       </div>
 
       <div className={styles.eventNewBox}>
