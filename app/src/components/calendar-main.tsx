@@ -44,6 +44,7 @@ const MyCalendar: React.FC = () => {
   const [todayEvents, setTodayEvents] = useState<CustomEvent[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<CustomEvent[]>([]);
   const [events, setEvents] = useState<CustomEvent[]>([]);
+  const [priorEvents, setPriorEvents] = useState<CustomEvent[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [displayedDate, setDisplayedDate] = useState<string>('');  // State for the displayed date
   const auth = useAuth();
@@ -52,7 +53,9 @@ const MyCalendar: React.FC = () => {
     const fetchAllEvents = async () => {
       if (!auth.loading) {
         const await_response = await fetchEvents(auth.user.uid);
-        setEvents(await_response[2]);
+        const combinedEvents = [...await_response[0], ...await_response[2]];
+        setPriorEvents(await_response[0]);
+        setEvents(combinedEvents);
       }
     };
 
