@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from "@/styles/today-events.module.css";
-import { type CustomEvent } from "@/types";
+import { type CustomEvent, type User } from "@/types";
 import Racquet from "@/assets/tennis_racquet.png";
 import Image from "next/image";
 
@@ -15,9 +15,10 @@ interface CalendarEvent {
 
 interface TodayEventsProps {
   events: CustomEvent[];
+  user: User;
 }
 
-const TodayEvents: React.FC<TodayEventsProps> = ({ events }) => {
+const TodayEvents: React.FC<TodayEventsProps> = ({ events, user }) => {
 
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
 
@@ -61,9 +62,12 @@ const formatTime = (timeString: string) => {
                   <Image src={Racquet} alt="Racquet" />
                   <p style={{ fontSize: '1.50rem'}}>{event.title}</p>
               </div>    
-              <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
-              <p>{event.description}</p>
-              <p>Slots open: {event.participants.length} out of {event.maxParticipants}</p> {/* This should also be dynamic */}
+              {/* Center-aligned details */}
+              <div className={styles.eventDetails}>
+                <p>Time: {formatTime(event.start)}</p>
+                <p>{event.description}</p>
+                <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+              </div>
               <div className={styles.buttonGroup}>
                 {/* Show "Register" and "Cancel" buttons only if the event is not expanded */}
                 {expandedEventId !== event.id && (
@@ -93,24 +97,19 @@ const formatTime = (timeString: string) => {
                 </div>
                 <p>Please select the names of the people in your group who will be participating:</p>
                 <div className={styles.checkboxGroup}>
-                  {/*{participants.map((name, index) => (
-                    <label key={index}>
-                      <input type="checkbox" name={`participant-${index}`} />
-                      {name}
-                    </label>
-                  ))}*/}
-                  <label>
-                    <input type = "checkbox" name = "participant-1" />
-                    John Doe
-                  </label>
-                  <label>
-                    <input type = "checkbox" name = "participant-2" />
-                    Jane Doe
-                  </label>
-                  <label>
-                    <input type = "checkbox" name = "participant-3" />
-                    Alex Smith
-                  </label>
+                  {/* Dynamic generation of family member checkboxes */}
+                    {user.adults?.map((adult, index) => (
+                      <label key={`adult-${index}`}>
+                        <input type="checkbox" name={`participant-adult-${index}`} />
+                        {adult.name}
+                      </label>
+                    ))}
+                    {user.children?.map((child, index) => (
+                      <label key={`child-${index}`}>
+                        <input type="checkbox" name={`participant-child-${index}`} />
+                        {child.firstName} {child.lastName}
+                      </label>
+                    ))}
                 </div>
                 <div className = {styles.buttonWrapper}>
                   <button className={styles.submitBtn}>Submit</button>
