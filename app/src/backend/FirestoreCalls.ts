@@ -43,6 +43,43 @@ export function updateUser(user: User): Promise<void> {
       });
   });
 }
+
+export function createUser(
+  email: string,
+  firstName: string,
+  lastName: string,
+  phone: string,
+  zip: string,
+  notifications: boolean,
+  waiver: boolean,
+  type: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const userCollectionRef = collection(db, "Users");
+
+    const user: User = {
+      email,
+      firstName,
+      lastName,
+      phone: Number(phone),
+      zip: Number(zip),
+      notifications,
+      waiver,
+      events: [],
+      createdAt: new Date(),
+      type,
+    };
+
+    addDoc(collection(db, "Users"), user)
+      .then(() => {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
 export function adminGetEvents(): Promise<CustomEvent[]> {
   return new Promise((resolve, reject) => {
     getDocs(collection(db, "Events"))
