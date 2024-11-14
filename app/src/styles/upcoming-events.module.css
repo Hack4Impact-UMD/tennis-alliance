@@ -1,16 +1,16 @@
-.todayEventsContainer {
+.upcomingEventContainer {
     display: flex;
     flex-direction: column;
     border-radius: 12px;
     overflow: hidden;
     width: 100%;
-    max-width: 700px;
+    max-width: 700px;    
   }
   .individualEvent {
     display: flex;
     flex-direction: row;
     margin-bottom: 5%;
-    background-color: #d9f1f4;
+    background-color: #FCF7CE;
   }
   .dateSection {
     display: flex;
@@ -18,19 +18,27 @@
     justify-content: center;
     align-items: center;
     padding: 20px;
+    padding-bottom: 10%;
   }
   
   .dateSection h2 {
     margin: 0;
     font-size: 1.75rem;
     font-weight: bold;
-    color: #333;
+    color: #000;
   }
   
   .dateSection p {
     margin-top: 10px;
-    font-size: 1.25rem;
-    color: #555;
+    font-size: 1.75rem;
+    color: #000;
+  }
+
+  .divider {
+    width: 1px;
+    background-color: #000; /* Choose a color for the divider */
+    margin: 0 10px;
+    align-self: stretch;
   }
 
   .divider {
@@ -47,16 +55,22 @@
     width: auto;
   }
   
-  .eventInformation h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #004d40;
+  .titleButtonContainer {
+    display: flex;
+    justify-content: center; /* Align items to the left and right */
   }
   
   .eventInformation p {
     margin: 5px 0;
     font-size: 1rem;
-    color: #004d40;
+    color: #000;
+  }
+
+  .eventDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-aligns contents horizontally */
+    text-align: center; /* Centers text within each p element */
   }
   
   .buttonGroup {
@@ -65,34 +79,54 @@
     margin-top: 10px;
   }
   
-  .registerBtn, .cancelBtn {
-    background-color: #81d4fa;
+  .registerBtn, .cancelBtn, .submitBtn {
+    background-color: #AACDEE;
     border: none;
     border-radius: 25px;
     padding: 10px 30px;
     font-size: 1rem;
-    color: #fff;
+    color: #000;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   
-  .registerBtn:hover {
-    background-color: #0288d1;
-  }
-  
-  .cancelBtn {
-    background-color: #ef5350;
-  }
-  
-  .cancelBtn:hover {
-    background-color: #c62828;
+  .buttonWrapper {
+    display: flex;
+    justify-content: flex-end; /* Aligns the submit button to the right */
+    margin-top: 1rem; /* Adds some space above the button */
   }
 
+  .checkboxGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    gap: 8px; /* Space between items */
+    margin-top: 10px; /* Space above the checkbox group */
+  }
+  
+  .checkboxGroup label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Space between checkbox and label text */
+  }
+  
   .titleButtonContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+    gap: 15%;
+}
+
+.radioButtonRow {
+  display: flex;
+  justify-content: center; /* Centers the items horizontally */
+  gap: 1rem; /* Adds space between the labels */
+  margin: 0.5rem 0; /* Optional: adds some space above and below */
+}
+
+.radioButtonRow label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* Adds space between the radio button and label text */
 }
 
 .toggleButton {
@@ -105,7 +139,7 @@
 }
   
   @media (max-width: 768px) {
-    .todayEventsContainer {
+    .upcomingEventContainer {
       flex-direction: column;
     }
   }
