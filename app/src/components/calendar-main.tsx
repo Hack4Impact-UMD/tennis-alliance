@@ -57,7 +57,6 @@ const MyCalendar: React.FC = () => {
     const fetchAllEvents = async () => {
       if (!auth.loading) {
         const await_response = await fetchEvents(auth.user.uid);
-        console.log("await_response[2]: ", await_response)
         const combinedEvents = [...await_response[0], ...await_response[2]];
         setPriorEvents(await_response[0]);
         setEvents(combinedEvents);
@@ -209,7 +208,6 @@ const MyCalendar: React.FC = () => {
       setTodayEvents(todayEventList);
       upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       setUpcomingEvents(upcomingEventList);
-      console.log("upcomingEventList: ", upcomingEventList);
       setCalendarEvents(calendarEvents);
       setRegisteredEvents(registeredEventList);
 
