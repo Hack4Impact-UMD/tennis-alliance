@@ -4,12 +4,19 @@ import TimeGrid from '@event-calendar/time-grid';
 import DayGrid from '@event-calendar/day-grid';
 import Interaction from '@event-calendar/interaction'
 import TodayEvents from './today-events';
+import { RegisteredEvents } from './registered-events';
 import UpcomingEvents from './upcoming-events';
 import { type CustomEvent } from "@/types";
 import styles from "@/styles/calendar-main.module.css";
-import {fetchEvents, addUserToEvent, sendEmail} from '@/backend/CloudFunctionsCalls';
+import {fetchEvents, createUser, addUserToEvent, sendEmail, deleteUserFromEvent} from '@/backend/CloudFunctionsCalls';
 import {adminGetEvents} from '@/backend/FirestoreCalls';
 import '@event-calendar/core/index.css';
+import { useAuth } from '@/auth/AuthProvider';
+import { adminDeleteEvent, adminUpdateEvent } from '@/backend/FirestoreCalls';
+import DeletePopUp from '@/pages/admin-event-delete-popup';
+import EditPopup from '@/pages/admin-event-edit-popup';
+import Image from "next/image";
+import TennisBalls from "@/assets/tennis_balls.png";
 
 // Define the event type structure (optional, but useful for type safety)
 interface CalendarEvent {
@@ -20,336 +27,95 @@ interface CalendarEvent {
   description: string;
 }
 
+// Function to format the date
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString + 'T00:00:00Z'); // Ensure it's treated as UTC
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  };
+
+  return date.toLocaleDateString('en-US', options);
+};
+
 const MyCalendar: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CalendarEvent[]>([]);
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
-  const [todayEvents, setTodayEvents] = useState<CalendarEvent[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<CalendarEvent[]>([]);
+  const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CustomEvent[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CustomEvent[]>([]);
+  const [todayEvents, setTodayEvents] = useState<CustomEvent[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<CustomEvent[]>([]);
   const [events, setEvents] = useState<CustomEvent[]>([]);
-
-  /*useEffect(() => {
-    const fetchAndSetEvents = async () => {
-      console.log("Fetching events...");
-      try {
-        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
-        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
-        console.log(priorEvents, registeredUpcoming, upcoming);
-        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
-        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
-            id: event.id,
-            title: event.title,
-            start: event.start,
-            end: event.end,
-            /*start: `${event.date}T${event.startTime}`,
-            end: `${event.date}T${event.endTime}`,
-            description: event.description,
-            date: event.date,
-            participants: event.participants,
-            slots: event.slots,
-        }));
-        setCalendarEvents(mappedEvents);
-      } catch (error) {
-        console.error("Fetch Events Error:", error);
-      }
-    };
-    fetchAndSetEvents();
-  }, []);*/
-
-  /*useEffect(() => {
-    if(calendarRef.current && calendarEvents.length > 0){
-      const ec = new Calendar({
-        target: calendarRef.current,
-        props: {
-          plugins: [TimeGrid, DayGrid, Interaction],
-          options: {
-            view: 'dayGridMonth',
-            events: calendarEvents,
-            eventContent: (info) => {
-              return info.event.title; // Use the aggregated title
-            },
-            dateClick: (info) => {
-              const clickedDate = info.date.toISOString().split('T')[0];
-              const eventsOnThisDate = calendarEvents.filter(event => event.start.startsWith(clickedDate));
-              setSelectedDate(clickedDate);
-              setEventsForSelectedDate(eventsOnThisDate);
-            },
-          },
-        },
-    });
-
-    return () => {
-      ec.destroy();
-    };
-  }
-  }, [calendarEvents]);*/
-
-  /*useEffect(() => {
-
-    const getAllEvents = async () => {
-      try {
-        console.log("fetching adminGetEvents");
-        const fetchedEvents = await adminGetEvents();
-        console.log("fetchedEvents: ", fetchedEvents);
-      } catch (e) {
-        console.error("Get All Eventgs Error:", e);
-      }
-    };
-
-    const fetchAllEvents = async () => {
-
-      try {
-        const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
-        console.log("fetching fetchEvents");
-        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
-        console.log("priorEvents: ", priorEvents);
-        console.log("registeredUpcoming: ", registeredUpcoming);
-        console.log("upcoming: ", upcoming);
-      } catch (e) {
-        console.error("Fetch Events Error:", e);
-      }
-    };
-
-    getAllEvents(); // Call the async function
-    fetchAllEvents(); // Call the async function
-  }, []);*/
-
+  const [registeredEvents, setRegisteredEvents] = useState<CustomEvent[]>([]);
+  const [regUpcomingEvents, setRegUpcomingEvents] = useState<CustomEvent[]>([]);
+  const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
+  const auth = useAuth();
 
   useEffect(() => {
-    /*const auth_id = "zQqGZmCdYRdpXxtySUSovtY1C3J2";
-    const fetchAndSetEvents = async () => {
-      console.log("Fetching events...");
-      try {
-        const [priorEvents, registeredUpcoming, upcoming] = await fetchEvents(auth_id);
-        console.log("Fetched Events: ", priorEvents, registeredUpcoming, upcoming);
-        const allEvents = [...priorEvents, ...registeredUpcoming, ...upcoming];
-        const mappedEvents: CalendarEvent[] = allEvents.map((event: CalendarEvent) => ({
-            id: event.id,
-            title: event.title,
-            start: event.start,
-            end: event.end,
-            description: event.description,
-        }));
-        setCalendarEvents(mappedEvents);
-      } catch (error) {
-        console.error("Fetch Events Error:", error);
-      }
-    };
+    const fetchAllEvents = async () => {
 
-    fetchAndSetEvents();*/
+      if(!auth.loading){
+        /*console.log("Auth user: ", auth.user);*/
+        const await_response = await fetchEvents(auth.user.uid);
+        /*console.log("Await response: ", await_response);
+        console.log("Await upcoming array: ", await_response[2]);*/
+        setEvents(await_response[2]);
+        setRegUpcomingEvents(await_response[1]);
+      }
+    }
+
+    fetchAllEvents();
+  }, [auth.loading]);
+
+  useEffect(() => {
 
     if (calendarRef.current) {
-      const customEvents: CustomEvent[] = [
-  {
-    id: '1',
-    title: 'Beginner Tennis Session',
-    date: '2024-10-27', // Updated to the first day of the upcoming week
-    startTime: '10:00',
-    endTime: '12:00',
-    description: 'A beginner-level tennis session for new players.',
-    participants: [
-      {
-        email: 'participant1@example.com',
-        mainId: '123',
-        mainFirstName: 'John',
-        mainLastName: 'Doe',
-        otherMembers: [
-          { firstName: 'Jane', lastName: 'Doe' },
-          { firstName: 'Jake', lastName: 'Smith' }
-        ],
-      },
-    ],
-    slots: 10,
-  },
-  {
-    id: '2',
-    title: 'Advanced Tennis Match',
-    date: '2024-10-28',
-    startTime: '14:00',
-    endTime: '16:00',
-    description: 'A competitive match for advanced tennis players.',
-    participants: [
-      {
-        email: 'participant2@example.com',
-        mainId: '456',
-        mainFirstName: 'Emily',
-        mainLastName: 'Davis',
-        otherMembers: [{ firstName: 'Sam', lastName: 'Brown' }],
-      },
-    ],
-    slots: 8,
-  },
-  {
-    id: '3',
-    title: 'Coaching Tennis Lessons',
-    date: '2024-10-28',
-    startTime: '18:00',
-    endTime: '20:00',
-    description: 'A group learning session for advanced tennis players.',
-    participants: [
-      {
-        email: 'participant3@example.com',
-        mainId: '458',
-        mainFirstName: 'John',
-        mainLastName: 'Davis',
-        otherMembers: [{ firstName: 'Sam', lastName: 'Smith' }],
-      },
-    ],
-    slots: 6,
-  },
-  {
-    id: '4',
-    title: 'Morning Pickleball Session',
-    date: '2024-10-29',
-    startTime: '09:00',
-    endTime: '10:30',
-    description: 'A casual pickleball session for all skill levels.',
-    participants: [
-      {
-        email: 'participant4@example.com',
-        mainId: '789',
-        mainFirstName: 'Alice',
-        mainLastName: 'Johnson',
-        otherMembers: [{ firstName: 'Bob', lastName: 'Smith' }],
-      },
-    ],
-    slots: 12,
-  },
-  {
-    id: '5',
-    title: 'Afternoon Tennis Match',
-    date: '2024-10-29',
-    startTime: '13:00',
-    endTime: '15:00',
-    description: 'A fun match for intermediate tennis players.',
-    participants: [
-      {
-        email: 'participant5@example.com',
-        mainId: '790',
-        mainFirstName: 'David',
-        mainLastName: 'Wilson',
-        otherMembers: [{ firstName: 'Charlie', lastName: 'Lee' }],
-      },
-    ],
-    slots: 10,
-  },
-  {
-    id: '6',
-    title: 'Pickleball Practice',
-    date: '2024-10-30',
-    startTime: '16:00',
-    endTime: '18:00',
-    description: 'A practice session for pickleball players at all levels.',
-    participants: [
-      {
-        email: 'participant6@example.com',
-        mainId: '791',
-        mainFirstName: 'Eve',
-        mainLastName: 'Garcia',
-        otherMembers: [{ firstName: 'Frank', lastName: 'Martinez' }],
-      },
-    ],
-    slots: 8,
-  },
-  {
-    id: '7',
-    title: 'Tennis Clinic',
-    date: '2024-10-31',
-    startTime: '10:00',
-    endTime: '12:00',
-    description: 'A tennis clinic to help players improve their techniques.',
-    participants: [
-      {
-        email: 'participant7@example.com',
-        mainId: '792',
-        mainFirstName: 'George',
-        mainLastName: 'King',
-        otherMembers: [{ firstName: 'Helen', lastName: 'Smith' }],
-      },
-    ],
-    slots: 15,
-  },
-  {
-    id: '8',
-    title: 'Pickleball Doubles Tournament',
-    date: '2024-11-01',
-    startTime: '14:00',
-    endTime: '17:00',
-    description: 'A doubles tournament for advanced pickleball players.',
-    participants: [
-      {
-        email: 'participant8@example.com',
-        mainId: '793',
-        mainFirstName: 'Ivy',
-        mainLastName: 'Taylor',
-        otherMembers: [{ firstName: 'Jack', lastName: 'Brown' }],
-      },
-    ],
-    slots: 16,
-  },
-  {
-    id: '12',
-    title: 'Pickleball Friendly Round Robin',
-    date: '2024-11-01',
-    startTime: '17:00',
-    endTime: '18:00',
-    description: 'A beginner-friendly low-competitive tournament.',
-    participants: [
-      {
-        email: 'participant8@example.com',
-        mainId: '793',
-        mainFirstName: 'Ivy',
-        mainLastName: 'Taylor',
-        otherMembers: [{ firstName: 'Jack', lastName: 'Brown' }],
-      },
-    ],
-    slots: 16,
-  },
-  {
-    id: '9',
-    title: 'Beginner Tennis Workshop',
-    date: '2024-10-26',
-    startTime: '09:00',
-    endTime: '11:00',
-    description: 'A workshop for beginners to learn tennis basics.',
-    participants: [
-      {
-        email: 'participant9@example.com',
-        mainId: '794',
-        mainFirstName: 'Kathy',
-        mainLastName: 'Moore',
-        otherMembers: [{ firstName: 'Larry', lastName: 'Jones' }],
-      },
-    ],
-    slots: 20,
-  },
-];
-
-
+      
       // Transform CustomEvent to the structure that the Calendar library expects
-      const calendarEvents: CalendarEvent[] = [];
+      const calendarEvents: CustomEvent[] = [];
       const eventCountByDate: { [key: string]: number } = {};
-      const eventsByDate: { [key: string]: CalendarEvent[]} = {};
+      const eventsByDate: { [key: string]: CustomEvent[]} = {};
 
-      const today = new Date().toISOString().split('T')[0];
-      const oneWeekLater = new Date();
-      oneWeekLater.setDate(oneWeekLater.getDate() + 7);
+      const now = new Date();
+      const utcOffset = now.getTimezoneOffset() * 60000; // Convert timezone offset to milliseconds
+      const estOffset = 5 * 60 * 60000; // Offset EST is UTC-5 hours
+      
+      // Get the time in EST by subtracting the difference from UTC
+      const estDate = new Date(now.getTime() - utcOffset + estOffset);
+      
+      // Format the date in EST as YYYY-MM-DD
+      const year = estDate.getFullYear();
+      const month = String(estDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(estDate.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setTodayInEST(formattedDate);  // Set the formatted date in state
+      console.log("todayInEST: ", todayInEST);
 
-      const todayEventList: CalendarEvent[] = [];
-      const upcomingEventList: CalendarEvent[] = [];
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+
+      const todayEventList: CustomEvent[] = [];
+      const upcomingEventList: CustomEvent[] = [];
+      const registeredEventList: CustomEvent[] = [];
 
 
       // Count events per date and create aggregated event entries
-      customEvents.forEach(event => {
+      /*console.log("events: ", events);*/
+      events.forEach(event => {
         const dateKey = event.date; // Get the date (YYYY-MM-DD)
         eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
-        let eventObj = {
+        let eventObj: CustomEvent = {
           id: '',
           title: '',
           start: '',
           end: '',
           description: '',
+          date: '',
+          participants: [],
+          maxParticipants: 0,
+          maxVolunteers: 0,
         };
         if(!eventsByDate[dateKey]) {
           eventsByDate[dateKey] = [];
@@ -358,23 +124,59 @@ const MyCalendar: React.FC = () => {
             eventObj = {
             id: event.id,
             title: event.title,
-            start: `${event.date}T${event.startTime}`,
-            end: `${event.date}T${event.endTime}`,
+            start: `${event.date}T${event.start}`,
+            end: `${event.date}T${event.end}`,
             description: event.description,
+            date: event.date,
+            participants: event.participants,
+            maxParticipants: event.maxParticipants,
+            maxVolunteers: event.maxVolunteers,
           };
         }
+        /*console.log("eventObj: ", eventObj);*/
         eventsByDate[dateKey].push(eventObj);
-        if(dateKey === today){
+        if(dateKey === todayInEST){
           todayEventList.push(eventObj);
         }
 
         const eventDate = new Date(dateKey);
-        console.log("eventDate: ", eventDate);
-        console.log("oneWeekLate: ", oneWeekLater);
-        if(eventDate > new Date(today) && eventDate <= oneWeekLater){
+        if (eventDate.getFullYear() === currentYear && eventDate.getMonth() === currentMonth) {
           upcomingEventList.push(eventObj);
-          console.log("upcomingEventList: ", upcomingEventList);
         }
+      });
+
+      // Aggregate Registered Upcoming Events
+      regUpcomingEvents.forEach(event => {
+        const dateKey = event.date; // Get the date (YYYY-MM-DD)
+        eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
+        let eventObj: CustomEvent = {
+          id: '',
+          title: '',
+          start: '',
+          end: '',
+          description: '',
+          date: '',
+          participants: [],
+          maxParticipants: 0,
+          maxVolunteers: 0,
+        };
+        if(!eventsByDate[dateKey]) {
+          eventsByDate[dateKey] = [];
+        }
+        if(event.id){
+            eventObj = {
+            id: event.id,
+            title: event.title,
+            start: `${event.date}T${event.start}`,
+            end: `${event.date}T${event.end}`,
+            description: event.description,
+            date: event.date,
+            participants: event.participants,
+            maxParticipants: event.maxParticipants,
+            maxVolunteers: event.maxVolunteers,
+          };
+        }
+        registeredEventList.push(eventObj);
       });
 
       // Create aggregated events for the calendar
@@ -385,12 +187,23 @@ const MyCalendar: React.FC = () => {
           start: `${date}T00:00`, // Set a dummy start time
           end: `${date}T23:59`, // Set a dummy end time
           description: 'temporary description',
+          date: date,
+          participants: [],
+          maxParticipants: 0,
+          maxVolunteers: 0,
         });
       });
+      
 
+      
       setTodayEvents(todayEventList);
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+      setRegisteredEvents(registeredEventList);
+
+      console.log("todayEvents: ", todayEvents);
+      /*console.log("upcomingEvents: ", upcomingEvents);
+      console.log("calendarEvents: ", calendarEvents);*/
 
       // Initialize the calendar
       const ec = new Calendar({
@@ -416,21 +229,23 @@ const MyCalendar: React.FC = () => {
         ec.destroy();
       };
     }
-  }, []);
+  }, [events, regUpcomingEvents]);
 
   return (
     <div>
-      {/*div for registered events container*/}
-      <div className = {styles.registeredContainer}>
-        <div className = {styles.eventRegisteredBox}>
+      {/* div for registered events container */}
+      <div className={styles.registeredContainer}>
+        <div className={styles.eventRegisteredBox}>
           <p>Events Registered</p>
         </div>
-        {/* add registered events in here*/}
+        <RegisteredEvents events={registeredEvents}/>
       </div>
+
       {/*div for new events header*/}
       <div className = {styles.eventNewBox}>
         <p>New Events:</p>
       </div>
+
       {/*div for calendar*/}
       <div ref={calendarRef} className = {styles.calendarDiv}></div>
 
@@ -440,7 +255,7 @@ const MyCalendar: React.FC = () => {
       {/* div for upcoming events container */}
       <div className = {styles.upcomingContainer}>
         <div className = {styles.upcomingBox}>
-          <h3>Upcoming Events</h3>
+          <p>Upcoming Events</p>
         </div>
         <UpcomingEvents events={selectedDate ? eventsForSelectedDate : upcomingEvents} />
       </div>

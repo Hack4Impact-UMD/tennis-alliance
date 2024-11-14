@@ -26,8 +26,8 @@ type CustomEvent = {
   title: string;
   // yyyy-mm-dd format
   date: string;
-  startTime: string;
-  endTime: string;
+  start: string;
+  end: string;
   description: string;
   participants: {
     email: string;
