@@ -57,9 +57,11 @@ const MyCalendar: React.FC = () => {
     const fetchAllEvents = async () => {
       if (!auth.loading) {
         const await_response = await fetchEvents(auth.user.uid);
+        console.log("await_response[2]: ", await_response)
         const combinedEvents = [...await_response[0], ...await_response[2]];
         setPriorEvents(await_response[0]);
         setEvents(combinedEvents);
+        setUpcomingEvents(await_response[2]);
         setRegUpcomingEvents(await_response[1]);
       }
     };
@@ -145,9 +147,13 @@ const MyCalendar: React.FC = () => {
         }
 
         const eventDate = new Date(dateKey);
-        if (eventDate.getFullYear() === currentYear && eventDate.getMonth() === currentMonth) {
+        const todayDate = new Date(todayInEST);
+
+        // Add events that are today or in the future
+        if (eventDate >= todayDate) {
           upcomingEventList.push(eventObj);
         }
+
       });
 
       // Aggregate Registered Upcoming Events
@@ -203,6 +209,7 @@ const MyCalendar: React.FC = () => {
       setTodayEvents(todayEventList);
       upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       setUpcomingEvents(upcomingEventList);
+      console.log("upcomingEventList: ", upcomingEventList);
       setCalendarEvents(calendarEvents);
       setRegisteredEvents(registeredEventList);
 
