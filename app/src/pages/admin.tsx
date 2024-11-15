@@ -1,14 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import os from "os";
-import { users } from "@/tests/mock";
+//import { users } from "@/tests/mock";
 import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers } from "@/backend/FirestoreCalls";
 import { getUserWithId } from "@/backend/FirestoreCalls";
-import { set } from "date-fns";
+//import { set } from "date-fns";
 
 const FILTERS = {
     "All Users": "all",
@@ -23,6 +23,7 @@ const AdminDashboard = () => {
     const [download, setDownload] = useState("");
     const downloadLink = useRef<HTMLAnchorElement>(null);
     const [eventData, setEventData] = useState<any[]>([]);
+    const [userData, setUserData] = useState<any[]>([]);
     const [selectedID, setSelectedID] = useState<string | null>(null);
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
 
@@ -41,7 +42,21 @@ const AdminDashboard = () => {
     }, []);
 
     useEffect(() => {
-        const filteredData = users.filter(
+        const getUsers = async () => {
+            try {
+                const users = await adminGetUsers();
+                setUserData(users);
+                console.log("Users:", users);
+            } catch (error) {
+                console.error("Failed to fetch users:", error);
+            }
+        };
+
+        getUsers();
+    }, []);
+
+    useEffect(() => {
+        const filteredData = userData.filter(
             (row) =>
                 (filter === "all" || row.type === filter) &&
                 (search === "" ||
@@ -50,7 +65,7 @@ const AdminDashboard = () => {
                         .includes(search.toLowerCase()))
         );
         setData(filteredData);
-    }, [search, filter]);
+    }, [search, filter, userData]);
 
     useEffect(() => {
         if (download.length > 0) {
@@ -60,8 +75,8 @@ const AdminDashboard = () => {
     }, [download]);
 
     const downloadUsers = async () => {
-        const fields = Object.keys(users[0]);
-        const csv = users.map((user) => Object.values(user).join(","));
+        const fields = Object.keys(userData[0]);
+        const csv = userData.map((user) => Object.values(user).join(","));
         csv.unshift(fields.join(","));
         setDownload(csv.join(os.EOL));
     };
