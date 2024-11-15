@@ -8,6 +8,7 @@ import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
 import { adminGetEvents, adminGetUsers } from "@/backend/FirestoreCalls";
 import { getUserWithId } from "@/backend/FirestoreCalls";
+import { User, CustomEvent } from "@/types";
 //import { set } from "date-fns";
 
 const FILTERS = {
@@ -17,14 +18,14 @@ const FILTERS = {
 };
 
 const AdminDashboard = () => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
     const [download, setDownload] = useState("");
     const downloadLink = useRef<HTMLAnchorElement>(null);
-    const [eventData, setEventData] = useState<any[]>([]);
-    const [userData, setUserData] = useState<any[]>([]);
-    const [selectedID, setSelectedID] = useState<string | null>(null);
+    const [eventData, setEventData] = useState<CustomEvent[]>([]);
+    const [userData, setUserData] = useState<User[]>([]);
+    //const [selectedID, setSelectedID] = useState<string | null>(null); // unused
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const AdminDashboard = () => {
             (row) =>
                 (filter === "all" || row.type === filter) &&
                 (search === "" ||
-                    `${row.first_name} ${row.last_name}`
+                    `${row.firstName} ${row.lastName}`
                         .toLowerCase()
                         .includes(search.toLowerCase()))
         );
@@ -85,7 +86,7 @@ const AdminDashboard = () => {
         return index % 2 == 0 ? "#E4F5E2" : "#FCF7CE";
     };
 
-    const handleSelectEvent = async (event: any) => {
+    const handleSelectEvent = async (event: CustomEvent) => {
         try {
             const participantsData = await Promise.all(
                 event.participants.map(async (participantObj: any) => {

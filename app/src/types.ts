@@ -3,6 +3,7 @@ type User = {
   email: string;
   firstName: string;
   lastName: string;
+  type: string;
   phone: number;
   zip: number;
   notifications: boolean;
