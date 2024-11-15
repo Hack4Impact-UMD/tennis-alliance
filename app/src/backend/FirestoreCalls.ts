@@ -80,6 +80,53 @@ export function createUser(
   });
 }
 
+export function createFamily(
+  email: string,
+  firstName: string,
+  lastName: string,
+  phone: string,
+  zip: string,
+  notifications: boolean,
+  waiver: boolean,
+  children: {
+    childFirstName: string;
+    childLastName: string;
+    childAge: number;
+    childBirthYear: number;
+    childSchool: string;
+  }[],
+  type: string,
+  altName: string,
+  altEmail: string,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const familyCollectionRef = collection(db, "Users");
+
+    addDoc(familyCollectionRef, {
+      email,
+      firstName,
+      lastName,
+      phone: Number(phone),
+      zip: Number(zip),
+      notifications,
+      waiver,
+      altName,
+      altEmail,
+      children,
+      events: [],
+      createdAt: new Date(),
+      type,
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+}
+
+
 export function adminGetEvents(): Promise<CustomEvent[]> {
   return new Promise((resolve, reject) => {
     getDocs(collection(db, "Events"))
