@@ -1,20 +1,14 @@
 import React from "react";
 import styles from "@/styles/today-events.module.css";
-import { type CustomEvent } from "@/types";
-
-interface CalendarEvent {
-    id: string;
-    title: string;
-    start: string; // ISO 8601 string or other compatible date format
-    end: string;
-    description: string;
-}
+import { type CustomEvent, type User } from "@/types";
+import { deleteUserFromEvent } from "@/backend/CloudFunctionsCalls";
 
 interface RegisteredEventsProp {
     events: CustomEvent[];
+    user: User;
 }
 
-export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events }) => {
+export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user }) => {
     // Function to get the correct ordinal suffix for the day
   const getOrdinalSuffix = (day: number) => {
     if (day > 3 && day < 21) return 'th'; // Special case for numbers 11-20
@@ -64,6 +58,11 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events }) => 
                 <h3>{event.title}</h3>
                 <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
                 <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
+                <button className={styles.removeButton} onClick={() => deleteUserFromEvent(
+                  user.auth_id as string, event.id as string
+                )}>
+                  Remove
+                </button>
               </div>
             </div>
           );

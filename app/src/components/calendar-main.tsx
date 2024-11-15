@@ -51,6 +51,7 @@ const MyCalendar: React.FC = () => {
   const [registeredEvents, setRegisteredEvents] = useState<CustomEvent[]>([]);
   const [regUpcomingEvents, setRegUpcomingEvents] = useState<CustomEvent[]>([]);
   const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
+  const [uid, setUid] = useState<string>('');
   const auth = useAuth();
 
   useEffect(() => {
@@ -252,7 +253,7 @@ const MyCalendar: React.FC = () => {
             <p>Nothing planned for {formatDate(displayedDate)}</p>
           </div>
         </div>
-        <RegisteredEvents events={registeredEvents}/>
+        {user && <RegisteredEvents events={registeredEvents} user={user} />}
       </div>
 
       <div className={styles.eventNewBox}>
