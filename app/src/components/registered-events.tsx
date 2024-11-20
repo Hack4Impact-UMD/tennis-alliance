@@ -1,6 +1,7 @@
 import React from "react";
-import Image from "next/image";
-import TennisBalls from "@/assets/tennis_balls.png";import styles from "@/styles/registered-events.module.css";
+import Arrow from "@/assets/down_arrow.png";
+import Racquet from "@/assets/tennis_racquet.png";
+import Image from "next/image";import TennisBalls from "@/assets/tennis_balls.png";import styles from "@/styles/registered-events.module.css";
 import { type CustomEvent } from "@/types";
 
 interface RegisteredEventsProp {
@@ -35,7 +36,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displ
   };
 
   return (
-    <div className={styles.todayEventsContainer}>
+    <div className={styles.registeredEventsContainer}>
       {events.length > 0 ? (
         events.map(event => {
           const eventDate = new Date(event.start);
@@ -49,10 +50,22 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displ
                 <p>{formatDate(event.start)}</p>
                 <p>Volunteer</p>
               </div>
+
+              {/* Divider line */}
+              <div className={styles.divider}></div>
+
               <div className={styles.eventInformation}>
-                <h3>{event.title}</h3>
-                <p>Time: {formatTime(event.start)}</p>
-                <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                <div className={styles.titleButtonContainer}>
+                  <Image src={Racquet} alt="Racquet" />
+                  <p style={{ display: 'inline' }}>{event.title}</p>
+                  {/* Square button next to event title */}
+                  <Image src = {Arrow} alt = "Arrow"/> 
+                </div>    
+                {/* Center-aligned details */}
+                <div className={styles.eventDetails}>
+                  <p>Time: {formatTime(event.start)}</p>
+                  <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                </div>
               </div>
             </div>
           );
