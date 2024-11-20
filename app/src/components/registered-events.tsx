@@ -35,6 +35,15 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displ
     return `${monthName} ${day}${getOrdinalSuffix(day)}`;
   };
 
+  const getEventBackgroundColor = (role: string) => {
+    if (role === 'Volunteer') {
+      return '#FCF7CE'; // Yellow for volunteer
+    } else if (role === 'Participant') {
+      return '#E4F5E2'; // Light green for participant
+    }
+    return ''; // Default (no background color)
+  };
+
   return (
     <div className={styles.registeredEventsContainer}>
       {events.length > 0 ? (
@@ -45,7 +54,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displ
           const eventDayWithSuffix = `${eventDay}${getOrdinalSuffix(eventDay)}`;
 
           return (
-            <div key={event.id} className={styles.individualEvent}>
+            <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p>
                 <p>Volunteer</p>

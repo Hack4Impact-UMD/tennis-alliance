@@ -49,10 +49,13 @@ const MyCalendar: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [displayedDate, setDisplayedDate] = useState<string>('');  // State for the displayed date
   const [registeredEvents, setRegisteredEvents] = useState<CustomEvent[]>([]);
+  const [filteredRegisteredEvents, setFilteredRegisteredEvents] = useState<CustomEvent[]>([]);
   const [regUpcomingEvents, setRegUpcomingEvents] = useState<CustomEvent[]>([]);
   const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
   const [isOutsideClick, setIsOutsideClick] = useState<boolean>(false);  // Flag for outside click
   const [outsideClickFlag, setOutsideClickFlag] = useState<boolean>(false);  // Flag for detecting clicks outside
+  const registeredEventListRef = useRef<CustomEvent[]>([]); // Persistent across renders
+
 
   const auth = useAuth();
 
@@ -63,10 +66,9 @@ const MyCalendar: React.FC = () => {
         const combinedEvents = [...await_response[0], ...await_response[2]];
         setPriorEvents(await_response[0]);
         setEvents(combinedEvents);
-        console.log("combinedEvents", combinedEvents);
         setUpcomingEvents(await_response[2]);
         setRegUpcomingEvents(await_response[1]);
-        console.log("setRegUpcomingEvents", await_response[1]);
+        console.log("regUpcomingEvents: ", await_response[1]);
       }
     };
 
@@ -122,6 +124,19 @@ const MyCalendar: React.FC = () => {
       setIsOutsideClick(false); // Reset the flag
     }
   }, [isOutsideClick]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      /*const filteredEvents = regUpcomingEvents.filter(
+        (event) => event.date === selectedDate
+      );
+      setFilteredRegisteredEvents(filteredEvents);
+      setRegisteredEvents(filteredEvents);*/
+      console.log("registeredEvents: ", registeredEvents);
+    } else {
+      setRegisteredEvents(registeredEventListRef.current);
+    }
+  }, [selectedDate, registeredEvents]);
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -254,8 +269,10 @@ const MyCalendar: React.FC = () => {
       upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+      registeredEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      registeredEventListRef.current = registeredEventList;
       setRegisteredEvents(registeredEventList);
-      console.log("registeredEventList", registeredEventList);
+      console.log("registeredEventList: ", registeredEventList);
 
       const ec = new Calendar({
         target: calendarRef.current,
@@ -267,7 +284,9 @@ const MyCalendar: React.FC = () => {
             eventContent: (info) => info.event.title,
             dateClick: (info) => {
               const clickedDate = info.date.toISOString().split('T')[0];
+              console.log("clickedDate: ", clickedDate);
               setSelectedDate(clickedDate);
+              console.log("selectedDate: ", selectedDate);
               setEventsForSelectedDate(eventsByDate[clickedDate] || []);
             },
           },
