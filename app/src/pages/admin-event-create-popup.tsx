@@ -32,6 +32,9 @@ const Popup = () => {
     const [maxParticipants, setMaxParticipants] = useState(0);
     const [maxVolunteers, setMaxVolunteers] = useState(0);
     const [description, setDescription] = useState("");
+    const [isRepeatWeekly, setIsRepeatWeekly] = useState(false);
+    const [repeatStartDate, setRepeatStartDate] = useState(new Date());
+    const [repeatEndDate, setRepeatEndDate] = useState(new Date());
 
     /* PopUp Button */
     const openPopup = () => setVisible(true);
@@ -41,26 +44,71 @@ const Popup = () => {
         setEventName("");
         setStartTime({ hours: "10", minutes: "30", period: "AM" });
         setEndTime({ hours: "1", minutes: "30", period: "PM" });
-    };
-
-    const submitEvent = () => {
-        // Handle the submission logic
-        closePopup();
-        adminCreateEvent(
-            eventName,
-            startTime,
-            endTime,
-            selectedDay,
-            maxParticipants,
-            maxVolunteers,
-            description
-        );
-        setStartTime({ hours: "10", minutes: "30", period: "AM" });
-        setEndTime({ hours: "1", minutes: "30", period: "PM" });
         setMaxParticipants(0);
         setMaxVolunteers(0);
         setDescription("");
-        setEventName("");
+        setIsRepeatWeekly(false);
+        setRepeatStartDate(new Date());
+        setRepeatEndDate(new Date());
+    };
+
+    const submitEvent = () => {
+        if (isRepeatWeekly) {
+            const start = new Date(repeatStartDate);
+            const end = new Date(repeatEndDate);
+
+            if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                return;
+            }
+
+            const events = [];
+            let currentEventDate = new Date(start);
+
+            while (currentEventDate <= end) {
+                events.push(new Date(currentEventDate));
+                const nextEventDate = new Date(currentEventDate);
+                nextEventDate.setDate(currentEventDate.getDate() + 7);
+
+                if (nextEventDate > end) {
+                    break;
+                }
+                currentEventDate = nextEventDate;
+            }
+
+            events.forEach((date) => {
+                adminCreateEvent(
+                    eventName,
+                    startTime,
+                    endTime,
+                    date,
+                    maxParticipants,
+                    maxVolunteers,
+                    description
+                );
+            });
+        } else {
+            adminCreateEvent(
+                eventName,
+                startTime,
+                endTime,
+                selectedDay,
+                maxParticipants,
+                maxVolunteers,
+                description
+            );
+        }
+
+        closePopup();
+    };
+
+    const handleRepeatStartDateChange = (day: Date) => setRepeatStartDate(day);
+    const handleRepeatEndDateChange = (day: Date) => setRepeatEndDate(day);
+
+    const customModifiersStyles = {
+        selected: {
+            color: "white",
+            backgroundColor: "#000C79",
+        },
     };
 
     /* TimePicker */
@@ -306,6 +354,36 @@ const Popup = () => {
                                 min={0}
                                 onChange={(e) => handleVolunteersChange(parseInt(e.target.value))}
                             />
+                        </div>
+                        <div className={styles.repeatSection}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={isRepeatWeekly}
+                                    onChange={(e) =>
+                                        setIsRepeatWeekly(e.target.checked)
+                                    }
+                                />
+                                Repeat Weekly
+                            </label>
+                            {isRepeatWeekly && (
+                                <div className={styles.repeatDates}>
+                                    <p>Repeat Start Date:</p>
+                                    <DayPicker
+                                        mode="single"
+                                        selected={repeatStartDate}
+                                        onDayClick={handleRepeatStartDateChange}
+                                        modifiersStyles={customModifiersStyles}
+                                    />
+                                    <p>Repeat End Date:</p>
+                                    <DayPicker
+                                        mode="single"
+                                        selected={repeatEndDate}
+                                        onDayClick={handleRepeatEndDateChange}
+                                        modifiersStyles={customModifiersStyles}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div>
                             <div className={styles.title}>Description:</div>
