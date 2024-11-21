@@ -44,6 +44,21 @@ export function updateUser(user: User): Promise<void> {
   });
 }
 
+export function adminGetUsers(): Promise<User[]> {
+  return new Promise((resolve, reject) => {
+    getDocs(collection(db, "Users"))
+      .then((querySnapshot) => {
+        const users: User[] = querySnapshot.docs.map(
+          (doc) => doc.data() as User
+        );
+        resolve(users);
+      })
+      .catch((e) => {
+        reject(e);
+      });
+  });
+}
+
 export function createUser(
   email: string,
   firstName: string,

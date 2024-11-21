@@ -1,14 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import os from "os";
-import { users } from "@/tests/mock";
+//import { users } from "@/tests/mock";
 import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents } from "@/backend/FirestoreCalls";
-import { getUserWithId } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
+import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/config";
+
 
 const FILTERS = {
     "All Users": "all",
@@ -17,13 +20,14 @@ const FILTERS = {
 };
 
 const AdminDashboard = () => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<User[]>([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
     const [download, setDownload] = useState("");
     const downloadLink = useRef<HTMLAnchorElement>(null);
-    const [eventData, setEventData] = useState<any[]>([]);
-    const [selectedID, setSelectedID] = useState<string | null>(null);
+    const [eventData, setEventData] = useState<CustomEvent[]>([]);
+    const [userData, setUserData] = useState<User[]>([]);
+    // const [selectedID, setSelectedID] = useState<string | null>(null);
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
 
     useEffect(() => {
@@ -40,17 +44,31 @@ const AdminDashboard = () => {
         fetchEvents();
     }, []);
 
+    useEffect(() =>  {
+        const getUsers = async () => {
+            try {
+                const users = await adminGetUsers();
+                setUserData(users);
+                console.log("Users:", users);
+            } catch (error) {
+                console.error("Failed to fetch users:", error);
+            }
+        };
+
+        getUsers();
+    }, []);
+
     useEffect(() => {
-        const filteredData = users.filter(
+        const filteredData = userData.filter(
             (row) =>
                 (filter === "all" || row.type === filter) &&
                 (search === "" ||
-                    `${row.first_name} ${row.last_name}`
+                    `${row.firstName} ${row.lastName}`
                         .toLowerCase()
                         .includes(search.toLowerCase()))
         );
         setData(filteredData);
-    }, [search, filter]);
+    }, [search, filter, userData]);
 
     useEffect(() => {
         if (download.length > 0) {
@@ -60,17 +78,34 @@ const AdminDashboard = () => {
     }, [download]);
 
     const downloadUsers = async () => {
-        const fields = Object.keys(users[0]);
-        const csv = users.map((user) => Object.values(user).join(","));
+        const fields = Object.keys(userData);
+        const csv = userData.map((user) => Object.values(user).join(","));
         csv.unshift(fields.join(","));
         setDownload(csv.join(os.EOL));
+    };
+
+    const sendEmailtoUser = (user: User) => {
+        return new Promise((resolve, reject) => {
+            if (user.email) {
+                const sendEmailCloud = httpsCallable(functions, "sendEmail");
+                sendEmailCloud({
+                    text: `Sending test email to ${user.firstName} ${user.lastName}`,
+                    bcc: [user.email],
+                    reason: "Test Email",
+                }).catch((error) => {
+                    console.error("Failed to send email:", error);
+                    reject(error);
+                });
+                console.log("Sent email to ", user.email);
+            }
+        });
     };
 
     const getRowColor = (index: number): string => {
         return index % 2 == 0 ? "#E4F5E2" : "#FCF7CE";
     };
 
-    const handleSelectEvent = async (event: any) => {
+    const handleSelectEvent = async (event: CustomEvent) => {
         try {
             const participantsData = await Promise.all(
                 event.participants.map(async (participantObj: any) => {
@@ -146,7 +181,7 @@ const AdminDashboard = () => {
                         <span>{row.email}</span>
                         <span>{row.type}</span>
                         <button>
-                            <Image src={Email} alt="mail" />
+                            <Image src={Email} alt="mail" onClick={() => sendEmailtoUser(row)} />
                         </button>
                         <button>
                             <Image src={Trash} alt="delete" />
