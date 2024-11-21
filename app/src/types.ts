@@ -13,6 +13,9 @@ type User = {
   }[];
   children?: Children[];
   adults?: { name: string; email: string }[];
+  waiver: boolean;
+  createdAt: Date;
+  type: string;
 };
 
 type Children = {
