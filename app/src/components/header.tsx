@@ -54,17 +54,17 @@ const Header = () => {
                     <Link href="/registration" onClick={toggleMenu}>
                         Registration
                     </Link>
-                    <Link href="/events" onClick={toggleMenu}>
-                        Events
-                    </Link>
                     <Link href="/dashboard" onClick={toggleMenu}>
                         Dashboard
+                    </Link>
+                    <Link href="/admin" onClick={toggleMenu}>
+                        Admin Dashboard
                     </Link>
                     <Link href="/settings" onClick={toggleMenu}>
                         Settings
                     </Link>
-                    <Link href="/registration" onClick={toggleMenu}>
-                        Sign Out
+                    <Link href="/login" onClick={toggleMenu}>
+                        Sign In
                     </Link>
                     <p>Information</p>
                     <Link href={base}>Home</Link>
@@ -73,9 +73,6 @@ const Header = () => {
                         Tennis Center
                     </Link>
                     <Link href={`${base}/programs`}>Programs and Events</Link>
-                    <Link href={`${base}/outreach`}>Outreach</Link>
-                    <Link href={`${base}/support`}>Support</Link>
-                    <Link href={`${base}/contact-us`}>Contact Us</Link>
                 </div>
                 {toggleNav && (
                     <div className={classes.background} onClick={toggleMenu} />
