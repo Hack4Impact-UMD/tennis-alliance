@@ -9,7 +9,7 @@ import Popup from "./admin-event-create-popup";
 import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
 import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
-
+import { useAuth } from "@/auth/AuthProvider";
 
 const FILTERS = {
     "All Users": "all",
@@ -18,6 +18,7 @@ const FILTERS = {
 };
 
 const AdminDashboard = () => {
+    const auth = useAuth();
     const [data, setData] = useState<User[]>([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
@@ -175,7 +176,7 @@ const AdminDashboard = () => {
                 <div className={styles.buttons}>
                     <button onClick={downloadUsers}>Export Users</button>
 
-                    <button><a href={`mailto:tennisalliancemail@gmail.com?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>
+                    <button><a href={`mailto:${auth.user.email}?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>
                     <a
                         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
                             download
