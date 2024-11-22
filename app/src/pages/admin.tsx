@@ -9,8 +9,6 @@ import Popup from "./admin-event-create-popup";
 import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
 import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/config";
 
 
 const FILTERS = {
@@ -29,6 +27,7 @@ const AdminDashboard = () => {
     const [userData, setUserData] = useState<User[]>([]);
     // const [selectedID, setSelectedID] = useState<string | null>(null);
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
+    const [allEmails, setAllEmails] = useState("");
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -68,6 +67,7 @@ const AdminDashboard = () => {
                         .includes(search.toLowerCase()))
         );
         setData(filteredData);
+        setAllEmails(filteredData.map((user) => user.email).join(","));
     }, [search, filter, userData]);
 
     useEffect(() => {
@@ -82,23 +82,6 @@ const AdminDashboard = () => {
         const csv = userData.map((user) => Object.values(user).join(","));
         csv.unshift(fields.join(","));
         setDownload(csv.join(os.EOL));
-    };
-
-    const sendEmailtoUser = (user: User) => {
-        return new Promise((resolve, reject) => {
-            if (user.email) {
-                const sendEmailCloud = httpsCallable(functions, "sendEmail");
-                sendEmailCloud({
-                    text: `Sending test email to ${user.firstName} ${user.lastName}`,
-                    bcc: [user.email],
-                    reason: "Test Email",
-                }).catch((error) => {
-                    console.error("Failed to send email:", error);
-                    reject(error);
-                });
-                console.log("Sent email to ", user.email);
-            }
-        });
     };
 
     const getRowColor = (index: number): string => {
@@ -122,6 +105,7 @@ const AdminDashboard = () => {
             );
     
             setData(participantsData.filter(user => user !== null));
+            setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
             setSelectedEventTitle(event.title);
         } catch (error) {
             console.error("Error fetching participants data:", error);
@@ -181,7 +165,7 @@ const AdminDashboard = () => {
                         <span>{row.email}</span>
                         <span>{row.type}</span>
                         <button>
-                            <Image src={Email} alt="mail" onClick={() => sendEmailtoUser(row)} />
+                            <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
                         </button>
                         <button>
                             <Image src={Trash} alt="delete" />
@@ -191,7 +175,7 @@ const AdminDashboard = () => {
                 <div className={styles.buttons}>
                     <button onClick={downloadUsers}>Export Users</button>
 
-                    <button>Message All Participants</button>
+                    <button><a href={`mailto:tennisalliancemail@gmail.com?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>
                     <a
                         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
                             download
