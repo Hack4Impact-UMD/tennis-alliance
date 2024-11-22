@@ -50,7 +50,7 @@ const formatTime = (timeString: string) => {
         events.map(event => (
           <div key={event.id} className={styles.individualEvent}>
             <div className={styles.dateSection}>
-              <p>Today's Events</p>
+              {/*<p>Today's Events</p>*/}
               <p>{`${month} ${dayWithSuffix}`}</p> {/* Display today's date */}
             </div>
 
