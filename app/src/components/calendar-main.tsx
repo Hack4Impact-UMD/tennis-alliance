@@ -209,7 +209,7 @@ const MyCalendar: React.FC = () => {
         const todayDate = new Date(todayInEST);
 
         // Add events that are today or in the future
-        if (eventDate >= todayDate) {
+        if (eventDate >= todayDate && eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear) {
           upcomingEventList.push(eventObj);
         }
 
