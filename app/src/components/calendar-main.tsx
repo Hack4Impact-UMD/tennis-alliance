@@ -328,6 +328,10 @@ const MyCalendar: React.FC = () => {
           <TodayEvents 
             events={todayEvents} 
             user={user}
+            upcomingEvents={upcomingEvents}
+            registeredEvents={registeredEvents}
+            setUpcomingEvents={setUpcomingEvents}
+            setRegisteredEvents={setRegisteredEvents}
           />
         )}
       </div>
@@ -340,6 +344,10 @@ const MyCalendar: React.FC = () => {
           <UpcomingEvents
             events={selectedDate ? eventsForSelectedDate : upcomingEvents}
             user={user}
+            upcomingEvents={upcomingEvents}
+            registeredEvents={registeredEvents}
+            setUpcomingEvents={setUpcomingEvents}
+            setRegisteredEvents={setRegisteredEvents}
           />
         )}
       </div>

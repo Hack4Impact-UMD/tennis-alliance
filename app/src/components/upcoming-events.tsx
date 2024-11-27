@@ -3,15 +3,30 @@ import styles from "@/styles/upcoming-events.module.css";
 import { type CustomEvent, type User} from "@/types";
 import Arrow from "@/assets/down_arrow.png";
 import Racquet from "@/assets/tennis_racquet.png";
+import {addUserToEvent} from '@/backend/CloudFunctionsCalls';
 import Image from "next/image";
 
 interface UpcomingEventsProps {
   events: CustomEvent[];
   user: User;
+  upcomingEvents: CustomEvent[];
+  registeredEvents: CustomEvent[];
+  setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
+  setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
 }
 
-const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
+const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ 
+  events, 
+  user,
+  upcomingEvents,
+  registeredEvents,
+  setUpcomingEvents,
+  setRegisteredEvents, 
+}) => {
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
+  const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
+  const [role, setRole] = React.useState<string>("participant");
+ 
 
   // Function to get the correct ordinal suffix for the day
   const getOrdinalSuffix = (day: number) => {
@@ -58,6 +73,53 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
     return ''; // Default (no background color)
   };
 
+  const handleSubmit = async (eventId: string | undefined) => {
+    if (!user.auth_id) {
+      alert("User authentication ID is missing.");
+      return;
+    }
+    if (!eventId) {
+      alert("Event ID is missing.");
+      return;
+    }
+    console.log("user auth id: ", user.auth_id);
+    console.log("event id: ", eventId);
+    console.log("members: ", selectedMembers.map(member => {
+      const [firstName, lastName] = member.split(' ');
+      return { firstName, lastName };
+    }));
+    try {
+      await addUserToEvent(
+        user.auth_id,
+        eventId,
+        selectedMembers.map(member => {
+          const [firstName, lastName] = member.split(' ');
+          return { firstName, lastName };
+        })
+      );
+      alert("You have successfully registered for the event!");
+ 
+      const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
+      if(eventToRegister) {
+         setUpcomingEvents((prev) => prev.filter((event) => event.id !== eventId));
+         setRegisteredEvents((prev) => [...prev, eventToRegister]);
+      }
+      
+      setExpandedEventId(null);
+      setSelectedMembers([]);
+    } catch (error) {
+      console.error("Error registering for event:", error);
+      alert("There was an error. Please try again.");
+    }
+  };
+ 
+ 
+  const handleCheckboxChange = (memberName: string) => {
+    setSelectedMembers(prev =>
+      prev.includes(memberName) ? prev.filter(name => name !== memberName) : [...prev, memberName]
+    );
+  };
+
   return (
     <div className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
@@ -95,12 +157,24 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
                     <p>Would you like to register as a participant or volunteer?</p>
                     <div className={styles.radioButtonRow}>
                       <label>
-                        <input type="radio" name="role" value="participant" />
-                          Participant
+                        <input
+                          type="radio"
+                          name="role"
+                          value="participant"
+                          checked={role === "participant"}
+                          onChange={() => setRole("participant")}
+                        />
+                        Participant
                       </label>
                       <label>
-                        <input type="radio" name="role" value="volunteer" />
-                          Volunteer
+                        <input
+                          type="radio"
+                          name="role"
+                          value="volunteer"
+                          checked={role === "volunteer"}
+                          onChange={() => setRole("volunteer")}
+                        />
+                        Volunteer
                       </label>
                     </div>
                     <p>Please select the names of the people in your group who will be participating:</p>
@@ -108,20 +182,36 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
                     {/* Dynamic generation of family member checkboxes */}
                     {user.adults?.map((adult, index) => (
                       <label key={`adult-${index}`}>
-                        <input type="checkbox" name={`participant-adult-${index}`} />
+                        <input
+                         type="checkbox"
+                         name={`participant-adult-${index}`}
+                         checked={selectedMembers.includes(adult.name)}
+                         onChange={() => handleCheckboxChange(adult.name)} />
                         {adult.name}
                       </label>
                     ))}
                     {user.children?.map((child, index) => (
                       <label key={`child-${index}`}>
-                        <input type="checkbox" name={`participant-child-${index}`} />
+                        <input
+                         type="checkbox"
+                         name={`participant-child-${index}`}
+                         checked={selectedMembers.includes(`${child.firstName} ${child.lastName}`)}
+                         onChange={() => handleCheckboxChange(`${child.firstName} ${child.lastName}`)}/>
                         {child.firstName} {child.lastName}
                       </label>
                     ))}
                   </div>
                   
                   <div className = {styles.buttonWrapper}>
-                    <button className={styles.submitBtn}>Submit</button>
+                    <button 
+                      className={styles.submitBtn}
+                      onClick={() =>
+                        {
+                          handleSubmit(event.id)
+                        }}
+                    >
+                      Submit
+                    </button>
                   </div>
                 </div>
               )}
