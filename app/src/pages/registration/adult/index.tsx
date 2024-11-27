@@ -1,33 +1,44 @@
-import { createUser } from "@/backend/CloudFunctionsCalls";
+import { createUser } from "@/backend/FirestoreCalls";
 import TennisBackground from "@/components/tennisBackground";
 import { User } from "@/types";
 import { useState } from "react";
 import styles from "../registration.module.css";
 
-const Adult = () => {
-  const [user, setUser] = useState<User>({
-    email: "",
-    firstName: "",
-    lastName: "",
-    phone: 0,
-    zip: 0,
-    notifications: false,
-    events: [],
-  });
-  const handleSubmit = () => {
-    createUser(user)
+const Adult: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [zip, setZip] = useState<string>("");
+  const [notifications, setNotifications] = useState<boolean>(false);
+  const [waiver, setWaiver] = useState<boolean>(false);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log("email:", email);
+    console.log("first name:", firstName);
+    console.log("last name:", lastName);
+    console.log("phone:", phone);
+    console.log("zip:", zip);
+    console.log("notifications:", notifications);
+    console.log("waiver:", waiver);
+
+    createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult")
       .then(() => {
-        console.log("done");
+        console.log("User successfully created");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.error("Error creating user:", err);
+      });
   };
+
   return (
     <div className={styles.container}>
       <TennisBackground
         title="Create an Adult Account"
         subtitle="Please fill out the following sections"
       />
-      <form>
+      <form onSubmit={handleSubmit}>
         <label id="name">Name</label>
         <div>
           <input
@@ -35,6 +46,8 @@ const Adult = () => {
             aria-labelledby="name"
             type="text"
             placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             required
           />
           <input
@@ -42,15 +55,38 @@ const Adult = () => {
             aria-labelledby="name"
             type="text"
             placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             required
           />
         </div>
         <label htmlFor="email">Email</label>
-        <input id="email" type="email" placeholder="Email" required />
+        <input
+          id="email"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <label htmlFor="phone">Phone Number</label>
-        <input id="phone" type="text" placeholder="Phone Number" required />
+        <input
+          id="phone"
+          type="text"
+          placeholder="Phone Number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
         <label htmlFor="zip">Zip Code</label>
-        <input id="zip" type="text" placeholder="Zip Code" required />
+        <input
+          id="zip"
+          type="text"
+          placeholder="Zip Code"
+          value={zip}
+          onChange={(e) => setZip(e.target.value)}
+          required
+        />
         <p>
           Click{" "}
           <a
@@ -66,13 +102,24 @@ const Adult = () => {
           Check the box below to agree to the terms and conditions stated in the
           waiver
         </label>
-        <input id="waiver" type="checkbox" required />
+        <input
+          id="waiver"
+          type="checkbox"
+          checked={waiver}
+          onChange={(e) => setWaiver(e.target.checked)}
+          required
+        />
         <label htmlFor="notification">
           Check the box below to receive occasional notifications about upcoming
           events and tennis community news.
         </label>
-        <input id="notification" type="checkbox" />
-        <button className="button" type="submit" onClick={handleSubmit}>
+        <input
+          id="notification"
+          type="checkbox"
+          checked={notifications}
+          onChange={(e) => setNotifications(e.target.checked)}
+        />
+        <button className="button" type="submit">
           Submit
         </button>
       </form>

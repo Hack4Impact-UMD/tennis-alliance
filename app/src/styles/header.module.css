@@ -22,6 +22,7 @@
     left: 28px;
     width: auto;
     height: 36px;
+    cursor: pointer;
 }
 
 .hamburger.active {
@@ -67,12 +68,13 @@
     font-size: 28px;
 }
 
-.menu > img {
+.menu>img {
     position: fixed;
     top: 36px;
     left: 36px;
     width: 28px;
     height: 28px;
+    cursor: pointer;
 }
 
 .profile {
@@ -83,20 +85,20 @@
     margin-bottom: 32px;
 }
 
-.profile > img {
+.profile>img {
     margin-bottom: 16px;
 }
 
-.profile > p:nth-of-type(1) {
+.profile>p:nth-of-type(1) {
     font-weight: 700;
 }
 
-.menu > p {
+.menu>p {
     margin-bottom: 20px;
     font-weight: 700;
 }
 
-.menu > a {
+.menu>a {
     display: flex;
     align-items: center;
     width: fit-content;
@@ -104,7 +106,7 @@
     font-weight: 500;
 }
 
-.menu > a:hover {
+.menu>a:hover {
     position: relative;
     display: inline-block;
     opacity: 50%;
@@ -127,8 +129,8 @@
         padding: 72px 72px 36px;
     }
 
-    .menu > p,
-    .menu > a {
+    .menu>p,
+    .menu>a {
         margin-bottom: 16px;
         font-size: 24px;
     }
@@ -137,11 +139,11 @@
         margin-bottom: 16px;
     }
 
-    .profile > p {
+    .profile>p {
         font-size: 24px;
     }
 
-    .profile > img {
+    .profile>img {
         width: auto;
         height: 80px;
     }
@@ -153,8 +155,8 @@
         padding: 60px 60px 32px;
     }
 
-    .menu > p,
-    .menu > a {
+    .menu>p,
+    .menu>a {
         margin-bottom: 12px;
         font-size: 22px;
     }
@@ -163,11 +165,11 @@
         margin-bottom: 16px;
     }
 
-    .profile > p {
+    .profile>p {
         font-size: 22px;
     }
 
-    .profile > img {
+    .profile>img {
         width: auto;
         height: 70px;
     }
@@ -179,8 +181,8 @@
         padding: 48px 48px 24px;
     }
 
-    .menu > p,
-    .menu > a {
+    .menu>p,
+    .menu>a {
         margin-bottom: 8px;
         font-size: 18px;
     }
@@ -189,11 +191,11 @@
         margin-bottom: 16px;
     }
 
-    .profile > p {
+    .profile>p {
         font-size: 18px;
     }
 
-    .profile > img {
+    .profile>img {
         width: auto;
         height: 60px;
     }

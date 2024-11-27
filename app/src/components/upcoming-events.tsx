@@ -1,12 +1,16 @@
 import React from 'react';
-import styles from "@/styles/today-events.module.css";
-import { type CustomEvent } from "@/types";
+import styles from "@/styles/upcoming-events.module.css";
+import { type CustomEvent, type User} from "@/types";
+import Arrow from "@/assets/down_arrow.png";
+import Racquet from "@/assets/tennis_racquet.png";
+import Image from "next/image";
 
 interface UpcomingEventsProps {
   events: CustomEvent[];
+  user: User;
 }
 
-const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
+const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
 
   // Function to get the correct ordinal suffix for the day
@@ -45,8 +49,17 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
     return `${monthName} ${day}${getOrdinalSuffix(day)}`;
   };
 
+  const getEventBackgroundColor = (role: string) => {
+    if (role === 'Volunteer') {
+      return '#FCF7CE'; // Yellow for volunteer
+    } else if (role === 'Participant') {
+      return '#E4F5E2'; // Light green for participant
+    }
+    return ''; // Default (no background color)
+  };
+
   return (
-    <div className={styles.todayEventsContainer}>
+    <div className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
         events.map(event => {
           // Extract the date from the event's start time
@@ -56,24 +69,27 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
           const eventDayWithSuffix = `${eventDay}${getOrdinalSuffix(eventDay)}`;
 
           return (
-            <div key={event.id} className={styles.individualEvent}>
+            <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p> {/* Display event's date */}
-                <p>Volunteer</p>
+                <p>Participant</p>
               </div>
+
+              {/* Divider line */}
+              <div className={styles.divider}></div>
+
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
-                  <h3 style={{ display: 'inline' }}>{event.title}</h3>
+                  <Image src={Racquet} alt="Racquet" />
+                  <p style={{ display: 'inline' }}>{event.title}</p>
                   {/* Square button next to event title */}
-                  <button 
-                    className={styles.toggleButton}
-                    onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)}
-                  >
-                  ▼
-                  </button>
+                  <Image src = {Arrow} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
                 </div>                
-                <p>Time: {formatTime(event.start)}</p> {/* Convert and display time in EST */}
-                <p>Slots open: 7 out of 20</p> {/* This should also be dynamic */}
+                {/* Center-aligned details */}
+                <div className={styles.eventDetails}>
+                  <p>Time: {formatTime(event.start)}</p>
+                  <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                </div>
                 {expandedEventId === event.id && (
                   <div className={styles.registrationForm}>
                     <p>Would you like to register as a participant or volunteer?</p>
@@ -89,25 +105,21 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events }) => {
                     </div>
                     <p>Please select the names of the people in your group who will be participating:</p>
                     <div className={styles.checkboxGroup}>
-                      {/*{participants.map((name, index) => (
-                        <label key={index}>
-                          <input type="checkbox" name={`participant-${index}`} />
-                            {name}
-                        </label>
-                      ))}*/}
-                    <label>
-                      <input type = "checkbox" name = "participant-1" />
-                        John Doe
-                    </label>
-                    <label>
-                      <input type = "checkbox" name = "participant-2" />
-                        Jane Doe
-                    </label>
-                    <label>
-                      <input type = "checkbox" name = "participant-3" />
-                        Alex Smith
-                    </label>
+                    {/* Dynamic generation of family member checkboxes */}
+                    {user.adults?.map((adult, index) => (
+                      <label key={`adult-${index}`}>
+                        <input type="checkbox" name={`participant-adult-${index}`} />
+                        {adult.name}
+                      </label>
+                    ))}
+                    {user.children?.map((child, index) => (
+                      <label key={`child-${index}`}>
+                        <input type="checkbox" name={`participant-child-${index}`} />
+                        {child.firstName} {child.lastName}
+                      </label>
+                    ))}
                   </div>
+                  
                   <div className = {styles.buttonWrapper}>
                     <button className={styles.submitBtn}>Submit</button>
                   </div>
