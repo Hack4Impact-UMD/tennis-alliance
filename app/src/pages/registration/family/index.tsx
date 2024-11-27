@@ -1,6 +1,5 @@
 import { createFamily } from "@/backend/FirestoreCalls";
 import TennisBackground from "@/components/tennisBackground";
-import { User } from "@/types";
 import { useState } from "react";
 import styles from "../registration.module.css";
 
@@ -14,12 +13,8 @@ const Family: React.FC = () => {
   const [altEmail, setAltEmail] = useState<string>("");
   const [notifications, setNotifications] = useState<boolean>(false);
   const [waiver, setWaiver] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<boolean>(false);
 
-  const [childFirstName, setChildFirstName] = useState<string>("");
-  const [childLastName, setChildLastName] = useState<string>("");
-  const [childAge, setChildAge] = useState<number | "">("");
-  const [childBirthYear, setChildBirthYear] = useState<number | "">("");
-  const [childSchool, setChildSchool] = useState<string>("");
   const [children, setChildren] = useState<
     { childFirstName: string; childLastName: string; childAge: number | ""; childBirthYear: number | ""; childSchool: string }[]
   >([
@@ -60,7 +55,7 @@ const Family: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-  
+
     createFamily(
       email,
       firstName,
@@ -73,17 +68,16 @@ const Family: React.FC = () => {
         ...child,
         childAge: Number(child.childAge),
         childBirthYear: Number(child.childBirthYear),
-      })), // Use the `children` state
+      })),
       "family",
       altName,
       altEmail
     )
       .then(() => {
-        console.log("Family successfully created");
+        setSuccessMessage(true);
       })
       .catch((err) => console.error("Error creating family:", err));
   };
-  
 
   return (
     <div className={styles.container}>
@@ -163,7 +157,6 @@ const Family: React.FC = () => {
           value={altEmail}
           onChange={(e) => setAltEmail(e.target.value)}
         />
-        <label id="child1_name">Child Name</label>
         {children.map((child, index) => (
           <div key={index}>
             <label id={`child${index}_name`}>Child Name</label>
@@ -265,6 +258,17 @@ const Family: React.FC = () => {
         <button className="button" type="submit">
           Submit
         </button>
+        {successMessage && (
+          <div className={styles.successMessage}>
+            <div>Please check your inbox to set a password.</div>
+            <div>
+              Go to <span></span>
+              <a href="/login" className={styles.loginLink}>
+                login
+              </a>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
