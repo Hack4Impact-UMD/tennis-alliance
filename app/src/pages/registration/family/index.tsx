@@ -60,17 +60,7 @@ const Family: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
-    const children = [
-      {
-        childFirstName,
-        childLastName,
-        childAge: Number(childAge),
-        childBirthYear: Number(childBirthYear),
-        childSchool,
-      },
-    ];
-
+  
     createFamily(
       email,
       firstName,
@@ -79,16 +69,21 @@ const Family: React.FC = () => {
       zip,
       notifications,
       waiver,
-      children,
+      children.map((child) => ({
+        ...child,
+        childAge: Number(child.childAge),
+        childBirthYear: Number(child.childBirthYear),
+      })), // Use the `children` state
       "family",
       altName,
-      altEmail,
+      altEmail
     )
       .then(() => {
         console.log("Family successfully created");
       })
       .catch((err) => console.error("Error creating family:", err));
   };
+  
 
   return (
     <div className={styles.container}>
