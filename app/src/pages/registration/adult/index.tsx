@@ -1,6 +1,5 @@
-import { createUser } from "@/backend/FirestoreCalls";
+import { createUser } from "@/backend/CloudFunctionsCalls";
 import TennisBackground from "@/components/tennisBackground";
-import { User } from "@/types";
 import { useState } from "react";
 import styles from "../registration.module.css";
 
@@ -12,24 +11,18 @@ const Adult: React.FC = () => {
   const [zip, setZip] = useState<string>("");
   const [notifications, setNotifications] = useState<boolean>(false);
   const [waiver, setWaiver] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<boolean>(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("email:", email);
-    console.log("first name:", firstName);
-    console.log("last name:", lastName);
-    console.log("phone:", phone);
-    console.log("zip:", zip);
-    console.log("notifications:", notifications);
-    console.log("waiver:", waiver);
-
-    createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult")
-      .then(() => {
-        console.log("User successfully created");
-      })
-      .catch((err) => {
-        console.error("Error creating user:", err);
-      });
+    // createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult")
+    //   .then(() => {
+    //     setSuccessMessage(true); // Show the success message
+    //   })
+    //   .catch((err) => {
+    //     console.error("Error creating user:", err);
+    //   });
+    setSuccessMessage(true);
   };
 
   return (
@@ -122,6 +115,17 @@ const Adult: React.FC = () => {
         <button className="button" type="submit">
           Submit
         </button>
+        {successMessage && (
+          <div className={styles.successMessage}>
+            <div>Please check your inbox to set a password.</div>
+            <div>
+              Go to <span></span>
+              <a href="/login" className={styles.loginLink}>
+                login
+              </a>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
