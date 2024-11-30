@@ -49,9 +49,14 @@ const MyCalendar: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [displayedDate, setDisplayedDate] = useState<string>('');  // State for the displayed date
   const [registeredEvents, setRegisteredEvents] = useState<CustomEvent[]>([]);
+  const [filteredRegisteredEvents, setFilteredRegisteredEvents] = useState<CustomEvent[]>([]);
   const [regUpcomingEvents, setRegUpcomingEvents] = useState<CustomEvent[]>([]);
   const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
-  const [uid, setUid] = useState<string>('');
+  const [isOutsideClick, setIsOutsideClick] = useState<boolean>(false);  // Flag for outside click
+  const [outsideClickFlag, setOutsideClickFlag] = useState<boolean>(false);  // Flag for detecting clicks outside
+  const registeredEventListRef = useRef<CustomEvent[]>([]); // Persistent across renders
+
+
   const auth = useAuth();
 
   useEffect(() => {
@@ -63,6 +68,7 @@ const MyCalendar: React.FC = () => {
         setEvents(combinedEvents);
         setUpcomingEvents(await_response[2]);
         setRegUpcomingEvents(await_response[1]);
+        console.log("regUpcomingEvents: ", await_response[1]);
       }
     };
 
@@ -78,6 +84,59 @@ const MyCalendar: React.FC = () => {
     };
     fetchUser();
   }, [auth.user]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setOutsideClickFlag(true);  // Set flag to true when clicked outside
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (outsideClickFlag) {
+      setSelectedDate(null);  // Reset selected date when clicking outside
+      setEventsForSelectedDate([]);
+      setDisplayedDate(todayInEST);  // Set displayed date back to today's date
+      setOutsideClickFlag(false);  // Reset the flag after updating the state
+    }
+  }, [outsideClickFlag, todayInEST]);
+
+    useEffect(() => {
+    // Set the displayed date to today if the flag is true
+    if (isOutsideClick) {
+      const now = new Date();
+      const utcOffset = now.getTimezoneOffset() * 60000;
+      const estOffset = 5 * 60 * 60000;
+      const estDate = new Date(now.getTime() - utcOffset + estOffset);
+
+      const year = estDate.getFullYear();
+      const month = String(estDate.getMonth() + 1).padStart(2, '0');
+      const day = String(estDate.getDate()).padStart(2, '0');
+      const todayInEST = `${year}-${month}-${day}`;
+      
+      setDisplayedDate(todayInEST);
+      setIsOutsideClick(false); // Reset the flag
+    }
+  }, [isOutsideClick]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      /*const filteredEvents = regUpcomingEvents.filter(
+        (event) => event.date === selectedDate
+      );
+      setFilteredRegisteredEvents(filteredEvents);
+      setRegisteredEvents(filteredEvents);*/
+      console.log("registeredEvents: ", registeredEvents);
+    } else {
+      setRegisteredEvents(registeredEventListRef.current);
+    }
+  }, [selectedDate, registeredEvents]);
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -210,7 +269,10 @@ const MyCalendar: React.FC = () => {
       upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       setUpcomingEvents(upcomingEventList);
       setCalendarEvents(calendarEvents);
+      registeredEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      registeredEventListRef.current = registeredEventList;
       setRegisteredEvents(registeredEventList);
+      console.log("registeredEventList: ", registeredEventList);
 
       const ec = new Calendar({
         target: calendarRef.current,
@@ -222,7 +284,9 @@ const MyCalendar: React.FC = () => {
             eventContent: (info) => info.event.title,
             dateClick: (info) => {
               const clickedDate = info.date.toISOString().split('T')[0];
+              console.log("clickedDate: ", clickedDate);
               setSelectedDate(clickedDate);
+              console.log("selectedDate: ", selectedDate);
               setEventsForSelectedDate(eventsByDate[clickedDate] || []);
             },
           },
@@ -233,7 +297,7 @@ const MyCalendar: React.FC = () => {
         ec.destroy();
       };
     }
-  }, [events, regUpcomingEvents]);
+  }, [events, regUpcomingEvents, todayInEST, displayedDate]);
 
   useEffect(() => {
     setDisplayedDate(selectedDate || formatDate(new Date().toISOString().split('T')[0]));
@@ -245,15 +309,7 @@ const MyCalendar: React.FC = () => {
         <div className={styles.eventRegisteredBox}>
           <p>Events Registered</p>
         </div>        
-        <div className={styles.noEventsContainer}>
-          <div className={styles.iconContainer}>
-            <Image src={TennisBalls} alt="LogoIcon" width={50} height={50} style={{ borderRadius: '50%' }} />
-          </div>
-          <div className={styles.noEventsText}>
-            <p>Nothing planned for {formatDate(displayedDate)}</p>
-          </div>
-        </div>
-        {user && <RegisteredEvents events={registeredEvents} user={user} />}
+        {user && <RegisteredEvents events={registeredEvents} user={user} displayedDate={displayedDate}/>}
       </div>
 
       <div className={styles.eventNewBox}>
@@ -262,12 +318,19 @@ const MyCalendar: React.FC = () => {
 
       <div ref={calendarRef} className={styles.calendarDiv}></div>
 
-      {user && !selectedDate && (
-        <TodayEvents 
-          events={todayEvents} 
-          user={user}
-        />
-      )}
+      <div className={styles.todayContainer}>
+        {(!selectedDate || selectedDate === todayInEST) && (
+          <div className={styles.todayBox}> 
+            <p>Today's Events</p>
+          </div>
+        )}
+        {user && !selectedDate && (
+          <TodayEvents 
+            events={todayEvents} 
+            user={user}
+          />
+        )}
+      </div>
 
       <div className={styles.upcomingContainer}>
         <div className={styles.upcomingBox}>
