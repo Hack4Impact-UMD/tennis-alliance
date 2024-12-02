@@ -81,7 +81,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
                   <Image src={Racquet} alt="Racquet" />
-                  <p style={{ display: 'inline' }}>{event.title}</p>
+                  <p style={{ display: 'inline' , fontSize:'1.25rem', marginTop:'20px', textAlign:'center'}}>{event.title}</p>
                   {/* Square button next to event title */}
                   <Image src = {Arrow} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
                 </div>                
