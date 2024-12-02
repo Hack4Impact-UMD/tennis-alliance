@@ -1,14 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import os from "os";
-import { users } from "@/tests/mock";
+//import { users } from "@/tests/mock";
 import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents } from "@/backend/FirestoreCalls";
-import { getUserWithId } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
+import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
+import { useAuth } from "@/auth/AuthProvider";
 
 const FILTERS = {
     "All Users": "all",
@@ -17,14 +18,17 @@ const FILTERS = {
 };
 
 const AdminDashboard = () => {
-    const [data, setData] = useState([]);
+    const auth = useAuth();
+    const [data, setData] = useState<User[]>([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
     const [download, setDownload] = useState("");
     const downloadLink = useRef<HTMLAnchorElement>(null);
-    const [eventData, setEventData] = useState<any[]>([]);
-    const [selectedID, setSelectedID] = useState<string | null>(null);
+    const [eventData, setEventData] = useState<CustomEvent[]>([]);
+    const [userData, setUserData] = useState<User[]>([]);
+    // const [selectedID, setSelectedID] = useState<string | null>(null);
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
+    const [allEmails, setAllEmails] = useState("");
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -40,17 +44,32 @@ const AdminDashboard = () => {
         fetchEvents();
     }, []);
 
+    useEffect(() =>  {
+        const getUsers = async () => {
+            try {
+                const users = await adminGetUsers();
+                setUserData(users);
+                console.log("Users:", users);
+            } catch (error) {
+                console.error("Failed to fetch users:", error);
+            }
+        };
+
+        getUsers();
+    }, []);
+
     useEffect(() => {
-        const filteredData = users.filter(
+        const filteredData = userData.filter(
             (row) =>
                 (filter === "all" || row.type === filter) &&
                 (search === "" ||
-                    `${row.first_name} ${row.last_name}`
+                    `${row.firstName} ${row.lastName}`
                         .toLowerCase()
                         .includes(search.toLowerCase()))
         );
         setData(filteredData);
-    }, [search, filter]);
+        setAllEmails(filteredData.map((user) => user.email).join(","));
+    }, [search, filter, userData]);
 
     useEffect(() => {
         if (download.length > 0) {
@@ -60,8 +79,8 @@ const AdminDashboard = () => {
     }, [download]);
 
     const downloadUsers = async () => {
-        const fields = Object.keys(users[0]);
-        const csv = users.map((user) => Object.values(user).join(","));
+        const fields = Object.keys(userData);
+        const csv = userData.map((user) => Object.values(user).join(","));
         csv.unshift(fields.join(","));
         setDownload(csv.join(os.EOL));
     };
@@ -70,7 +89,7 @@ const AdminDashboard = () => {
         return index % 2 == 0 ? "#E4F5E2" : "#FCF7CE";
     };
 
-    const handleSelectEvent = async (event: any) => {
+    const handleSelectEvent = async (event: CustomEvent) => {
         try {
             const participantsData = await Promise.all(
                 event.participants.map(async (participantObj: any) => {
@@ -87,6 +106,7 @@ const AdminDashboard = () => {
             );
     
             setData(participantsData.filter(user => user !== null));
+            setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
             setSelectedEventTitle(event.title);
         } catch (error) {
             console.error("Error fetching participants data:", error);
@@ -146,7 +166,7 @@ const AdminDashboard = () => {
                         <span>{row.email}</span>
                         <span>{row.type}</span>
                         <button>
-                            <Image src={Email} alt="mail" />
+                            <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
                         </button>
                         <button>
                             <Image src={Trash} alt="delete" />
@@ -156,7 +176,7 @@ const AdminDashboard = () => {
                 <div className={styles.buttons}>
                     <button onClick={downloadUsers}>Export Users</button>
 
-                    <button>Message All Participants</button>
+                    <button><a href={`mailto:${auth.user.email}?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>
                     <a
                         href={`data:text/csv;charset=utf-8,${encodeURIComponent(
                             download
