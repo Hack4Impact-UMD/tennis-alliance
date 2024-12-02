@@ -39,10 +39,10 @@ const AdminDashboard = () => {
     const [eventData, setEventData] = useState<CustomEvent[]>([]);
     const [userData, setUserData] = useState<User[]>([]);
     // const [selectedID, setSelectedID] = useState<string | null>(null);
-    const [selectedEventTitle, setSelectedEventTitle] = useState("");
+    const [selectedEventTitle, setSelectedEventTitle] = useState("No event selected");
     const [allEmails, setAllEmails] = useState("");
     const [displayedDate, setDisplayedDate] = useState<string>('');  // State for the displayed date
-    const [displayedDate2, setDisplayedDate2] = useState<string>('');  // State for the displayed date 2
+    const [displayedDate2, setDisplayedDate2] = useState<string>("No date selected");
     const [events, setEvents] = useState<CustomEvent[]>([]);
     const [regUpcomingEvents, setRegUpcomingEvents] = useState<CustomEvent[]>([]);
     const [registeredEvents, setRegisteredEvents] = useState<CustomEvent[]>([]);
@@ -90,18 +90,11 @@ const AdminDashboard = () => {
     };
     
 
-    useEffect(() => {
+    /*useEffect(() => {
         // Set today's date on initial load
         const today = new Date();
         setDisplayedDate2(formatDate(today));
-    }, []);
-
-    useEffect(() => {
-        // Update displayed date when selectedEventTitle changes
-        if (selectedEventTitle) {
-            setDisplayedDate2(selectedEventTitle);
-        }
-    }, [selectedEventTitle]);
+    }, []);*/
 
     useEffect(() => {
         const calculateCurrentWeekRange = () => {
@@ -154,16 +147,21 @@ const AdminDashboard = () => {
     }, []);
 
     useEffect(() => {
-        const filteredData = userData.filter(
-            (row) =>
-                (filter === "all" || row.type === filter) &&
-                (search === "" ||
-                    `${row.firstName} ${row.lastName}`
-                        .toLowerCase()
-                        .includes(search.toLowerCase()))
-        );
-        setData(filteredData);
-        setAllEmails(filteredData.map((user) => user.email).join(","));
+        if (search || filter !== "all") {
+            const filteredData = userData.filter(
+                (row) =>
+                    (filter === "all" || row.type === filter) &&
+                    (search === "" ||
+                        `${row.firstName} ${row.lastName}`
+                            .toLowerCase()
+                            .includes(search.toLowerCase()))
+            );
+            setData(filteredData);
+            setAllEmails(filteredData.map((user) => user.email).join(","));
+        } else {
+            setData([]); // Ensure no users are displayed initially
+            setAllEmails(""); // Clear email list
+        }
     }, [search, filter, userData]);
 
     useEffect(() => {
@@ -350,6 +348,7 @@ const AdminDashboard = () => {
           console.log("calendarEvents: ", calendarEvents);
           console.log("upcomingEvents: ", upcomingEvents);
           console.log("todayInEst: ", todayInEST);*/
+          console.log("upcomingEvents: ", upcomingEvents);
     
           const ec = new Calendar({
             target: calendarRef.current,
@@ -364,6 +363,7 @@ const AdminDashboard = () => {
                   setSelectedDate(clickedDate);
                   setEventsForSelectedDate(eventsByDate[clickedDate] || []);
                   setDisplayedDate2(monthDay(clickedDate));
+                  setSelectedEventTitle("No event selected"); // Ensure this is reset
                 },
               },
             },
@@ -392,13 +392,17 @@ const AdminDashboard = () => {
                     {<Popup/>}
                 </div>
                 <div className={styles.selectedDateContainer}>
-                    <div className={styles.selectedText}>You have selected:</div>
-                    <div className={styles.selectedDate}>{displayedDate2}</div>
+                    <div className={styles.selectedDateText}>Date selected:</div>
+                    <div className={styles.selectedEvent}>{displayedDate2}</div>
                 </div>
                 <DashboardEvents 
                     events={selectedDate ? eventsForSelectedDate : upcomingEvents}
                     onSelectEvent={handleSelectEvent}
                 />
+                <div className={styles.selectedEventContainer}>
+                    <div className={styles.selectedEventText}>Event selected:</div>
+                    <div className={styles.selectedEvent}>{selectedEventTitle}</div>
+                </div>
                 <p>All Users</p>
                 <div className={styles.search}>
                     <input

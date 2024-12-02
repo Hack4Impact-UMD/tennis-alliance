@@ -125,12 +125,29 @@
     margin-top: 20px; /* Adjust for spacing as needed */
 }
 
-.selectedText {
+.selectedDateText {
     font-size: 16px; /* Adjust font size as needed */
     color: #333; /* Adjust color as needed */
 }
 
 .selectedDate {
+    font-size: 20px; /* Larger font size for emphasis */
+    font-weight: bold; /* Make it bold for better visibility */
+    text-decoration: underline; /* Underline the date */
+    margin-top: 5px; /* Add a small gap between the text and date */
+}
+
+.selectedEventContainer {
+    text-align: center;
+    margin-top: 20px; /* Adjust for spacing as needed */
+}
+
+.selectedEventText {
+    font-size: 16px; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
+}
+
+.selectedEvent {
     font-size: 20px; /* Larger font size for emphasis */
     font-weight: bold; /* Make it bold for better visibility */
     text-decoration: underline; /* Underline the date */
