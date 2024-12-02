@@ -395,7 +395,10 @@ const AdminDashboard = () => {
                     <div className={styles.selectedText}>You have selected:</div>
                     <div className={styles.selectedDate}>{displayedDate2}</div>
                 </div>
-                <DashboardEvents events={selectedDate ? eventsForSelectedDate : upcomingEvents}/>
+                <DashboardEvents 
+                    events={selectedDate ? eventsForSelectedDate : upcomingEvents}
+                    onSelectEvent={handleSelectEvent}
+                />
                 <p>All Users</p>
                 <div className={styles.search}>
                     <input

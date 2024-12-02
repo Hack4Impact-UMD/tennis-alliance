@@ -120,7 +120,12 @@ const formatTime = (timeString: string) => {
  return (
    <div className={styles.todayEventsContainer}>
      {events.length > 0 ? (
-       events.map(event => (
+       events.map(event => {
+        const availableSlots = event.maxParticipants - event.participants.length;
+        const isEventFull = availableSlots <= 0;
+
+        return (
+
          <div key={event.id} className={styles.individualEvent}>
            <div className={styles.dateSection}>
              {/*<p>Today's Events</p>*/}
@@ -145,7 +150,7 @@ const formatTime = (timeString: string) => {
              </div>
              <div className={styles.buttonGroup}>
                {/* Show "Register" and "Cancel" buttons only if the event is not expanded */}
-               {expandedEventId !== event.id && (
+               {expandedEventId !== event.id && !isEventFull && (
                  <>
                    <button
                      className={styles.registerBtn}
@@ -221,7 +226,8 @@ const formatTime = (timeString: string) => {
              )}
            </div>
          </div>
-       ))
+        );
+      })
      ) : (
        <p>No events today.</p>
      )}

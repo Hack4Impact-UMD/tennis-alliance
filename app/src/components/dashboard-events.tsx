@@ -20,10 +20,11 @@ interface CalendarEvent {
 
 interface DashboardEventsProp {
  events: CustomEvent[];
+ onSelectEvent?: (event: CustomEvent) => Promise<void>;
 }
 
 
-const DashboardEvents: React.FC<DashboardEventsProp> = ({ events }) => {
+const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent }) => {
 
 
  // Function to get the correct ordinal suffix for the day
@@ -77,7 +78,7 @@ const getEventBackgroundColor = (role: string) => {
    <div className={styles.dashboardEventsContainer}>
      {events.length > 0 ? (
        events.map(event => (
-        <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
+        <div key={event.id} onClick={() => onSelectEvent && onSelectEvent(event)} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
            <div className={styles.dateSection}>
              <p>{formatDate(event.start)}</p> 
              <p>Participant</p>

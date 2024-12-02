@@ -124,6 +124,8 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({
     <div className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
         events.map(event => {
+          const availableSlots = event.maxParticipants - event.participants.length;
+          const isEventFull = availableSlots <= 0;
           // Extract the date from the event's start time
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
@@ -152,7 +154,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({
                   <p>Time: {formatTime(event.start)}</p>
                   <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
                 </div>
-                {expandedEventId === event.id && (
+                {expandedEventId === event.id && !isEventFull && (
                   <div className={styles.registrationForm}>
                     <p>Would you like to register as a participant or volunteer?</p>
                     <div className={styles.radioButtonRow}>
