@@ -44,6 +44,49 @@ export function updateUser(user: User): Promise<void> {
   });
 }
 
+export async function getAdditionalInfo(uid: string): Promise<{
+  backgroundAndInterests: string;
+  skills: string[];
+  otherDetails?: string;
+} | null> {
+  try {
+    const userRef = doc(db, "Users", uid);
+    const userDoc = await getDoc(userRef);
+
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      return data.additionalInfo || null; // Return the additionalInfo field if it exists
+    } else {
+      console.error("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching additional info:", error);
+    throw error;
+  }
+}
+
+export async function updateAdditionalInfo(
+  uid: string,
+  additionalInfo: {
+    backgroundAndInterests: string;
+    skills: string[];
+    otherDetails?: string;
+  }
+): Promise<void> {
+  try {
+    const userRef = doc(db, "Users", uid);
+    await updateDoc(userRef, {
+      additionalInfo,
+    });
+    console.log("Additional info updated successfully.");
+  } catch (error) {
+    console.error("Error updating additional info:", error);
+    throw error;
+  }
+}
+
+
 export function createUser(
   email: string,
   firstName: string,

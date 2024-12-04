@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "@/auth/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
 import classes from "@/styles/header.module.css";
@@ -9,7 +11,10 @@ import XButton from "@/assets/x_white.svg";
 
 const Header = () => {
     const [toggleNav, setToggleNav] = useState(false);
+    const router = useRouter();
     const base = "https://tennisallianceaac.org";
+    const authContext = useAuth();
+    const user = authContext.user;
 
     const toggleMenu = () => {
         setToggleNav(!toggleNav);
@@ -21,27 +26,28 @@ const Header = () => {
             : (document.body.style.overflowY = "inherit");
     }, [toggleNav]);
 
+    const navigateToDashboard = () => {
+        router.push("/dashboard");
+    }
+
     return (
         <nav className={classes.header}>
             <Image
-                className={`${classes.hamburger} ${
-                    toggleNav ? classes.active : ""
-                }`}
+                className={`${classes.hamburger} ${toggleNav ? classes.active : ""
+                    }`}
                 src={Hamburger}
                 onClick={toggleMenu}
                 alt="hamburger"
             />
-            <Image className={classes.logo} src={Logo} alt="Logo" />
+            <Image className={classes.logo} src={Logo} alt="Logo" onClick={navigateToDashboard} />
 
             <div
-                className={`${classes.overlay} ${
-                    toggleNav ? classes.active : ""
-                }`}
+                className={`${classes.overlay} ${toggleNav ? classes.active : ""
+                    }`}
             >
                 <div
-                    className={`${classes.menu} ${
-                        toggleNav ? classes.active : ""
-                    }`}
+                    className={`${classes.menu} ${toggleNav ? classes.active : ""
+                        }`}
                 >
                     <Image src={XButton} onClick={toggleMenu} alt="exit" />
                     <div className={classes.profile}>
