@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import styles from "@/styles/today-events.module.css";
 import { type CustomEvent, type User } from "@/types";
 import Racquet from "@/assets/tennis_racquet.png";
@@ -28,13 +28,13 @@ interface TodayEventsProps {
 }
 
 
-const TodayEvents: React.FC<TodayEventsProps> = ({ 
+const TodayEvents = forwardRef<HTMLDivElement, TodayEventsProps> (({ 
   events, 
   user,
   upcomingEvents,
   registeredEvents,
   setUpcomingEvents,
-  setRegisteredEvents, }) => {
+  setRegisteredEvents}, ref) => {
 
 
  const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
@@ -118,7 +118,7 @@ const formatTime = (timeString: string) => {
 
 
  return (
-   <div className={styles.todayEventsContainer}>
+   <div ref = {ref} className={styles.todayEventsContainer}>
      {events.length > 0 ? (
        events.map(event => {
         const availableSlots = event.maxParticipants - event.participants.length;
@@ -233,7 +233,8 @@ const formatTime = (timeString: string) => {
      )}
    </div>
  );
-};
+}
+);
 
 
 export default TodayEvents;

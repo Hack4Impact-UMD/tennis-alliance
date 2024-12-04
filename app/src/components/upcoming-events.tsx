@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import styles from "@/styles/upcoming-events.module.css";
 import { type CustomEvent, type User} from "@/types";
 import Arrow from "@/assets/down_arrow.png";
@@ -15,14 +15,13 @@ interface UpcomingEventsProps {
   setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
 }
 
-const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ 
+const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({ 
   events, 
   user,
   upcomingEvents,
   registeredEvents,
   setUpcomingEvents,
-  setRegisteredEvents, 
-}) => {
+  setRegisteredEvents}, ref) => {
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
   const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
   const [role, setRole] = React.useState<string>("participant");
@@ -121,7 +120,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({
   };
 
   return (
-    <div className={styles.upcomingEventContainer}>
+    <div ref = {ref} className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
         events.map(event => {
           const availableSlots = event.maxParticipants - event.participants.length;
@@ -226,6 +225,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({
       )}
     </div>
   );
-};
+}
+);
 
 export default UpcomingEvents;
