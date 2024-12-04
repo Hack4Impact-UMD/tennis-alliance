@@ -13,7 +13,7 @@ interface RegisteredEventsProp {
 }
 
 export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user, displayedDate }) => {
-  console.log(user.auth_id);
+  // console.log(user.auth_id);
   const getOrdinalSuffix = (day: number) => {
     if (day > 3 && day < 21) return "th";
     switch (day % 10) {
@@ -78,9 +78,11 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
                   <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
-                  <button className={styles.removeButton} onClick={() => deleteUserFromEvent(
-                      user.auth_id as string, event.id as string
-                    )}>
+                  <button className={styles.removeButton} onClick={() => 
+                      {
+                        // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)
+                        deleteUserFromEvent(user.auth_id as string, event.id as string)
+                      }}>
                       Remove
                   </button>
                 </div>
