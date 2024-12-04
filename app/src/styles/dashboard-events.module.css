@@ -1,0 +1,81 @@
+.dashboardEventContainer {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 700px;    
+  }
+  .individualEvent {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5%;
+    background-color: #FCF7CE;
+  }
+  .dateSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    padding-bottom: 10%;
+  }
+  
+  .dateSection h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #000;
+  }
+  
+  .dateSection p {
+    margin-top: 10px;
+    font-size: 1.75rem;
+    color: #000;
+  }
+
+  .divider {
+    width: 1px;
+    background-color: #000; /* Choose a color for the divider */
+    margin: 0 10px;
+    align-self: stretch;
+  }
+  
+  .eventInformation {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    width: auto;
+  }
+  
+  .titleButtonContainer {
+    display: flex;
+    justify-content: center; /* Align items to the left and right */
+  }
+  
+  .eventInformation p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #000;
+  }
+
+  .eventDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-aligns contents horizontally */
+    text-align: center; /* Centers text within each p element */
+  }
+  
+  .titleButtonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15%;
+}
+  
+  @media (max-width: 768px) {
+    .upcomingEventContainer {
+      flex-direction: column;
+    }
+  }
+  

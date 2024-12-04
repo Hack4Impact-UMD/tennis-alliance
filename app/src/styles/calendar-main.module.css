@@ -1,3 +1,8 @@
+.calendarBox {
+    width: 60%;
+    max-width: 600px;
+}
+
 .registeredContainer {
     display: flex;
     flex-direction: column; /* Stack items vertically */
@@ -7,16 +12,16 @@
 
 .eventRegisteredBox {
     background-color: #0E8FCC; /* Blue background */
-    padding: 20px;
+    padding: 10px;
     border-radius: 15px; /* Circular edges */
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-size: 16px;
-    width: 30%;
+    width: fit-content;
     justify-content: left;
     display: flex;
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
 }
 
 .noEventsContainer {
@@ -27,6 +32,7 @@
     border-radius: 10px;
     gap: 10px;
     align-items: center;
+    width: 30%;
     margin-top: 10px; /* Space below the Events Registered header */
 }
 .noEventsText {
@@ -35,38 +41,39 @@
 
 .eventNewBox {
     background-color: #0E8FCC; /* Blue background */
-    padding: 20px;
+    padding: 10px;
     border-radius: 15px; /* Circular edges */
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-size: 16px;
-    width: 30%;
+    width: fit-content;/*30%;*/
     justify-content: left;
     display: flex;
+    margin-bottom:5%;
 }
 .todayBox {
     background-color: #0E8FCC; /* Blue background */
-    padding: 20px;
+    padding: 10px;
     border-radius: 15px; /* Circular edges */
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-size: 16px;
-    width: 30%;
+    width: fit-content;
     justify-content: left;
     display: flex;
     margin-bottom: 20px;
 }
 .upcomingBox {
     background-color: #0E8FCC; /* Blue background */
-    padding: 20px;
+    padding: 10px;
     border-radius: 15px; /* Circular edges */
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-size: 16px;
-    width: 30%;
+    width: fit-content;
     justify-content: left;
     display: flex;
     margin-bottom: 20px;
