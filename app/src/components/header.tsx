@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/auth/AuthProvider";
+import { getUserWithId } from "@/backend/FirestoreCalls";
+import { User } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import classes from "@/styles/header.module.css";
@@ -11,10 +13,10 @@ import XButton from "@/assets/x_white.svg";
 
 const Header = () => {
     const [toggleNav, setToggleNav] = useState(false);
+    const [user, setUser] = useState<User>();
     const router = useRouter();
     const base = "https://tennisallianceaac.org";
     const authContext = useAuth();
-    const user = authContext.user;
 
     const toggleMenu = () => {
         setToggleNav(!toggleNav);
@@ -29,6 +31,18 @@ const Header = () => {
     const navigateToDashboard = () => {
         router.push("/dashboard");
     }
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const user = await getUserWithId(authContext.user.uid)
+                setUser(user);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchUser();
+    })
 
     return (
         <nav className={classes.header}>
@@ -52,8 +66,8 @@ const Header = () => {
                     <Image src={XButton} onClick={toggleMenu} alt="exit" />
                     <div className={classes.profile}>
                         <Image src={Profile} alt="profile" />
-                        <p>First Last</p>
-                        <p>email@test.com</p>
+                        <p>{user?.firstName} {user?.lastName}</p>
+                        <p>{user?.email}</p>
                     </div>
 
                     <p>Event Registration</p>

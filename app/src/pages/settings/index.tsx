@@ -28,6 +28,8 @@ const Settings = () => {
     otherDetails: "",
   });
   const authContext = useAuth();
+  const maxBackgroundLength = 250;
+  const maxOtherDetailsLength = 100;
 
   // On page load, fetch the user
   useEffect(() => {
@@ -91,7 +93,10 @@ const Settings = () => {
       updateUser(user!),
       updateAdditionalInfo(uid, additionalInfo)
     ])
-      .then(() => console.log("done"))
+      .then(() => {
+        console.log("done")
+        window.location.reload();
+      })
       .catch((err) => console.log(err));
   };
   return (
@@ -210,9 +215,10 @@ const Settings = () => {
             <label>Tell us about your background and interests</label>
             <textarea
               rows={10}
-              maxLength={250}
+              maxLength={maxBackgroundLength}
               onChange={(e) => handleAdditionalInfoChange("backgroundAndInterests", e.target.value)}
               value={additionalInfo.backgroundAndInterests} />
+            <p>{additionalInfo.backgroundAndInterests.length}/{maxBackgroundLength} characters</p>
             <legend>Check any skills that apply to you:</legend>
             <div className={style.checkbox}>
               <input
@@ -248,7 +254,12 @@ const Settings = () => {
               <label htmlFor="event_planning">Event Planning</label>
             </div>
             <div className={style.checkbox}>
-              <input id="other" type="checkbox" name="skill" value="other" onClick={handleCheckboxChange} />
+              <input
+                id="other"
+                type="checkbox"
+                name="skill"
+                value="other"
+                onClick={handleCheckboxChange} />
               <label htmlFor="other">Other</label>
             </div>
             {isOtherSelected && (
@@ -256,10 +267,11 @@ const Settings = () => {
                 <label>If other, please specify</label>
                 <textarea
                   rows={10}
-                  maxLength={100}
+                  maxLength={maxOtherDetailsLength}
                   onChange={(e) => handleAdditionalInfoChange("otherDetails", e.target.value)}
                   value={additionalInfo.otherDetails}
                   required />
+                <p>{additionalInfo.otherDetails.length}/{maxOtherDetailsLength} characters</p>
               </div>
             )}
             <button>Save</button>
