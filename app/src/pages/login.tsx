@@ -38,10 +38,10 @@ const LoginPage = () => {
         const code = (error as AuthError).code;
         if (code === "auth/too-many-requests") {
           setFailureMessage(
-            "*Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later."
+            "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later."
           );
         } else {
-          setFailureMessage("*Incorrect email address or password");
+          setFailureMessage("Incorrect email address or password");
         }
         console.log(error);
       });
@@ -127,6 +127,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div>{failureMessage}</div>
           <button type="submit">
             <Image
               className={styles.tennisBalls}

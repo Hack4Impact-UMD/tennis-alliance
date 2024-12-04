@@ -303,6 +303,7 @@ const MyCalendar: React.FC = () => {
             dateClick: (info) => {
               const clickedDate = info.date.toISOString().split('T')[0];
               console.log("clickedDate: ", clickedDate);
+              setDisplayedDate(clickedDate);
               setSelectedDate(clickedDate);
               console.log("selectedDate: ", selectedDate);
               setEventsForSelectedDate(eventsByDate[clickedDate] || []);
@@ -322,12 +323,15 @@ const MyCalendar: React.FC = () => {
   }, [selectedDate]);
 
   return (
-    <div>
+    <div className={styles.calendarBox}>
       <div className={styles.registeredContainer}>
         <div className={styles.eventRegisteredBox}>
-          <p>Events Registered</p>
-        </div>        
-        <RegisteredEvents events={registeredEvents} displayedDate={displayedDate} />
+        <p>Events Registered</p>
+        </div>
+          {(selectedDate != null) && (
+            <RegisteredEvents events={registeredEvents} displayedDate={displayedDate} />
+          )}
+          
       </div>
 
       <div className={styles.eventNewBox}>
