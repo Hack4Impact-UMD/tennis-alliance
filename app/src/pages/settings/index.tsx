@@ -2,7 +2,7 @@ import editButton from "@/assets/pen.png";
 import exitButton from "@/assets/exit.png"
 import { useAuth } from "@/auth/AuthProvider";
 import RequireAuth from "@/auth/RequireAuth/RequireAuth";
-import { getUserWithId, updateUser } from "@/backend/FirestoreCalls";
+import { getUserWithId, updateUser, getAdditionalInfo, updateAdditionalInfo } from "@/backend/FirestoreCalls";
 import ChildForm from "@/components/childForm";
 import Loading from "@/components/LoadingScreen/Loading";
 import style from "@/styles/settings.module.css";
@@ -21,26 +21,45 @@ const Settings = () => {
     useState<boolean>(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [isFamilyAccount, setIsFamilyAccount] = useState(false);
+  const [additionalInfo, setAdditionalInfo] = useState({
+    backgroundAndInterests: "",
+    skills: [] as string[],
+    otherDetails: "",
+  });
   const authContext = useAuth();
+  const maxBackgroundLength = 250;
+  const maxOtherDetailsLength = 100;
 
   // On page load, fetch the user
   useEffect(() => {
-    if (
-      (!authContext.loading &&
-        authContext?.token?.claims.role?.toString().toUpperCase() == "ADMIN") ||
-      authContext?.token?.claims.role?.toString().toUpperCase() == "USER"
-    ) {
-      getUserWithId(authContext.user.uid)
-        .then((user) => {
+    const fetchUserData = async () => {
+      if (
+        (!authContext.loading &&
+          authContext?.token?.claims.role?.toString().toUpperCase() == "ADMIN") ||
+        authContext?.token?.claims.role?.toString().toUpperCase() == "USER"
+      ) {
+        try {
+          const user = await getUserWithId(authContext.user.uid)
           setUser(user);
-        })
-        .catch((error) => {
+          if (user.type === "family") setIsFamilyAccount(true);
+          // Fetches the user's additional info from Firebase
+          const fetchedAdditionalInfo = await getAdditionalInfo(authContext.user.uid);
+          // Sets default values of additional info to values obtained from database if they exist
+          setAdditionalInfo({
+            backgroundAndInterests: fetchedAdditionalInfo?.backgroundAndInterests || "",
+            skills: fetchedAdditionalInfo?.skills || [],
+            otherDetails: fetchedAdditionalInfo?.otherDetails || ""
+          });
+        } catch (error) {
           console.log(error);
-        })
-        .finally(() => {
+        } finally {
           setLoading(false);
-        });
-    }
+        }
+      }
+    };
+
+    fetchUserData();
   }, [authContext.loading]);
 
   const handleInputChange = (field: keyof User, value: string) => {
@@ -55,10 +74,29 @@ const Settings = () => {
     setIsOtherSelected(!isOtherSelected);
   };
 
+  const handleAdditionalInfoChange = (field: keyof typeof additionalInfo, value: string | string[]) => {
+    setAdditionalInfo((prevInfo) => ({ ...prevInfo, [field]: value }));
+  };
+
+  const handleSkillCheckboxChange = (skill: string) => {
+    setAdditionalInfo((prevInfo) => {
+      const newSkills = prevInfo.skills.includes(skill)
+        ? prevInfo.skills.filter((s) => s !== skill)
+        : [...prevInfo.skills, skill];
+      return { ...prevInfo, skills: newSkills };
+    });
+  };
+
   const handleSubmit = () => {
-    // Once the form is filled just use this to change the user in the backend
-    updateUser(user!)
-      .then(() => console.log("done"))
+    const uid = authContext.user.uid;
+    Promise.all([
+      updateUser(user!),
+      updateAdditionalInfo(uid, additionalInfo)
+    ])
+      .then(() => {
+        console.log("done")
+        window.location.reload();
+      })
       .catch((err) => console.log(err));
   };
   return (
@@ -166,12 +204,21 @@ const Settings = () => {
               </div>
             </div>
             <hr />
-            <h3>Children Info</h3>
-            <ChildForm isEditing={isEditing} />
-            <hr />
+            {isFamilyAccount && (
+              <div>
+                <h3>Children Info</h3>
+                <ChildForm isEditing={isEditing} />
+                <hr />
+              </div>
+            )}
             <h3>Additional Info</h3>
             <label>Tell us about your background and interests</label>
-            <textarea rows={10} />
+            <textarea
+              rows={10}
+              maxLength={maxBackgroundLength}
+              onChange={(e) => handleAdditionalInfoChange("backgroundAndInterests", e.target.value)}
+              value={additionalInfo.backgroundAndInterests} />
+            <p>{additionalInfo.backgroundAndInterests.length}/{maxBackgroundLength} characters</p>
             <legend>Check any skills that apply to you:</legend>
             <div className={style.checkbox}>
               <input
@@ -179,6 +226,8 @@ const Settings = () => {
                 type="checkbox"
                 name="skill"
                 value="fundraising"
+                checked={additionalInfo.skills.includes("fundraising")}
+                onChange={() => handleSkillCheckboxChange("fundraising")}
               />
               <label htmlFor="fundraising">Fundraising</label>
             </div>
@@ -188,6 +237,8 @@ const Settings = () => {
                 type="checkbox"
                 name="skill"
                 value="marketing"
+                checked={additionalInfo.skills.includes("marketing")}
+                onChange={() => handleSkillCheckboxChange("marketing")}
               />
               <label htmlFor="marketing">Marketing</label>
             </div>
@@ -197,17 +248,30 @@ const Settings = () => {
                 type="checkbox"
                 name="skill"
                 value="event_planning"
+                checked={additionalInfo.skills.includes("event_planning")}
+                onChange={() => handleSkillCheckboxChange("event_planning")}
               />
               <label htmlFor="event_planning">Event Planning</label>
             </div>
             <div className={style.checkbox}>
-              <input id="other" type="checkbox" name="skill" value="other" onClick={handleCheckboxChange} />
+              <input
+                id="other"
+                type="checkbox"
+                name="skill"
+                value="other"
+                onClick={handleCheckboxChange} />
               <label htmlFor="other">Other</label>
             </div>
             {isOtherSelected && (
               <div>
                 <label>If other, please specify</label>
-                <textarea rows={10} required />
+                <textarea
+                  rows={10}
+                  maxLength={maxOtherDetailsLength}
+                  onChange={(e) => handleAdditionalInfoChange("otherDetails", e.target.value)}
+                  value={additionalInfo.otherDetails}
+                  required />
+                <p>{additionalInfo.otherDetails.length}/{maxOtherDetailsLength} characters</p>
               </div>
             )}
             <button>Save</button>
