@@ -135,7 +135,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p> {/* Display event's date */}
-                <p>Participant</p>
+                {/* <p>Participant</p> */}
               </div>
 
               {/* Divider line */}

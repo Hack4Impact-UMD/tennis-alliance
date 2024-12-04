@@ -10,6 +10,9 @@ import Hamburger from "@/assets/hamburger.svg";
 import Logo from "@/assets/logo.png";
 import Profile from "@/assets/profile.png";
 import XButton from "@/assets/x_white.svg";
+import firebase from "firebase/compat/app";
+import { set } from "date-fns";
+import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
     const [toggleNav, setToggleNav] = useState(false);
@@ -28,6 +31,26 @@ const Header = () => {
             : (document.body.style.overflowY = "inherit");
     }, [toggleNav]);
 
+    const [role, setRole] = useState<string>("");
+    const currentUser = useAuth();
+    useEffect(() => {
+        const fetchRole = async () => {
+          try {
+            const role = currentUser?.token?.claims.role?.toString().toUpperCase();
+            if (role) {
+              setRole(role);
+            } else {
+              setRole("undefined");
+            }
+            console.log("Role:", role);
+          } catch (error) {
+            console.error("Error fetching role:", error);
+          }
+        };
+    
+        fetchRole();
+      }, [toggleNav]);
+    
     const navigateToDashboard = () => {
         router.push("/dashboard");
     }
@@ -43,7 +66,7 @@ const Header = () => {
         }
         fetchUser();
     })
-
+    
     return (
         <nav className={classes.header}>
             <Image
@@ -74,19 +97,22 @@ const Header = () => {
                     <Link href="/registration" onClick={toggleMenu}>
                         Registration
                     </Link>
-                    <Link href="/dashboard" onClick={toggleMenu}>
-                        Dashboard
-                    </Link>
-                    <Link href="/admin" onClick={toggleMenu}>
-                        Admin Dashboard
-                    </Link>
+                    {role === "ADMIN" ? (
+                        <Link href="/admin" onClick={toggleMenu}>
+                            Admin Dashboard
+                        </Link>
+                    ) : (
+                        <Link href="/dashboard" onClick={toggleMenu}>
+                            Dashboard
+                        </Link>
+                    )}
                     <Link href="/settings" onClick={toggleMenu}>
                         Settings
                     </Link>
                     <Link href="/login" onClick={toggleMenu}>
                         Sign In
                     </Link>
-                    <p>Information</p>
+                    <p className={classes.info}>Information</p>
                     <Link href={base}>Home</Link>
                     <Link href={`${base}/about-us`}>About Us</Link>
                     <Link href={`${base}/tennis-center-updates`}>

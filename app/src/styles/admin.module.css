@@ -152,6 +152,7 @@
     font-weight: bold; /* Make it bold for better visibility */
     text-decoration: underline; /* Underline the date */
     margin-top: 5px; /* Add a small gap between the text and date */
+    
 }
 
 .data {
