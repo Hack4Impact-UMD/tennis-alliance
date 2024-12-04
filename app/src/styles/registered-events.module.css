@@ -1,28 +1,24 @@
-.upcomingEventContainer {
+.registeredEventsContainer {
     display: flex;
     flex-direction: column;
     border-radius: 12px;
     overflow: hidden;
     width: 100%;
-    max-width: 700px;    
-    margin-bottom:30px;
+    max-width: 700px;
   }
   .individualEvent {
     display: flex;
-    border-radius: 12px;
     flex-direction: row;
     margin-bottom: 5%;
-    background-color: #FCF7CE;
+    background-color: #E0F3F6;
   }
   .dateSection {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width:30%;
-    /*padding: 20px;*/
-    margin:20px;
-    /*padding-bottom: 10%;*/
+    padding: 20px;
+    padding-bottom: 10%;
   }
   
   .dateSection h2 {
@@ -34,36 +30,21 @@
   
   .dateSection p {
     margin-top: 10px;
-    /*font-size: 1.75rem;*/
-    text-align: center;
+    font-size: 1.75rem;
     color: #000;
-  }
-
-  .divider {
-    width: 1px;
-    background-color: #000; /* Choose a color for the divider */
-    margin: 0 10px;
-    align-self: stretch;
-  }
-
-  .divider {
-    width: 1px;
-    background-color: #000; /* Choose a color for the divider */
-    margin: 0 10px;
-    align-self: stretch;
   }
   
   .eventInformation {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px;
     border-radius: 8px;
     margin-bottom: 15px;
-    width: 100%;
   }
   
   .titleButtonContainer {
     display: flex;
-    justify-content: center; /* Align items to the left and right */
+    align-items: center;
+    justify-content: space-between;
+    gap: 15%;
   }
   
   .eventInformation p {
@@ -71,7 +52,20 @@
     font-size: 1rem;
     color: #000;
   }
-
+  
+  .divider {
+    width: 1px;
+    background-color: #000; /* Divider color */
+    margin: 0 10px;
+    align-self: stretch;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  
   .eventDetails {
     display: flex;
     flex-direction: column;
@@ -79,10 +73,9 @@
     text-align: center; /* Centers text within each p element */
   }
   
-  .buttonGroup {
-    display: flex;
-    gap: 20px;
-    margin-top: 10px;
+  .eventDetails p {
+    font-size: 1rem;
+    color: #000;
   }
   
   .registerBtn, .cancelBtn, .submitBtn {
@@ -95,13 +88,27 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
+
+  .noEventsContainer {
+    display: flex;
+    flex-direction: row;
+    background-color: #AACDEE;
+    justify-content: flex-start;
+    border-radius: 10px;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px; /* Space below the Events Registered header */
+}
+.noEventsText {
+    padding-left: 10%;
+}
   
   .buttonWrapper {
     display: flex;
     justify-content: flex-end; /* Aligns the submit button to the right */
     margin-top: 1rem; /* Adds some space above the button */
   }
-
+  
   .checkboxGroup {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Two equal-width columns */
@@ -115,37 +122,21 @@
     gap: 0.5rem; /* Space between checkbox and label text */
   }
   
-  .titleButtonContainer {
+  .radioButtonRow {
+    display: flex;
+    justify-content: center; /* Centers the items horizontally */
+    gap: 1rem; /* Adds space between the labels */
+    margin: 0.5rem 0; /* Optional: adds some space above and below */
+  }
+  
+  .radioButtonRow label {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 15%;
-}
-
-.radioButtonRow {
-  display: flex;
-  justify-content: center; /* Centers the items horizontally */
-  gap: 1rem; /* Adds space between the labels */
-  margin: 0.5rem 0; /* Optional: adds some space above and below */
-}
-
-.radioButtonRow label {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem; /* Adds space between the radio button and label text */
-}
-
-.toggleButton {
-    margin-left: auto;
-    padding: 10px;
-    font-size: 16px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-}
+    gap: 0.25rem; /* Adds space between the radio button and label text */
+  }
   
   @media (max-width: 768px) {
-    .upcomingEventContainer {
+    .todayEventsContainer {
       flex-direction: column;
     }
   }
