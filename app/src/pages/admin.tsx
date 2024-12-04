@@ -445,7 +445,6 @@ const AdminDashboard = () => {
                 ))}
                 <div className={styles.buttons}>
                     <button onClick={downloadUsers}>Export Users</button>
-
                     {/*<button><a href={`mailto:${auth.user.email}?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>*/}
                     <a
                         href={`data:text/csv;charset=utf-8,${encodeURIComponent(

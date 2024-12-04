@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { CaptionProps, DayPicker } from "react-day-picker";
-import format from "date-fns/format";
-import getYear from "date-fns/getYear";
-import setYear from "date-fns/setYear";
-import setMonth from "date-fns/setMonth";
+import { DayPicker } from "react-day-picker";
 import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
 import "react-day-picker/dist/style.css";
 import { adminCreateEvent } from "@/backend/FirestoreCalls";
-import { create } from "domain";
 
 const Popup = () => {
     const [visible, setVisible] = useState(false);
@@ -27,13 +22,12 @@ const Popup = () => {
 
     const [selectedDay, setSelectedDay] = useState(new Date());
     const [currentMonth, setCurrentMonth] = useState(new Date());
-    const [showMonthPicker, setShowMonthPicker] = useState(false);
-    const [showYearPicker, setShowYearPicker] = useState(false);
     const [maxParticipants, setMaxParticipants] = useState(0);
     const [maxVolunteers, setMaxVolunteers] = useState(0);
     const [description, setDescription] = useState("");
+    const [isRepeatWeekly, setIsRepeatWeekly] = useState(false);
+    const [repeatCount, setRepeatCount] = useState(1);
 
-    /* PopUp Button */
     const openPopup = () => setVisible(true);
 
     const closePopup = () => {
@@ -41,29 +35,55 @@ const Popup = () => {
         setEventName("");
         setStartTime({ hours: "10", minutes: "30", period: "AM" });
         setEndTime({ hours: "1", minutes: "30", period: "PM" });
-    };
-
-    const submitEvent = () => {
-        // Handle the submission logic
-        closePopup();
-        adminCreateEvent(
-            eventName,
-            startTime,
-            endTime,
-            selectedDay,
-            maxParticipants,
-            maxVolunteers,
-            description
-        );
-        setStartTime({ hours: "10", minutes: "30", period: "AM" });
-        setEndTime({ hours: "1", minutes: "30", period: "PM" });
         setMaxParticipants(0);
         setMaxVolunteers(0);
         setDescription("");
-        setEventName("");
+        setIsRepeatWeekly(false);
+        setRepeatCount(1);
     };
 
-    /* TimePicker */
+    const submitEvent = () => {
+        if (isRepeatWeekly && repeatCount > 0) {
+            const events = [];
+            let currentEventDate = new Date(selectedDay);
+    
+            for (let i = 0; i < repeatCount; i++) {
+                // Push a new Date instance to avoid mutation issues
+                events.push(new Date(currentEventDate));
+                currentEventDate = new Date(currentEventDate); // Create a new Date instance
+                currentEventDate.setDate(currentEventDate.getDate() + 7); // Add 7 days
+            }
+    
+            events.forEach((date) => {
+                adminCreateEvent(
+                    eventName,
+                    startTime,
+                    endTime,
+                    date,
+                    maxParticipants,
+                    maxVolunteers,
+                    description
+                );
+            });
+        } else {
+            adminCreateEvent(
+                eventName,
+                startTime,
+                endTime,
+                selectedDay,
+                maxParticipants,
+                maxVolunteers,
+                description
+            );
+        }
+    
+        closePopup();
+    };
+
+    const handleDayClick = (day: Date) => {
+        setSelectedDay(day);
+    };
+
     const handleStartTimeChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         field: string
@@ -92,107 +112,6 @@ const Popup = () => {
         }
     };
 
-    /* DayPicker */
-    const handleDayClick = (day: Date) => {
-        setSelectedDay(day);
-        setShowMonthPicker(false);
-        setShowYearPicker(false);
-    };
-
-    const handleMonthChange = (month: number) => {
-        setCurrentMonth(setMonth(currentMonth, month));
-        setShowMonthPicker(false);
-    };
-
-    const handleYearChange = (year: number) => {
-        setCurrentMonth(setYear(currentMonth, year));
-        setShowYearPicker(false);
-    };
-
-    const handleMonthClick = () => {
-        setShowMonthPicker((currentShowMonthPicker) => {
-            // If opening monthPicker, ensure yearPicker is closed
-            if (!currentShowMonthPicker) setShowYearPicker(false);
-            return !currentShowMonthPicker;
-        });
-    };
-
-    const handleYearClick = () => {
-        setShowYearPicker((currentShowYearPicker) => {
-            // If opening yearPicker, ensure monthPicker is closed
-            if (!currentShowYearPicker) setShowMonthPicker(false);
-            return !currentShowYearPicker;
-        });
-    };
-
-    const handleParticipantsChange = (num: number) => {
-        setMaxParticipants(num);
-        console.log(num);
-    }
-
-    const handleVolunteersChange = (num: number) => {
-        setMaxVolunteers(num);
-        console.log(num);
-    }
-
-    const customCaption = ({ displayMonth }: CaptionProps) => {
-        const currentYear = getYear(displayMonth);
-        const startYear = currentYear - 2;
-        const months = Array.from({ length: 12 }, (_, i) =>
-            format(setMonth(displayMonth, i), "MMMM")
-        );
-        const years = Array.from({ length: 6 }, (_, i) => startYear + i);
-
-        return (
-            <div className={styles.calendarCaption}>
-                <div
-                    className={styles.calendarMonth}
-                    onClick={handleMonthClick}
-                >
-                    {format(displayMonth, "MMMM")}
-                    {showMonthPicker && (
-                        <div className={styles.monthPicker}>
-                            {months.map((month, index) => (
-                                <div
-                                    key={month}
-                                    onClick={() => handleMonthChange(index)}
-                                >
-                                    {month}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                <div className={styles.calendarYear} onClick={handleYearClick}>
-                    {format(displayMonth, "yyyy")}
-                    {showYearPicker && (
-                        <div className={styles.yearPicker}>
-                            {years.map((year) => (
-                                <div
-                                    key={year}
-                                    onClick={() => handleYearChange(year)}
-                                >
-                                    {year}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    const customHead = () => {
-        return null;
-    };
-
-    const modifiersStyles = {
-        selected: {
-            color: "white",
-            backgroundColor: "#000C79",
-        },
-    };
-
     return (
         <>
             <button onClick={openPopup} className={styles.popupButton}>
@@ -215,18 +134,12 @@ const Popup = () => {
                             onChange={(e) => setEventName(e.target.value)}
                             className={styles.inputBox}
                         />
-                        <p className={styles.title}>Date(s)</p>
+                        <p className={styles.title}>Date</p>
                         <div className={styles.calendar}>
                             <DayPicker
                                 mode="single"
                                 selected={selectedDay}
                                 onDayClick={handleDayClick}
-                                month={currentMonth}
-                                modifiersStyles={modifiersStyles}
-                                components={{
-                                    Caption: customCaption,
-                                    Head: customHead,
-                                }}
                             />
                         </div>
                         <p className={styles.title}>Time(s)</p>
@@ -295,7 +208,9 @@ const Popup = () => {
                                 type="number"
                                 className={styles.maxInput}
                                 min={0}
-                                onChange={(e) => handleParticipantsChange(parseInt(e.target.value))}
+                                onChange={(e) =>
+                                    setMaxParticipants(parseInt(e.target.value))
+                                }
                             />
                             <p className={styles.maxTitle}>
                                 Max # of Volunteers
@@ -304,8 +219,38 @@ const Popup = () => {
                                 type="number"
                                 className={styles.maxInput}
                                 min={0}
-                                onChange={(e) => handleVolunteersChange(parseInt(e.target.value))}
+                                onChange={(e) =>
+                                    setMaxVolunteers(parseInt(e.target.value))
+                                }
                             />
+                        </div>
+                        <div className={styles.repeatSection}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={isRepeatWeekly}
+                                    onChange={(e) =>
+                                        setIsRepeatWeekly(e.target.checked)
+                                    }
+                                />
+                                <span> </span>Repeat Event?
+                            </label>
+                            {isRepeatWeekly && (
+                                <div className={styles.repeatCount}>
+                                    <p>Occurences:</p>
+                                    <input
+                                        type="number"
+                                        value={repeatCount}
+                                        onChange={(e) =>
+                                            setRepeatCount(
+                                                parseInt(e.target.value) || 1
+                                            )
+                                        }
+                                        min={1}
+                                        className={styles.repeatInput}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div>
                             <div className={styles.title}>Description:</div>

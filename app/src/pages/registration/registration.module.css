@@ -107,3 +107,10 @@
     width: 100px;
     height: 40px;
 }
+
+.successMessage {
+    display: flex;
+    flex-direction: column;
+    width: full;
+    align-items: center;
+}
