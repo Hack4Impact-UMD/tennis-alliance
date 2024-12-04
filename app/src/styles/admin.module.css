@@ -24,6 +24,53 @@
     background-color: #0e8fcc;
 }
 
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.headers {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-self: flex-start;
+}
+
+.eventSchedule {
+    width: fit-content;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    background-color: #0e8fcc;
+    display: flex;
+    justify-content: flex-start;
+    align-self: flex-start;
+    margin-bottom: 10px;
+}
+
+.eventWeek {
+    width: fit-content;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    background-color: #0e8fcc;
+    display: flex;
+    justify-content: flex-start;
+    align-self: flex-start;
+}
+
+.calendar {
+    width: auto;
+    margin-bottom: 5%;
+}
+
+.tennisBalls{
+    width: auto;
+    height: auto;
+    margin-left: 1rem;
+}
+
 .search {
     display: flex;
     gap: 8px;
@@ -71,6 +118,40 @@
     background-repeat: no-repeat;
     background-position: 24px;
     background-size: 20px;
+}
+
+.selectedDateContainer {
+    text-align: center;
+    margin-top: 20px; /* Adjust for spacing as needed */
+}
+
+.selectedDateText {
+    font-size: 16px; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
+}
+
+.selectedDate {
+    font-size: 20px; /* Larger font size for emphasis */
+    font-weight: bold; /* Make it bold for better visibility */
+    text-decoration: underline; /* Underline the date */
+    margin-top: 5px; /* Add a small gap between the text and date */
+}
+
+.selectedEventContainer {
+    text-align: center;
+    margin-top: 20px; /* Adjust for spacing as needed */
+}
+
+.selectedEventText {
+    font-size: 16px; /* Adjust font size as needed */
+    color: #333; /* Adjust color as needed */
+}
+
+.selectedEvent {
+    font-size: 20px; /* Larger font size for emphasis */
+    font-weight: bold; /* Make it bold for better visibility */
+    text-decoration: underline; /* Underline the date */
+    margin-top: 5px; /* Add a small gap between the text and date */
 }
 
 .data {
