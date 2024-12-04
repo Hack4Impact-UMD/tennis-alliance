@@ -11,6 +11,8 @@
     flex-direction: row;
     margin-bottom: 5%;
     background-color: #FCF7CE;
+    border-radius: 12px;
+    margin-top:5%;
   }
   .dateSection {
     display: flex;
@@ -18,7 +20,7 @@
     justify-content: center;
     align-items: center;
     padding: 20px;
-    padding-bottom: 10%;
+    width:40%
   }
   
   .dateSection h2 {
@@ -46,6 +48,7 @@
     border-radius: 8px;
     margin-bottom: 15px;
     width: auto;
+    width:60%;
   }
   
   .titleButtonContainer {
@@ -69,8 +72,8 @@
   .titleButtonContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 15%;
+    justify-content: center;
+    /* gap: 15%; */
 }
   
   @media (max-width: 768px) {

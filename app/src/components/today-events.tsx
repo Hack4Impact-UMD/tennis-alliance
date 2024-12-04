@@ -140,7 +140,7 @@ const formatTime = (timeString: string) => {
            <div className={styles.eventInformation}>
              <div className={styles.titleButtonContainer}>
                  <Image src={Racquet} alt="Racquet" />
-                 <p style={{ fontSize: '1.50rem'}}>{event.title}</p>
+                 <p className={styles.eventTitle} style={{ fontSize: '1.25rem'}}>{event.title}</p>
              </div>   
              {/* Center-aligned details */}
              <div className={styles.eventDetails}>

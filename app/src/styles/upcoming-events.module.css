@@ -19,9 +19,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width:30%;
+    width:50%;
     /*padding: 20px;*/
     margin:20px;
+    font-size:22px;
     /*padding-bottom: 10%;*/
   }
   
@@ -64,6 +65,7 @@
   .titleButtonContainer {
     display: flex;
     justify-content: center; /* Align items to the left and right */
+    font-size: 22px;
   }
   
   .eventInformation p {

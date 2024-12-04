@@ -63,9 +63,17 @@
     transform: translateX(0);
 }
 
-.menu p,
 .menu a {
     font-size: 28px;
+    margin-left:20px;
+}
+
+.menu p {
+    font-size: 32px;
+}
+
+.info {
+    margin-top:20px;
 }
 
 .menu>img {

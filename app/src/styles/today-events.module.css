@@ -20,6 +20,8 @@
   justify-content: center;
   align-items: center;
   /*padding: 20px;*/
+  width:50%;
+  font-size:22px;
   margin:20px;
   /*padding-bottom: 10%;*/
 }
@@ -49,11 +51,13 @@
 .titleButtonContainer {
   display: flex;
   justify-content: center; /* Align items to the left and right */
+  align-items: center; /* Center-aligns items vertically */
+  margin-top:20px;
 }
 
 .eventInformation p {
   margin: 5px 0;
-  font-size: 1rem;
+  font-size: 1.25rem;
   color: #000;
 }
 
