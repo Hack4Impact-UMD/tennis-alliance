@@ -58,8 +58,34 @@ const ChildForm = ({ isEditing }: ChildFormProps) => {
                             />
                         </div>
                     </div>
-                    <label htmlFor={`email_${section.id}`}>Email</label>
-                    <input id={`email_${section.id}`} type="text" disabled={!isEditing} />
+                    <div className={style.fields}>
+                        <div>
+                            <label htmlFor={`age_${section.id}`}>
+                                Age
+                            </label>
+                            <input
+                                id={`age_${section.id}`}
+                                type="text"
+                                placeholder=""
+                                className={style.individualNames}
+                                disabled={!isEditing}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor={`birth_year_${section.id}`}>
+                                Birth Year
+                            </label>
+                            <input
+                                id={`birth_year_${section.id}`}
+                                type="text"
+                                placeholder=""
+                                className={style.individualNames}
+                                disabled={!isEditing}
+                            />
+                        </div>
+                    </div>
+                    <label htmlFor={`school_${section.id}`}>School</label>
+                    <input id={`school_${section.id}`} type="text" disabled={!isEditing} />
                 </div>
             ))}
             <div className={style.editChildren}>
