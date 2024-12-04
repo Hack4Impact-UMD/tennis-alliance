@@ -6,8 +6,7 @@ import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
-import { User, CustomEvent } from "@/types";
+import { adminGetEvents, adminDeleteParticipant, getUserWithId, adminGetEventIDs, getEventByID } from "@/backend/FirestoreCalls";
 import { set } from "date-fns";
 import { useAuth } from "@/auth/AuthProvider";
 
@@ -24,23 +23,29 @@ const AdminDashboard = () => {
     const [filter, setFilter] = useState("all");
     const [download, setDownload] = useState("");
     const downloadLink = useRef<HTMLAnchorElement>(null);
-    const [eventData, setEventData] = useState<CustomEvent[]>([]);
-    const [userData, setUserData] = useState<User[]>([]);
-    // const [selectedID, setSelectedID] = useState<string | null>(null);
+    const [eventData, setEventData] = useState<any[]>([]);
+    const [selectedID, setSelectedID] = useState<string>("");
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
     const [allEmails, setAllEmails] = useState("");
 
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const events = await adminGetEvents();
+                const eventIDs = await adminGetEventIDs();
+                
+                const eventPromises = eventIDs.map(async (id) => {
+                    const event = await getEventByID(id);
+                    return { ...event, id };
+                });
+                
+                const events = await Promise.all(eventPromises);
+                
                 setEventData(events);
-                console.log("Events:", events);
+                console.log("Events with IDs:", events);
             } catch (error) {
-                console.error("Failed to fetch events:", error);
+                console.error("Failed to fetch events or event IDs:", error);
             }
         };
-
         fetchEvents();
     }, []);
 
@@ -104,7 +109,8 @@ const AdminDashboard = () => {
                     }
                 })
             );
-    
+            console.log("Participants data:", participantsData);
+            setSelectedID(event.id);
             setData(participantsData.filter(user => user !== null));
             setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
             setSelectedEventTitle(event.title);
@@ -112,7 +118,26 @@ const AdminDashboard = () => {
             console.error("Error fetching participants data:", error);
         }
     };
-
+  
+    const handleRemoveParticipant = async (participantId: string, email: string) => {
+        try {
+            if (selectedEventTitle && participantId) {
+                await adminDeleteParticipant(
+                    selectedID,
+                    participantId,
+                    email,
+                    true
+                );
+                setData((prevData) =>
+                    prevData.filter((user) => user.auth_id !== participantId)
+                );
+                console.log(`Participant ${participantId} removed from ${selectedEventTitle}`);
+            }
+        } catch (error) {
+            console.error("Failed to remove participant:", error);
+        }
+    };
+  
     return (
         <div className={styles.container}>
             <div className={styles.table}>
@@ -168,7 +193,7 @@ const AdminDashboard = () => {
                         <button>
                             <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
                         </button>
-                        <button>
+                        <button onClick={() => handleRemoveParticipant(row.auth_id, row.email)}>
                             <Image src={Trash} alt="delete" />
                         </button>
                     </div>

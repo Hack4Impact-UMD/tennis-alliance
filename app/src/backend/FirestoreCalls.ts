@@ -10,6 +10,8 @@ import {
   runTransaction,
   updateDoc,
   writeBatch,
+  query,
+  where,
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
@@ -155,6 +157,15 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
   });
 }
 
+
+export function adminGetEventIDs(): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    getDocs(collection(db, "Events"))
+      .then((querySnapshot) => {
+        const eventIDs: string[] = querySnapshot.docs.map((doc) => doc.id);
+        resolve(eventIDs);
+
+      
 export function adminGetEventById(eventId: string): Promise<CustomEvent> {
   return new Promise((resolve, reject) => {
     if (!eventId) {
@@ -174,6 +185,19 @@ export function adminGetEventById(eventId: string): Promise<CustomEvent> {
       })
       .catch((e) => reject(e));
   });
+}
+
+export async function getEventByID(eventId: string): Promise<CustomEvent> {
+  try {
+    const eventDoc = await getDoc(doc(db, "Events", eventId));
+    if (eventDoc.exists()) {
+      return eventDoc.data() as CustomEvent;
+    } else {
+      throw new Error("Event does not exist");
+    }
+  } catch (e) {
+    throw e;
+  }
 }
 
 export function adminCreateEvent(
@@ -250,22 +274,22 @@ export function adminUpdateEvent(
   });
 }
 
-export function adminDeleteParticipant(
-  event: CustomEvent,
-  eventId: string,
+export async function adminDeleteParticipant(
+  eventName: string,
   participantId: string,
   participantEmail: string,
   email: boolean
 ): Promise<void> {
   return new Promise(async (resolve, reject) => {
-    if (!eventId) {
-      reject(new Error("Invalid id"));
+    if (!participantId) {
+      reject(new Error("Invalid participant id"));
       return;
     }
+
     if (email) {
       const sendEmailCloud = httpsCallable(functions, "sendEmail");
       sendEmailCloud({
-        text: `An admin has removed you from the event ${event.title}`,
+        text: `An admin has removed you from the event ${eventName}`,
         bcc: [participantEmail],
         reason: "Event Removal",
       }).catch((error: any) => {
@@ -273,22 +297,34 @@ export function adminDeleteParticipant(
       });
     }
 
+    const eventRef = doc(db, "Events", eventName);
+    const eventSnap = await getDoc(eventRef);
+    const event = eventSnap.data() as CustomEvent | undefined;
+    
+    if (!event) {
+      reject(new Error("Event not found"));
+      return;
+    }
+
     event.participants = event.participants.filter(
       (e) => e.mainId !== participantId
     );
+
     const user: User | void = await getUserWithId(participantId).catch(
       (err) => {
         reject();
       }
     );
+
     if (user) {
-      user.events = user?.events.filter((e) => e.id !== eventId);
+      user.events = user.events.filter((e) => e.id !== eventName);
     }
+
     const batch = writeBatch(db);
-    const eventRef = doc(db, "Events", eventId);
-    const userRef = doc(db, "Users", participantId);
     batch.update(eventRef, { ...event });
+    const userRef = doc(db, "Users", participantId);
     batch.update(userRef, { ...user });
+    
     batch
       .commit()
       .then(() => {
