@@ -12,7 +12,6 @@ import Profile from "@/assets/profile.png";
 import XButton from "@/assets/x_white.svg";
 import firebase from "firebase/compat/app";
 import { set } from "date-fns";
-import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
     const [toggleNav, setToggleNav] = useState(false);
@@ -94,9 +93,6 @@ const Header = () => {
                     </div>
 
                     <p>Event Registration</p>
-                    <Link href="/registration" onClick={toggleMenu}>
-                        Registration
-                    </Link>
                     {role === "ADMIN" ? (
                         <Link href="/admin" onClick={toggleMenu}>
                             Admin Dashboard
@@ -108,6 +104,9 @@ const Header = () => {
                     )}
                     <Link href="/settings" onClick={toggleMenu}>
                         Settings
+                    </Link>
+                    <Link href="/registration" onClick={toggleMenu}>
+                        Account Registration
                     </Link>
                     <Link href="/login" onClick={toggleMenu}>
                         Sign In
