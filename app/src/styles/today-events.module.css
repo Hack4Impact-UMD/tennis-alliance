@@ -129,6 +129,20 @@
   gap: 0.25rem; /* Adds space between the radio button and label text */
 }
 
+.removeButton {
+  background-color: #cce5ff;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.removeButton:hover {
+  background-color: #99ccff;
+}
+
 @media (max-width: 768px) {
   .todayEventsContainer {
     flex-direction: column;

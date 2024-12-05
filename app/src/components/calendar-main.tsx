@@ -145,11 +145,11 @@ const MyCalendar: React.FC = () => {
 
   useEffect(() => {
     if (selectedDate) {
-      /*const filteredEvents = regUpcomingEvents.filter(
+      const filteredEvents = regUpcomingEvents.filter(
         (event) => event.date === selectedDate
       );
       setFilteredRegisteredEvents(filteredEvents);
-      setRegisteredEvents(filteredEvents);*/
+      setRegisteredEvents(filteredEvents);
       console.log("registeredEvents: ", registeredEvents);
     } else {
       setRegisteredEvents(registeredEventListRef.current);
@@ -326,12 +326,9 @@ const MyCalendar: React.FC = () => {
     <div className={styles.calendarBox}>
       <div className={styles.registeredContainer}>
         <div className={styles.eventRegisteredBox}>
-        <p>Events Registered</p>
-        </div>
-          {(selectedDate != null) && (
-            <RegisteredEvents events={registeredEvents} displayedDate={displayedDate} />
-          )}
-          
+          <p>Events Registered</p>
+        </div>        
+        {user && <RegisteredEvents events={registeredEvents} user={user} displayedDate={selectedDate ? selectedDate : displayedDate}/>}
       </div>
 
       <div className={styles.eventNewBox}>
