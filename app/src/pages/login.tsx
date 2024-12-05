@@ -8,6 +8,7 @@ import { authenticateUser, logOut, sendResetEmail } from "@/backend/AuthCalls";
 import styles from "@/styles/login.module.css";
 import { AuthError } from "firebase/auth";
 import { useRouter } from "next/router";
+import { getAuth} from "firebase/auth";
 
 const LoginPage = () => {
   const ref = useRef<HTMLFormElement>(null);
@@ -32,16 +33,27 @@ const LoginPage = () => {
   const handleLogin = async () => {
     await authenticateUser(email, password)
       .then(() => {
-        router.push("../admin");
+        const user = getAuth().currentUser;
+        if (user) {
+          user.getIdTokenResult().then((idTokenResult) => {
+            const role = idTokenResult.claims.role;
+            console.log("User role:", role);
+            if (role === "ADMIN") {
+              router.push("../admin");
+            } else {
+              router.push("../dashboard");
+            }
+          });
+        }
       })
       .catch((error) => {
         const code = (error as AuthError).code;
         if (code === "auth/too-many-requests") {
           setFailureMessage(
-            "*Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later."
+            "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later."
           );
         } else {
-          setFailureMessage("*Incorrect email address or password");
+          setFailureMessage("Incorrect email address or password");
         }
         console.log(error);
       });
@@ -127,6 +139,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <div>{failureMessage}</div>
           <button type="submit">
             <Image
               className={styles.tennisBalls}

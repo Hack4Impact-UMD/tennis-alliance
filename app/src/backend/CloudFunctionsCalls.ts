@@ -11,24 +11,49 @@ import { httpsCallable } from "firebase/functions";
 /*
  * Creates a user and sends a password reset email to that user.
  */
-export function createUser(user: User): Promise<void> {
+export function createUser(
+  email: string,
+  firstName: string,
+  lastName: string,
+  phone: string,
+  zip: string,
+  notifications: boolean,
+  waiver: boolean,
+  type: string
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const createUserCloudFunction = httpsCallable(functions, "createUser");
     const auth = getAuth(app);
+
+    const user: User = {
+      email,
+      firstName,
+      lastName,
+      phone: Number(phone),
+      zip: Number(zip),
+      notifications,
+      waiver,
+      events: [],
+      createdAt: new Date(),
+      type,
+    };
+
     console.log(user);
-    createUserCloudFunction({ email: user.email, user: user })
+
+    createUserCloudFunction({ email: user.email, user })
       .then(async () => {
+        console.log("emailing" + user.email);
         await sendPasswordResetEmail(auth, user.email)
           .then(() => {
             resolve();
           })
           .catch((error) => {
-            reject();
+            reject(error);
           });
       })
       .catch((error) => {
         console.log(error);
-        reject();
+        reject(error);
       });
   });
 }

@@ -5,10 +5,12 @@
   overflow: hidden;
   width: 100%;
   max-width: 700px;
+  margin-bottom: 30px;
 }
 .individualEvent {
   display: flex;
   flex-direction: row;
+  border-radius: 12px;
   margin-bottom: 5%;
   background-color: #E0F3F6;
 }
@@ -17,8 +19,11 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  padding-bottom: 20%;
+  /*padding: 20px;*/
+  width:50%;
+  font-size:22px;
+  margin:20px;
+  /*padding-bottom: 10%;*/
 }
 
 .dateSection h2 {
@@ -30,24 +35,29 @@
 
 .dateSection p {
   margin-top: 10px;
-  font-size: 1.75rem;
+  /*font-size: 1.75rem;*/
+  text-align: center;
   color: #000;
 }
 
 .eventInformation {
-  padding: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
   border-radius: 8px;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .titleButtonContainer {
   display: flex;
   justify-content: center; /* Align items to the left and right */
+  align-items: center; /* Center-aligns items vertically */
+  margin-top:20px;
 }
 
 .eventInformation p {
   margin: 5px 0;
-  font-size: 1rem;
+  font-size: 1.25rem;
   color: #000;
 }
 

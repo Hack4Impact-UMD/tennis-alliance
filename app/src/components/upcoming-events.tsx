@@ -1,17 +1,31 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import styles from "@/styles/upcoming-events.module.css";
 import { type CustomEvent, type User} from "@/types";
 import Arrow from "@/assets/down_arrow.png";
 import Racquet from "@/assets/tennis_racquet.png";
+import {addUserToEvent} from '@/backend/CloudFunctionsCalls';
 import Image from "next/image";
 
 interface UpcomingEventsProps {
   events: CustomEvent[];
   user: User;
+  upcomingEvents: CustomEvent[];
+  registeredEvents: CustomEvent[];
+  setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
+  setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
 }
 
-const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
+const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({ 
+  events, 
+  user,
+  upcomingEvents,
+  registeredEvents,
+  setUpcomingEvents,
+  setRegisteredEvents}, ref) => {
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
+  const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
+  const [role, setRole] = React.useState<string>("participant");
+ 
 
   // Function to get the correct ordinal suffix for the day
   const getOrdinalSuffix = (day: number) => {
@@ -58,10 +72,59 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
     return ''; // Default (no background color)
   };
 
+  const handleSubmit = async (eventId: string | undefined) => {
+    if (!user.auth_id) {
+      alert("User authentication ID is missing.");
+      return;
+    }
+    if (!eventId) {
+      alert("Event ID is missing.");
+      return;
+    }
+    console.log("user auth id: ", user.auth_id);
+    console.log("event id: ", eventId);
+    console.log("members: ", selectedMembers.map(member => {
+      const [firstName, lastName] = member.split(' ');
+      return { firstName, lastName };
+    }));
+    try {
+      await addUserToEvent(
+        user.auth_id,
+        eventId,
+        selectedMembers.map(member => {
+          const [firstName, lastName] = member.split(' ');
+          return { firstName, lastName };
+        })
+      );
+      alert("You have successfully registered for the event!");
+ 
+      const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
+      if(eventToRegister) {
+         setUpcomingEvents((prev) => prev.filter((event) => event.id !== eventId));
+         setRegisteredEvents((prev) => [...prev, eventToRegister]);
+      }
+      
+      setExpandedEventId(null);
+      setSelectedMembers([]);
+    } catch (error) {
+      console.error("Error registering for event:", error);
+      alert("There was an error. Please try again.");
+    }
+  };
+ 
+ 
+  const handleCheckboxChange = (memberName: string) => {
+    setSelectedMembers(prev =>
+      prev.includes(memberName) ? prev.filter(name => name !== memberName) : [...prev, memberName]
+    );
+  };
+
   return (
-    <div className={styles.upcomingEventContainer}>
+    <div ref = {ref} className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
         events.map(event => {
+          const availableSlots = event.maxParticipants - event.participants.length;
+          const isEventFull = availableSlots <= 0;
           // Extract the date from the event's start time
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
@@ -72,7 +135,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p> {/* Display event's date */}
-                <p>Participant</p>
+                {/* <p>Participant</p> */}
               </div>
 
               {/* Divider line */}
@@ -81,7 +144,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
                   <Image src={Racquet} alt="Racquet" />
-                  <p style={{ display: 'inline' }}>{event.title}</p>
+                  <p style={{ display: 'inline' , fontSize:'1.25rem', marginTop:'20px', textAlign:'center'}}>{event.title}</p>
                   {/* Square button next to event title */}
                   <Image src = {Arrow} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
                 </div>                
@@ -90,17 +153,29 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
                   <p>Time: {formatTime(event.start)}</p>
                   <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
                 </div>
-                {expandedEventId === event.id && (
+                {expandedEventId === event.id && !isEventFull && (
                   <div className={styles.registrationForm}>
                     <p>Would you like to register as a participant or volunteer?</p>
                     <div className={styles.radioButtonRow}>
                       <label>
-                        <input type="radio" name="role" value="participant" />
-                          Participant
+                        <input
+                          type="radio"
+                          name="role"
+                          value="participant"
+                          checked={role === "participant"}
+                          onChange={() => setRole("participant")}
+                        />
+                        Participant
                       </label>
                       <label>
-                        <input type="radio" name="role" value="volunteer" />
-                          Volunteer
+                        <input
+                          type="radio"
+                          name="role"
+                          value="volunteer"
+                          checked={role === "volunteer"}
+                          onChange={() => setRole("volunteer")}
+                        />
+                        Volunteer
                       </label>
                     </div>
                     <p>Please select the names of the people in your group who will be participating:</p>
@@ -108,20 +183,36 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
                     {/* Dynamic generation of family member checkboxes */}
                     {user.adults?.map((adult, index) => (
                       <label key={`adult-${index}`}>
-                        <input type="checkbox" name={`participant-adult-${index}`} />
+                        <input
+                         type="checkbox"
+                         name={`participant-adult-${index}`}
+                         checked={selectedMembers.includes(adult.name)}
+                         onChange={() => handleCheckboxChange(adult.name)} />
                         {adult.name}
                       </label>
                     ))}
                     {user.children?.map((child, index) => (
                       <label key={`child-${index}`}>
-                        <input type="checkbox" name={`participant-child-${index}`} />
+                        <input
+                         type="checkbox"
+                         name={`participant-child-${index}`}
+                         checked={selectedMembers.includes(`${child.firstName} ${child.lastName}`)}
+                         onChange={() => handleCheckboxChange(`${child.firstName} ${child.lastName}`)}/>
                         {child.firstName} {child.lastName}
                       </label>
                     ))}
                   </div>
                   
                   <div className = {styles.buttonWrapper}>
-                    <button className={styles.submitBtn}>Submit</button>
+                    <button 
+                      className={styles.submitBtn}
+                      onClick={() =>
+                        {
+                          handleSubmit(event.id)
+                        }}
+                    >
+                      Submit
+                    </button>
                   </div>
                 </div>
               )}
@@ -134,6 +225,7 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, user }) => {
       )}
     </div>
   );
-};
+}
+);
 
 export default UpcomingEvents;

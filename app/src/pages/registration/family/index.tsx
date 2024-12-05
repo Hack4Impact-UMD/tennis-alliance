@@ -1,6 +1,5 @@
 import { createFamily } from "@/backend/FirestoreCalls";
 import TennisBackground from "@/components/tennisBackground";
-import { User } from "@/types";
 import { useState } from "react";
 import styles from "../registration.module.css";
 
@@ -14,25 +13,48 @@ const Family: React.FC = () => {
   const [altEmail, setAltEmail] = useState<string>("");
   const [notifications, setNotifications] = useState<boolean>(false);
   const [waiver, setWaiver] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<boolean>(false);
 
-  const [childFirstName, setChildFirstName] = useState<string>("");
-  const [childLastName, setChildLastName] = useState<string>("");
-  const [childAge, setChildAge] = useState<number | "">("");
-  const [childBirthYear, setChildBirthYear] = useState<number | "">("");
-  const [childSchool, setChildSchool] = useState<string>("");
+  const [children, setChildren] = useState<
+    { childFirstName: string; childLastName: string; childAge: number | ""; childBirthYear: number | ""; childSchool: string }[]
+  >([
+    {
+      childFirstName: "",
+      childLastName: "",
+      childAge: "",
+      childBirthYear: "",
+      childSchool: "",
+    },
+  ]);
+
+  const handleChildChange = (index: number, field: string, value: string | number) => {
+    const updatedChildren = [...children];
+    updatedChildren[index] = {
+      ...updatedChildren[index],
+      [field]: value,
+    };
+    setChildren(updatedChildren);
+  };
+
+  const addChild = () => {
+    setChildren([
+      ...children,
+      {
+        childFirstName: "",
+        childLastName: "",
+        childAge: "",
+        childBirthYear: "",
+        childSchool: "",
+      },
+    ]);
+  };
+
+  const removeChild = (index: number) => {
+    setChildren(children.filter((_, childIndex) => childIndex !== index));
+  };
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
-    const children = [
-      {
-        childFirstName,
-        childLastName,
-        childAge: Number(childAge),
-        childBirthYear: Number(childBirthYear),
-        childSchool,
-      },
-    ];
 
     createFamily(
       email,
@@ -42,13 +64,17 @@ const Family: React.FC = () => {
       zip,
       notifications,
       waiver,
-      children,
+      children.map((child) => ({
+        ...child,
+        childAge: Number(child.childAge),
+        childBirthYear: Number(child.childBirthYear),
+      })),
       "family",
       altName,
-      altEmail,
+      altEmail
     )
       .then(() => {
-        console.log("Family successfully created");
+        setSuccessMessage(true);
       })
       .catch((err) => console.error("Error creating family:", err));
   };
@@ -131,60 +157,72 @@ const Family: React.FC = () => {
           value={altEmail}
           onChange={(e) => setAltEmail(e.target.value)}
         />
-        <label id="child1_name">Child Name</label>
-        <div>
-          <input
-            id="child1_first_name"
-            aria-labelledby="child1_name"
-            type="text"
-            placeholder="First Name"
-            value={childFirstName}
-            onChange={(e) => setChildFirstName(e.target.value)}
-            required
-          />
-          <input
-            id="child1_last_name"
-            aria-labelledby="child1_name"
-            type="text"
-            placeholder="Last Name"
-            value={childLastName}
-            onChange={(e) => setChildLastName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <div>
-            <label htmlFor="child1_age">Child&apos;s Age</label>
+        {children.map((child, index) => (
+          <div key={index}>
+            <label id={`child${index}_name`}>Child Name</label>
+            <div>
+              <input
+                id={`child${index}_first_name`}
+                aria-labelledby={`child${index}_name`}
+                type="text"
+                placeholder="First Name"
+                value={child.childFirstName}
+                onChange={(e) => handleChildChange(index, "childFirstName", e.target.value)}
+                required
+              />
+              <input
+                id={`child${index}_last_name`}
+                aria-labelledby={`child${index}_name`}
+                type="text"
+                placeholder="Last Name"
+                value={child.childLastName}
+                onChange={(e) => handleChildChange(index, "childLastName", e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor={`child${index}_age`}>Child&apos;s Age</label>
+              <input
+                id={`child${index}_age`}
+                type="number"
+                placeholder="Age"
+                value={child.childAge}
+                onChange={(e) => handleChildChange(index, "childAge", Number(e.target.value))}
+                required
+              />
+              <label htmlFor={`child${index}_year`}>Child&apos;s Birth Year</label>
+              <input
+                id={`child${index}_year`}
+                type="number"
+                placeholder="Birth Year"
+                value={child.childBirthYear}
+                onChange={(e) => handleChildChange(index, "childBirthYear", Number(e.target.value))}
+                required
+              />
+            </div>
+            <label htmlFor={`child${index}_school`}>Child&apos;s School</label>
             <input
-              id="child1_age"
-              type="number"
-              placeholder="Age"
-              value={childAge}
-              onChange={(e) => setChildAge(Number(e.target.value))}
+              id={`child${index}_school`}
+              type="text"
+              placeholder="School"
+              value={child.childSchool}
+              onChange={(e) => handleChildChange(index, "childSchool", e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => removeChild(index)}
+              aria-label={`Remove Child ${index + 1}`}
+              style={{ color: "red", height: "50px" }}
+            >
+              Remove Child
+            </button>
           </div>
-          <div>
-            <label htmlFor="child1_year">Child&apos;s Birth Year</label>
-            <input
-              id="child1_year"
-              type="number"
-              placeholder="Birth Year"
-              value={childBirthYear}
-              onChange={(e) => setChildBirthYear(Number(e.target.value))}
-              required
-            />
-          </div>
-        </div>
-        <label htmlFor="child1_school">Child&apos;s School</label>
-        <input
-          id="child1_school"
-          type="text"
-          placeholder="School"
-          value={childSchool}
-          onChange={(e) => setChildSchool(e.target.value)}
-          required
-        />
+        ))}
+
+        <button type="button" onClick={addChild}>
+          Add Another Child
+        </button>
         <p>
           Click{" "}
           <a
@@ -220,6 +258,17 @@ const Family: React.FC = () => {
         <button className="button" type="submit">
           Submit
         </button>
+        {successMessage && (
+          <div className={styles.successMessage}>
+            <div>Please check your inbox to set a password.</div>
+            <div>
+              Go to <span></span>
+              <a href="/login" className={styles.loginLink}>
+                login
+              </a>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
