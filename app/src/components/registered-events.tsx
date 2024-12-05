@@ -61,7 +61,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p>
-                <p>Volunteer</p>
+                {/* <p>Volunteer</p> */}
               </div>
 
               {/* Divider line */}
