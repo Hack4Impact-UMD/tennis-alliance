@@ -155,6 +155,17 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
   });
 }
 
+export function adminGetEventIDs(): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    getDocs(collection(db, "Events"))
+      .then((querySnapshot) => {
+        const eventIDs: string[] = querySnapshot.docs.map((doc) => doc.id);
+        resolve(eventIDs);
+      })
+      .catch((e) => reject(e));
+  });
+}
+
 export function adminGetEventById(eventId: string): Promise<CustomEvent> {
   return new Promise((resolve, reject) => {
     if (!eventId) {

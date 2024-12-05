@@ -6,7 +6,7 @@ import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers, getUserWithId, adminGetEventIDs } from "@/backend/FirestoreCalls";
 import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
 import { useAuth } from "@/auth/AuthProvider";
@@ -25,8 +25,9 @@ const AdminDashboard = () => {
     const [download, setDownload] = useState("");
     const downloadLink = useRef<HTMLAnchorElement>(null);
     const [eventData, setEventData] = useState<CustomEvent[]>([]);
+    const [eventIDs, setEventIDs] = useState<string[]>([]);
     const [userData, setUserData] = useState<User[]>([]);
-    // const [selectedID, setSelectedID] = useState<string | null>(null);
+    const [selectedID, setSelectedID] = useState<string | null>(null);
     const [selectedEventTitle, setSelectedEventTitle] = useState("");
     const [allEmails, setAllEmails] = useState("");
 
@@ -34,6 +35,8 @@ const AdminDashboard = () => {
         const fetchEvents = async () => {
             try {
                 const events = await adminGetEvents();
+                const eventIDs = await adminGetEventIDs();
+                setEventIDs(eventIDs);
                 setEventData(events);
                 console.log("Events:", events);
             } catch (error) {
@@ -89,7 +92,7 @@ const AdminDashboard = () => {
         return index % 2 == 0 ? "#E4F5E2" : "#FCF7CE";
     };
 
-    const handleSelectEvent = async (event: CustomEvent) => {
+    const handleSelectEvent = async (event: CustomEvent, index) => {
         try {
             const participantsData = await Promise.all(
                 event.participants.map(async (participantObj: any) => {
@@ -106,8 +109,14 @@ const AdminDashboard = () => {
             );
     
             setData(participantsData.filter(user => user !== null));
-            setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
+            setAllEmails(
+                participantsData
+                    .filter(user => user !== null)
+                    .map((user) => user.email)
+                    .join(",")
+            );
             setSelectedEventTitle(event.title);
+            setSelectedID(eventIDs[index]);
         } catch (error) {
             console.error("Error fetching participants data:", error);
         }
@@ -123,7 +132,7 @@ const AdminDashboard = () => {
                     <div className={styles.events}>
                         <h3>Events</h3>
                         {eventData.map((event, index) => (
-                            <div key={index} className={styles.eventRow} onClick={() => handleSelectEvent(event)}>
+                            <div key={index} className={styles.eventRow} onClick={() => handleSelectEvent(event, index)}>
                                 <div>{event.title}</div>
                                 <div>{event.date}</div>
                             </div>
