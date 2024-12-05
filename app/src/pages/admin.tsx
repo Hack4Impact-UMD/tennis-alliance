@@ -122,6 +122,25 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleRemoveParticipant = async (participantId: string, email: string) => {
+        try {
+            if (selectedEventTitle && participantId) {
+                await adminDeleteParticipant(
+                    selectedID,
+                    participantId,
+                    email,
+                    true
+                );
+                setData((prevData) =>
+                    prevData.filter((user) => user.auth_id !== participantId)
+                );
+                console.log(`Participant ${participantId} removed from ${selectedEventTitle}`);
+            }
+        } catch (error) {
+            console.error("Failed to remove participant:", error);
+        }
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.table}>
