@@ -45,105 +45,6 @@ export function updateUser(user: User): Promise<void> {
       });
   });
 }
-
-export function adminGetUsers(): Promise<User[]> {
-  return new Promise((resolve, reject) => {
-    getDocs(collection(db, "Users"))
-      .then((querySnapshot) => {
-        const users: User[] = querySnapshot.docs.map(
-          (doc) => doc.data() as User
-        );
-        resolve(users);
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
-}
-
-export function createUser(
-  email: string,
-  firstName: string,
-  lastName: string,
-  phone: string,
-  zip: string,
-  notifications: boolean,
-  waiver: boolean,
-  type: string
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const userCollectionRef = collection(db, "Users");
-
-    const user: User = {
-      email,
-      firstName,
-      lastName,
-      phone: Number(phone),
-      zip: Number(zip),
-      notifications,
-      waiver,
-      events: [],
-      createdAt: new Date(),
-      type,
-    };
-
-    addDoc(collection(db, "Users"), user)
-      .then(() => {
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-}
-
-export function createFamily(
-  email: string,
-  firstName: string,
-  lastName: string,
-  phone: string,
-  zip: string,
-  notifications: boolean,
-  waiver: boolean,
-  children: {
-    childFirstName: string;
-    childLastName: string;
-    childAge: number;
-    childBirthYear: number;
-    childSchool: string;
-  }[],
-  type: string,
-  altName: string,
-  altEmail: string,
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const familyCollectionRef = collection(db, "Users");
-
-    addDoc(familyCollectionRef, {
-      email,
-      firstName,
-      lastName,
-      phone: Number(phone),
-      zip: Number(zip),
-      notifications,
-      waiver,
-      altName,
-      altEmail,
-      children,
-      events: [],
-      createdAt: new Date(),
-      type,
-    })
-      .then(() => {
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-}
-
-
 export function adminGetEvents(): Promise<CustomEvent[]> {
   return new Promise((resolve, reject) => {
     getDocs(collection(db, "Events"))
@@ -164,6 +65,10 @@ export function adminGetEventIDs(): Promise<string[]> {
       .then((querySnapshot) => {
         const eventIDs: string[] = querySnapshot.docs.map((doc) => doc.id);
         resolve(eventIDs);
+      })
+      .catch((e) => reject(e));
+  });
+}
 
       
 export function adminGetEventById(eventId: string): Promise<CustomEvent> {
@@ -215,8 +120,8 @@ export function adminCreateEvent(
     const event: CustomEvent = {
       title: eventName,
       date: formattedDate,
-      start: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
-      end: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
+      startTime: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
+      endTime: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
       description,
       participants: [],
       maxParticipants: maxParticipants,
@@ -255,8 +160,8 @@ export function adminUpdateEvent(
     const updatedEvent: CustomEvent = {
       title: eventName,
       date: formattedDate,
-      start: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
-      end: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
+      startTime: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
+      endTime: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
       description,
       participants: [],
       maxParticipants: maxParticipants,
