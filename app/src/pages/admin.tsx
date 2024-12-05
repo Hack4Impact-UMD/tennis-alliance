@@ -6,7 +6,7 @@ import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents, adminGetUsers, getUserWithId, adminGetEventIDs } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers, getUserWithId, adminGetEventIDs, adminDeleteParticipant } from "@/backend/FirestoreCalls";
 import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
 import { useAuth } from "@/auth/AuthProvider";
@@ -71,6 +71,7 @@ const AdminDashboard = () => {
                         .includes(search.toLowerCase()))
         );
         setData(filteredData);
+        console.log("Filtered data:", filteredData);
         setAllEmails(filteredData.map((user) => user.email).join(","));
     }, [search, filter, userData]);
 
@@ -196,7 +197,7 @@ const AdminDashboard = () => {
                         <button>
                             <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
                         </button>
-                        <button>
+                        <button onClick={() => handleRemoveParticipant(row.auth_id, row.email)}>
                             <Image src={Trash} alt="delete" />
                         </button>
                     </div>
