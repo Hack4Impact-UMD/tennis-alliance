@@ -144,9 +144,9 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
                   <Image src={Racquet} alt="Racquet" />
-                  <p style={{ display: 'inline' , fontSize:'1.25rem', marginTop:'20px', textAlign:'center'}}>{event.title}</p>
+                  <p style={{ display: 'inline' , fontSize:'1.25rem', textAlign:'center', width:'60%'}}>{event.title}</p>
                   {/* Square button next to event title */}
-                  <Image src = {Arrow} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
+                  <Image src = {Arrow} style={{width:'33px', height:'35px'}} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
                 </div>                
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>

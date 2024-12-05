@@ -21,7 +21,7 @@
     width: fit-content;
     justify-content: left;
     display: flex;
-    /*margin-bottom: 20px;*/
+    margin-bottom: 20px;
 }
 
 .noEventsContainer {

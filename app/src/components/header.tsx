@@ -92,7 +92,7 @@ const Header = () => {
                         <p>{user?.email}</p>
                     </div>
 
-                    <p>Event Registration</p>
+                    <p className={classes.eventRegTitle}>Event Registration</p>
                     {role === "ADMIN" ? (
                         <Link href="/admin" onClick={toggleMenu}>
                             Admin Dashboard

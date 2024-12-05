@@ -34,7 +34,7 @@
   }
   
   .dateSection p {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     /*font-size: 1.75rem;*/
     text-align: center;
     color: #000;
@@ -72,6 +72,8 @@
     margin: 5px 0;
     font-size: 1rem;
     color: #000;
+    /* width:60%; */
+    text-align: center;
   }
 
   .eventDetails {
@@ -122,6 +124,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 15%;
+    margin-top:20px;
 }
 
 .radioButtonRow {

@@ -77,6 +77,10 @@
     margin-top:20px;
 }
 
+.eventRegTitle{
+    margin-top:20px;
+}
+
 .menu>img {
     position: fixed;
     top: 36px;
@@ -161,7 +165,7 @@
 @media screen and (max-height: 900px) {
     .menu {
         width: 360px;
-        padding: 60px 60px 32px;
+        padding: 60px 30px 32px;
     }
 
     .menu>p,
