@@ -10,6 +10,7 @@ interface ChildFormProps {
 
 const ChildForm = ({ isEditing }: ChildFormProps) => {
     const [sections, setSections] = useState([{ id: 1 }]);
+    const [childrenInfo, setChildrenInfo] = useState([]);
 
     const addSection = () => {
         const newSections = [...sections, { id: sections.length + 1 }];

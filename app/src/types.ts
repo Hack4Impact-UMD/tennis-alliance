@@ -43,4 +43,4 @@ type CustomEvent = {
   maxVolunteers: number;
 };
 
-export type { CustomEvent, User };
+export type { CustomEvent, User, Children };

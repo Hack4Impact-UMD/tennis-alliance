@@ -1,5 +1,5 @@
 import { db, functions } from "@/config";
-import { CustomEvent, User } from "@/types";
+import { CustomEvent, User, Children } from "@/types";
 import {
   addDoc,
   collection,
@@ -101,6 +101,34 @@ export async function updateAdditionalInfo(
   }
 }
 
+export async function getChildren(uid: string): Promise<Children[]> {
+  try {
+    const userRef = doc(db, "Users", uid);
+    const userDoc = await getDoc(userRef);
+
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      return data.children || []; // Return the additionalInfo field if it exists
+    } else {
+      console.error("No such document!");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching children:", error);
+    throw error;
+  }
+}
+
+export async function updateChildren(uid: string): Promise<void> {
+  try {
+    const userRef = doc(db, "Users", uid);
+
+    console.log("Additional info updated successfully.");
+  } catch (error) {
+    console.error("Error updating additional info:", error);
+    throw error;
+  }
+}
 
 export function createUser(
   email: string,
