@@ -55,6 +55,8 @@ const MyCalendar: React.FC = () => {
   const [isOutsideClick, setIsOutsideClick] = useState<boolean>(false);  // Flag for outside click
   const [outsideClickFlag, setOutsideClickFlag] = useState<boolean>(false);  // Flag for detecting clicks outside
   const registeredEventListRef = useRef<CustomEvent[]>([]); // Persistent across renders
+  const todayEventsRef = useRef<HTMLDivElement | null>(null);
+  const upcomingEventsRef = useRef<HTMLDivElement | null>(null);
 
 
   const auth = useAuth();
@@ -85,10 +87,18 @@ const MyCalendar: React.FC = () => {
     fetchUser();
   }, [auth.user]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-        setOutsideClickFlag(true);  // Set flag to true when clicked outside
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node) &&
+        todayEventsRef.current &&
+        !todayEventsRef.current.contains(event.target as Node) &&
+        upcomingEventsRef.current &&
+        !upcomingEventsRef.current.contains(event.target as Node)
+      ) {
+        console.log("clicked outside");
+        resetToInitialState();
       }
     };
   
@@ -97,6 +107,14 @@ const MyCalendar: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const resetToInitialState = () => {
+    setSelectedDate(null);
+    setEventsForSelectedDate([]);
+    setTodayEvents(events.filter(event => event.date === todayInEST));
+    setUpcomingEvents(events.filter(event => new Date(event.date) >= new Date(todayInEST)));
+    setDisplayedDate(todayInEST);
+  };
 
   useEffect(() => {
     if (outsideClickFlag) {
@@ -107,7 +125,7 @@ const MyCalendar: React.FC = () => {
     }
   }, [outsideClickFlag, todayInEST]);
 
-    useEffect(() => {
+  useEffect(() => {
     // Set the displayed date to today if the flag is true
     if (isOutsideClick) {
       const now = new Date();
@@ -123,15 +141,15 @@ const MyCalendar: React.FC = () => {
       setDisplayedDate(todayInEST);
       setIsOutsideClick(false); // Reset the flag
     }
-  }, [isOutsideClick]);
+  }, [isOutsideClick]);*/
 
   useEffect(() => {
     if (selectedDate) {
-      /*const filteredEvents = regUpcomingEvents.filter(
+      const filteredEvents = regUpcomingEvents.filter(
         (event) => event.date === selectedDate
       );
       setFilteredRegisteredEvents(filteredEvents);
-      setRegisteredEvents(filteredEvents);*/
+      setRegisteredEvents(filteredEvents);
       console.log("registeredEvents: ", registeredEvents);
     } else {
       setRegisteredEvents(registeredEventListRef.current);
@@ -209,7 +227,7 @@ const MyCalendar: React.FC = () => {
         const todayDate = new Date(todayInEST);
 
         // Add events that are today or in the future
-        if (eventDate >= todayDate) {
+        if (eventDate >= todayDate && eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear) {
           upcomingEventList.push(eventObj);
         }
 
@@ -298,7 +316,7 @@ const MyCalendar: React.FC = () => {
         ec.destroy();
       };
     }
-  }, [events, regUpcomingEvents, todayInEST, displayedDate]);
+  }, [events, regUpcomingEvents, todayInEST]);
 
   useEffect(() => {
     setDisplayedDate(selectedDate || formatDate(new Date().toISOString().split('T')[0]));
@@ -308,12 +326,9 @@ const MyCalendar: React.FC = () => {
     <div className={styles.calendarBox}>
       <div className={styles.registeredContainer}>
         <div className={styles.eventRegisteredBox}>
-        <p>Events Registered</p>
-        </div>
-          {(selectedDate != null) && (
-            <RegisteredEvents events={registeredEvents} displayedDate={displayedDate} />
-          )}
-          
+          <p>Events Registered</p>
+        </div>        
+        {user && <RegisteredEvents events={registeredEvents} user={user} displayedDate={selectedDate ? selectedDate : displayedDate}/>}
       </div>
 
       <div className={styles.eventNewBox}>
@@ -330,8 +345,13 @@ const MyCalendar: React.FC = () => {
         )}
         {user && !selectedDate && (
           <TodayEvents 
+            ref={todayEventsRef}
             events={todayEvents} 
             user={user}
+            upcomingEvents={upcomingEvents}
+            registeredEvents={registeredEvents}
+            setUpcomingEvents={setUpcomingEvents}
+            setRegisteredEvents={setRegisteredEvents}
           />
         )}
       </div>
@@ -342,8 +362,13 @@ const MyCalendar: React.FC = () => {
         </div>
         {user && (
           <UpcomingEvents
+            ref={upcomingEventsRef}
             events={selectedDate ? eventsForSelectedDate : upcomingEvents}
             user={user}
+            upcomingEvents={upcomingEvents}
+            registeredEvents={registeredEvents}
+            setUpcomingEvents={setUpcomingEvents}
+            setRegisteredEvents={setRegisteredEvents}
           />
         )}
       </div>

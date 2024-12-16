@@ -1,15 +1,19 @@
 import React from "react";
+import { type CustomEvent, type User } from "@/types";
+import { deleteUserFromEvent } from "@/backend/CloudFunctionsCalls";
 import Arrow from "@/assets/down_arrow.png";
 import Racquet from "@/assets/tennis_racquet.png";
-import Image from "next/image";import TennisBalls from "@/assets/tennis_balls.png";import styles from "@/styles/registered-events.module.css";
-import { type CustomEvent } from "@/types";
+import Image from "next/image";import TennisBalls from "@/assets/tennis_balls.png";
+import styles from "@/styles/registered-events.module.css";
 
 interface RegisteredEventsProp {
   events: CustomEvent[];
   displayedDate: string;
+  user: User;
 }
 
-export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displayedDate }) => {
+export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user, displayedDate }) => {
+  // console.log(user.auth_id);
   const getOrdinalSuffix = (day: number) => {
     if (day > 3 && day < 21) return "th";
     switch (day % 10) {
@@ -57,7 +61,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displ
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p>
-                <p>Volunteer</p>
+                {/* <p>Volunteer</p> */}
               </div>
 
               {/* Divider line */}
@@ -74,6 +78,13 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, displ
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
                   <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                  <button className={styles.removeButton} onClick={() => 
+                      {
+                        // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)
+                        deleteUserFromEvent(user.auth_id as string, event.id as string)
+                      }}>
+                      Remove
+                  </button>
                 </div>
               </div>
             </div>

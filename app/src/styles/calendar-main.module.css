@@ -1,6 +1,6 @@
 .calendarBox {
-    width: 60%;
-    max-width: 600px;
+    width: 35%;
+    /* max-width: 600px; */
 }
 
 .registeredContainer {
@@ -17,11 +17,11 @@
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     width: fit-content;
     justify-content: left;
     display: flex;
-    /*margin-bottom: 20px;*/
+    margin-bottom: 20px;
 }
 
 .noEventsContainer {
@@ -46,11 +46,11 @@
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     width: fit-content;/*30%;*/
     justify-content: left;
     display: flex;
-    margin-bottom:5%;
+    margin-bottom:2%;
 }
 .todayBox {
     background-color: #0E8FCC; /* Blue background */
@@ -59,7 +59,7 @@
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     width: fit-content;
     justify-content: left;
     display: flex;
@@ -72,7 +72,7 @@
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     width: fit-content;
     justify-content: left;
     display: flex;

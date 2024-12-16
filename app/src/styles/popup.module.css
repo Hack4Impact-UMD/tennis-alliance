@@ -29,6 +29,10 @@
     z-index: 100;
 }
 
+.repeatSection {
+    color:white;
+}
+
 .popupInner {
     position: relative;
     padding: 40px;

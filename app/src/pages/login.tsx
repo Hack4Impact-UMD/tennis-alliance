@@ -8,6 +8,7 @@ import { authenticateUser, logOut, sendResetEmail } from "@/backend/AuthCalls";
 import styles from "@/styles/login.module.css";
 import { AuthError } from "firebase/auth";
 import { useRouter } from "next/router";
+import { getAuth} from "firebase/auth";
 
 const LoginPage = () => {
   const ref = useRef<HTMLFormElement>(null);
@@ -32,7 +33,18 @@ const LoginPage = () => {
   const handleLogin = async () => {
     await authenticateUser(email, password)
       .then(() => {
-        router.push("../admin");
+        const user = getAuth().currentUser;
+        if (user) {
+          user.getIdTokenResult().then((idTokenResult) => {
+            const role = idTokenResult.claims.role;
+            console.log("User role:", role);
+            if (role === "ADMIN") {
+              router.push("../admin");
+            } else {
+              router.push("../dashboard");
+            }
+          });
+        }
       })
       .catch((error) => {
         const code = (error as AuthError).code;

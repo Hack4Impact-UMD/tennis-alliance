@@ -177,7 +177,7 @@ const Settings = () => {
               className={style.save}
               onClick={() => setOpenChangePasswordModal(true)}
             >
-              click me change password
+              Change password
             </button>
             <div className={style.fields}>
               <div>

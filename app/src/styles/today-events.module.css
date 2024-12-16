@@ -20,6 +20,8 @@
   justify-content: center;
   align-items: center;
   /*padding: 20px;*/
+  width:50%;
+  font-size:22px;
   margin:20px;
   /*padding-bottom: 10%;*/
 }
@@ -32,13 +34,14 @@
 }
 
 .dateSection p {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   /*font-size: 1.75rem;*/
   text-align: center;
   color: #000;
 }
 
 .eventInformation {
+  position: relative;
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 8px;
@@ -49,12 +52,16 @@
 .titleButtonContainer {
   display: flex;
   justify-content: center; /* Align items to the left and right */
+  align-items: center; /*Center-aligns items vertically */
+  margin-top:20px;
 }
 
 .eventInformation p {
   margin: 5px 0;
-  font-size: 1rem;
+  font-size: 1.25rem;
   color: #000;
+  width:60%;
+  text-align: center;
 }
 
 .divider {
@@ -64,6 +71,11 @@
   align-self: stretch;
 }
 
+.racquet {
+  position:absolute;
+  left:10px;
+}
+
 .buttonGroup {
   display: flex;
   gap: 20px;
@@ -71,10 +83,12 @@
 }
 
 .eventDetails {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   align-items: center; /* Center-aligns contents horizontally */
   text-align: center; /* Centers text within each p element */
+  width:100%;
+  margin-left:4vw;
 }
 
 .eventDetails p {
@@ -123,6 +137,20 @@
   display: flex;
   align-items: center;
   gap: 0.25rem; /* Adds space between the radio button and label text */
+}
+
+.removeButton {
+  background-color: #cce5ff;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.removeButton:hover {
+  background-color: #99ccff;
 }
 
 @media (max-width: 768px) {
