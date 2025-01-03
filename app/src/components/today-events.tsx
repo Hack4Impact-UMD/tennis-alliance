@@ -123,6 +123,11 @@ const formatTime = (timeString: string) => {
        events.map(event => {
         const availableSlots = event.maxParticipants - event.participants.length;
         const isEventFull = availableSlots <= 0;
+        let totalOtherMembers = 0;
+        event.participants.forEach(participant => {
+          totalOtherMembers += participant.otherMembers.length;
+        });
+        const slotsOpen = event.maxParticipants - totalOtherMembers;
 
         return (
 
@@ -146,7 +151,7 @@ const formatTime = (timeString: string) => {
              <div className={styles.eventDetails}>
                <p>Time: {formatTime(event.start)}</p>
                <p>{event.description}</p>
-               <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+               <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
              </div>
              <div className={styles.buttonGroup}>
                {/* Show "Register" and "Cancel" buttons only if the event is not expanded */}
@@ -214,6 +219,7 @@ const formatTime = (timeString: string) => {
                <div className = {styles.buttonWrapper}>
                  <button
                    className={styles.submitBtn}
+                   disabled = {selectedMembers.length === 0}
                    onClick={() =>
                      {
                        handleSubmit(event.id)

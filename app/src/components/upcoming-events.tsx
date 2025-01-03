@@ -96,6 +96,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
           return { firstName, lastName };
         })
       );
+
       alert("You have successfully registered for the event!");
  
       const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
@@ -125,6 +126,11 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
         events.map(event => {
           const availableSlots = event.maxParticipants - event.participants.length;
           const isEventFull = availableSlots <= 0;
+          let totalOtherMembers = 0;
+          event.participants.forEach(participant => {
+            totalOtherMembers += participant.otherMembers.length;
+          });
+          const slotsOpen = event.maxParticipants - totalOtherMembers;
           // Extract the date from the event's start time
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
@@ -151,7 +157,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
-                  <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                  <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
                 </div>
                 {expandedEventId === event.id && !isEventFull && (
                   <div className={styles.registrationForm}>
@@ -206,6 +212,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                   <div className = {styles.buttonWrapper}>
                     <button 
                       className={styles.submitBtn}
+                      disabled={selectedMembers.length === 0}
                       onClick={() =>
                         {
                           handleSubmit(event.id)

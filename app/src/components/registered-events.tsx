@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { type CustomEvent, type User } from "@/types";
 import { deleteUserFromEvent } from "@/backend/CloudFunctionsCalls";
 import Arrow from "@/assets/down_arrow.png";
@@ -52,6 +52,11 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
     <div className={styles.registeredEventsContainer}>
       {events.length > 0 ? (
         events.map(event => {
+          let totalOtherMembers = 0;
+          event.participants.forEach(participant => {
+              totalOtherMembers += participant.otherMembers.length;
+          });
+          const slotsOpen = event.maxParticipants - totalOtherMembers;
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
           const eventMonth = eventDate.toLocaleString("default", { month: "long" });
@@ -77,7 +82,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
-                  <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                  <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
                   <button className={styles.removeButton} onClick={() => 
                       {
                         // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)

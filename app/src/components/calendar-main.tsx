@@ -150,7 +150,6 @@ const MyCalendar: React.FC = () => {
       );
       setFilteredRegisteredEvents(filteredEvents);
       setRegisteredEvents(filteredEvents);
-      console.log("registeredEvents: ", registeredEvents);
     } else {
       setRegisteredEvents(registeredEventListRef.current);
     }
