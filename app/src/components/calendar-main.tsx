@@ -355,6 +355,11 @@ const MyCalendar: React.FC = () => {
           (event) => event.id !== newRegisteredEvent.id
         )
       );
+      setTodayEvents((prevTodayEvents) =>
+        prevTodayEvents.filter(
+          (event) => event.id !== newRegisteredEvent.id
+        )
+      );
     }
   };
 
@@ -388,6 +393,7 @@ const MyCalendar: React.FC = () => {
             registeredEvents={registeredEvents}
             setUpcomingEvents={setUpcomingEvents}
             setRegisteredEvents={setRegisteredEvents}
+            onRegisterEvent={handleRegisterEvent}
           />
         )}
       </div>

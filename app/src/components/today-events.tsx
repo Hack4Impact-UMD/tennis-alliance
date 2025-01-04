@@ -25,6 +25,7 @@ interface TodayEventsProps {
  registeredEvents: CustomEvent[];
  setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
  setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
+ onRegisterEvent: (eventId: string) => void;
 }
 
 
@@ -34,7 +35,8 @@ const TodayEvents = forwardRef<HTMLDivElement, TodayEventsProps> (({
   upcomingEvents,
   registeredEvents,
   setUpcomingEvents,
-  setRegisteredEvents}, ref) => {
+  setRegisteredEvents,
+  onRegisterEvent}, ref) => {
 
 
  const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
@@ -93,6 +95,7 @@ const formatTime = (timeString: string) => {
          return { firstName, lastName };
        })
      );
+     onRegisterEvent(eventId);
      alert("You have successfully registered for the event!");
 
      const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
