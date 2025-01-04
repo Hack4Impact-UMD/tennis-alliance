@@ -13,6 +13,7 @@ interface UpcomingEventsProps {
   registeredEvents: CustomEvent[];
   setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
   setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
+  onRegisterEvent: (eventId: string) => void;
 }
 
 const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({ 
@@ -21,7 +22,8 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
   upcomingEvents,
   registeredEvents,
   setUpcomingEvents,
-  setRegisteredEvents}, ref) => {
+  setRegisteredEvents,
+  onRegisterEvent}, ref) => {
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
   const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
   const [role, setRole] = React.useState<string>("participant");
@@ -81,12 +83,12 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
       alert("Event ID is missing.");
       return;
     }
-    console.log("user auth id: ", user.auth_id);
+    /*console.log("user auth id: ", user.auth_id);
     console.log("event id: ", eventId);
     console.log("members: ", selectedMembers.map(member => {
       const [firstName, lastName] = member.split(' ');
       return { firstName, lastName };
-    }));
+    }));*/
     try {
       await addUserToEvent(
         user.auth_id,
@@ -96,7 +98,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
           return { firstName, lastName };
         })
       );
-
+      onRegisterEvent(eventId);
       alert("You have successfully registered for the event!");
  
       const eventToRegister = upcomingEvents.find((event) => event.id === eventId);

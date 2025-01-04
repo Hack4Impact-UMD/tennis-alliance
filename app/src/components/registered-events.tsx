@@ -86,7 +86,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                   <button className={styles.removeButton} onClick={() => 
                       {
                         // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)
-                        deleteUserFromEvent(user.auth_id as string, event.id as string)
+                        deleteUserFromEvent(user.auth_id as string, event.id as string);
                       }}>
                       Remove
                   </button>
