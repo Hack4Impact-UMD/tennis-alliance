@@ -87,6 +87,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                       {
                         // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)
                         deleteUserFromEvent(user.auth_id as string, event.id as string);
+                        window.location.reload();
                       }}>
                       Remove
                   </button>

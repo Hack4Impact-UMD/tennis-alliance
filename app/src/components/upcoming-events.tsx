@@ -98,8 +98,9 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
           return { firstName, lastName };
         })
       );
-      onRegisterEvent(eventId);
+      /*onRegisterEvent(eventId);*/
       alert("You have successfully registered for the event!");
+      window.location.reload();
  
       const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
       if(eventToRegister) {
