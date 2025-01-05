@@ -190,6 +190,15 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                     <p>Please select the names of the people in your group who will be participating:</p>
                     <div className={styles.checkboxGroup}>
                     {/* Dynamic generation of family member checkboxes */}
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="participant-main"
+                        checked={selectedMembers.includes(`${user.firstName} ${user.lastName}`)}
+                        onChange={() => handleCheckboxChange(`${user.firstName} ${user.lastName}`)}
+                      />
+                      {user.firstName} {user.lastName}
+                    </label>
                     {user.adults?.map((adult, index) => (
                       <label key={`adult-${index}`}>
                         <input
