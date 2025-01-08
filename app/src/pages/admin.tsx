@@ -21,6 +21,8 @@ import { RegisteredEvents } from '../components/registered-events';
 import UpcomingEvents from '../components/upcoming-events';
 import DashboardEvents from '../components/dashboard-events';
 import { Upcoming } from "@mui/icons-material";
+import EditPopup from "./admin-event-edit-popup";
+import DeletePopUp from "./admin-event-delete-popup";
 
 const FILTERS = {
     "All Users": "all",
@@ -427,20 +429,31 @@ const AdminDashboard = () => {
                     <div />
                 </div>
                 {data.map((row, i) => (
-                    <div
-                        key={i}
-                        className={styles.row}
-                        style={{ background: getRowColor(i) }}
-                    >
-                        <span>{row.firstName + " " + row.lastName}</span>
-                        <span>{row.email}</span>
-                        <span>{row.type}</span>
-                        <button>
-                            <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
-                        </button>
-                        <button>
-                            <Image src={Trash} alt="delete" />
-                        </button>
+                    <div>    
+                        <div
+                            key={i}
+                            className={styles.row}
+                            style={{ background: getRowColor(i) }}
+                        >
+                            <span>{row.firstName + " " + row.lastName}</span>
+                            <span>{row.email}</span>
+                            <span>{row.type}</span>
+                            <button>
+                                <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
+                            </button>
+                            <button>
+                                <Image src={Trash} alt="delete" />
+                            </button>
+                        </div>
+                        <div className={styles.children}>
+                            {row.children?.map((child, i) => (
+                                <div key={i} className={styles.child} style={{ background: getRowColor(i + 1) }}>
+                                    Child {i + 1}
+                                    <span>{child.firstName + " " + child.lastName}</span>
+                                    <span>Account owner: {row.firstName + " " + row.lastName}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 ))}
                 <div className={styles.buttons}>

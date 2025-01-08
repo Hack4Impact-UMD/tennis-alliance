@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from "@/styles/dashboard-events.module.css";
 import { type CustomEvent, type User } from "@/types";
 import Racquet from "@/assets/tennis_racquet.png";
 import Image from "next/image";
 import {addUserToEvent} from '@/backend/CloudFunctionsCalls';
 import { event } from '@/tests/mock';
-
+import EditPopup from '@/pages/admin-event-edit-popup';
+import DeletePopUp from '@/pages/admin-event-delete-popup';
 
 
 
@@ -90,6 +91,10 @@ const getEventBackgroundColor = (role: string) => {
 
 
            <div className={styles.eventInformation}>
+            <div className={styles.editDeleteContainer}>
+              <EditPopup eventID={event.id}/>
+              <DeletePopUp eventID={event.id}/>
+            </div>
              <div className={styles.titleButtonContainer}>
                  <Image src={Racquet} alt="Racquet" />
                  <p style={{ fontSize: '1.50rem'}}>{event.title}</p>

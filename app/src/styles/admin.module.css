@@ -181,6 +181,33 @@
     border-radius: 12px;
 }
 
+.children {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin-left: 5%;
+}
+
+.child {
+    gap: 24px;
+    border-radius: 12px;
+    height: 30px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+}
+
+.child > span {
+    flex-basis: 30%;
+    padding: 12px 0px;
+}
+
+.child > span:nth-of-type(2) {
+    flex-basis: 40%;
+}
+
 .row > span {
     flex-basis: 30%;
     padding: 12px 0px;
