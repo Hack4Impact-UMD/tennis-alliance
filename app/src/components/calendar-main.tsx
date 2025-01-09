@@ -57,10 +57,32 @@ const MyCalendar: React.FC = () => {
   const registeredEventListRef = useRef<CustomEvent[]>([]); // Persistent across renders
   const todayEventsRef = useRef<HTMLDivElement | null>(null);
   const upcomingEventsRef = useRef<HTMLDivElement | null>(null);
+  const [shouldRefresh, setShouldRefresh] = useState<boolean>(false);
+
+  const toggleRefresh = () => {
+    setShouldRefresh((prev) => !prev);
+  }
 
 
   const auth = useAuth();
 
+  useEffect(() => {
+    if (shouldRefresh) {
+      const fetchAllEvents = async () => {
+        if (!auth.loading) {
+          const await_response = await fetchEvents(auth.user.uid);
+          const combinedEvents = [...await_response[0], ...await_response[2]];
+          setPriorEvents(await_response[0]);
+          setEvents(combinedEvents);
+          setUpcomingEvents(upcomingEvents);
+          setRegUpcomingEvents(registeredEvents);
+        }
+      };
+  
+      fetchAllEvents();
+    }
+  }, [shouldRefresh]);
+  
   useEffect(() => {
     const fetchAllEvents = async () => {
       if (!auth.loading) {
@@ -150,7 +172,6 @@ const MyCalendar: React.FC = () => {
       );
       setFilteredRegisteredEvents(filteredEvents);
       setRegisteredEvents(filteredEvents);
-      console.log("registeredEvents: ", registeredEvents);
     } else {
       setRegisteredEvents(registeredEventListRef.current);
     }
@@ -322,13 +343,33 @@ const MyCalendar: React.FC = () => {
     setDisplayedDate(selectedDate || formatDate(new Date().toISOString().split('T')[0]));
   }, [selectedDate]);
 
+  const handleRegisterEvent = (eventId: string) => {
+    const newRegisteredEvent = upcomingEvents.find(event => event.id === eventId);
+    if (newRegisteredEvent) {
+      setRegisteredEvents((prevRegisteredEvents) => [
+        ...prevRegisteredEvents,
+        newRegisteredEvent,
+      ]);
+      setUpcomingEvents((prevUpcomingEvents) =>
+        prevUpcomingEvents.filter(
+          (event) => event.id !== newRegisteredEvent.id
+        )
+      );
+      setTodayEvents((prevTodayEvents) =>
+        prevTodayEvents.filter(
+          (event) => event.id !== newRegisteredEvent.id
+        )
+      );
+    }
+  };
+
   return (
     <div className={styles.calendarBox}>
       <div className={styles.registeredContainer}>
         <div className={styles.eventRegisteredBox}>
           <p>Events Registered</p>
         </div>        
-        {user && <RegisteredEvents events={registeredEvents} user={user} displayedDate={selectedDate ? selectedDate : displayedDate}/>}
+        {user && <RegisteredEvents events={registeredEvents} user={user} displayedDate={selectedDate ? selectedDate : displayedDate} />}
       </div>
 
       <div className={styles.eventNewBox}>
@@ -352,6 +393,7 @@ const MyCalendar: React.FC = () => {
             registeredEvents={registeredEvents}
             setUpcomingEvents={setUpcomingEvents}
             setRegisteredEvents={setRegisteredEvents}
+            onRegisterEvent={handleRegisterEvent}
           />
         )}
       </div>
@@ -369,6 +411,7 @@ const MyCalendar: React.FC = () => {
             registeredEvents={registeredEvents}
             setUpcomingEvents={setUpcomingEvents}
             setRegisteredEvents={setRegisteredEvents}
+            onRegisterEvent={handleRegisterEvent}
           />
         )}
       </div>
