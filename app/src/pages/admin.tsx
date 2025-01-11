@@ -448,8 +448,7 @@ const AdminDashboard = () => {
                         <div className={styles.children}>
                             {row.children?.map((child, i) => (
                                 <div key={i} className={styles.child} style={{ background: getRowColor(i + 1) }}>
-                                    Child {i + 1}
-                                    <span>{child.firstName + " " + child.lastName}</span>
+                                    Child {i + 1}: {child.firstName + " " + child.lastName}
                                     <span>Account owner: {row.firstName + " " + row.lastName}</span>
                                 </div>
                             ))}

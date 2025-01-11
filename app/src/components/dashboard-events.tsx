@@ -73,7 +73,9 @@ const getEventBackgroundColor = (role: string) => {
  const month = today.toLocaleString('default', { month: 'long' }); // Full month name
  const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
 
-
+ useEffect(() => {
+  console.log("Events: ", events);
+  }, []);
 
  return (
    <div className={styles.dashboardEventsContainer}>
@@ -91,10 +93,6 @@ const getEventBackgroundColor = (role: string) => {
 
 
            <div className={styles.eventInformation}>
-            <div className={styles.editDeleteContainer}>
-              <EditPopup eventID={event.id}/>
-              <DeletePopUp eventID={event.id}/>
-            </div>
              <div className={styles.titleButtonContainer}>
                  <Image src={Racquet} alt="Racquet" />
                  <p style={{ fontSize: '1.50rem'}}>{event.title}</p>
@@ -103,7 +101,15 @@ const getEventBackgroundColor = (role: string) => {
              <div className={styles.eventDetails}>
                <p>Time: {formatTime(event.start)}</p>
                <p>{event.description}</p>
-               <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+               <p>Slots open:{" "}
+               {event.maxParticipants -
+                  event.participants.reduce((total, participant) => total + (participant.otherMembers?.length || 0), event.participants.length)}{" "}
+                out of {event.maxParticipants}
+                </p>
+             </div>
+             <div className={styles.editDeleteContainer}>
+              <EditPopup eventID={event.id}/>
+              <DeletePopUp eventID={event.id}/>
              </div>
            </div>
          </div>

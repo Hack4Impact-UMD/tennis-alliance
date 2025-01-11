@@ -17,11 +17,12 @@
   .editDeleteContainer {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
+    justify-content: center;
     width: 100%;
     gap: 10px;
     margin-bottom: 10px;
+    padding-top: 15px;
+    margin-bottom: -15px;
   }
   .dateSection {
     display: flex;
