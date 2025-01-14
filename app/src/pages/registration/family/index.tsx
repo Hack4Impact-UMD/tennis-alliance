@@ -1,4 +1,4 @@
-import { createFamily } from "@/backend/FirestoreCalls";
+import { createFamilyUser } from "@/backend/CloudFunctionsCalls";
 import TennisBackground from "@/components/tennisBackground";
 import { useState } from "react";
 import styles from "../registration.module.css";
@@ -56,7 +56,7 @@ const Family: React.FC = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    createFamily(
+    createFamilyUser(
       email,
       firstName,
       lastName,
