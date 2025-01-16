@@ -13,6 +13,7 @@ interface UpcomingEventsProps {
   registeredEvents: CustomEvent[];
   setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
   setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
+  onRegisterEvent: (eventId: string) => void;
 }
 
 const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({ 
@@ -21,7 +22,8 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
   upcomingEvents,
   registeredEvents,
   setUpcomingEvents,
-  setRegisteredEvents}, ref) => {
+  setRegisteredEvents,
+  onRegisterEvent}, ref) => {
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
   const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
   const [role, setRole] = React.useState<string>("participant");
@@ -81,12 +83,12 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
       alert("Event ID is missing.");
       return;
     }
-    console.log("user auth id: ", user.auth_id);
+    /*console.log("user auth id: ", user.auth_id);
     console.log("event id: ", eventId);
     console.log("members: ", selectedMembers.map(member => {
       const [firstName, lastName] = member.split(' ');
       return { firstName, lastName };
-    }));
+    }));*/
     try {
       await addUserToEvent(
         user.auth_id,
@@ -96,7 +98,9 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
           return { firstName, lastName };
         })
       );
+      /*onRegisterEvent(eventId);*/
       alert("You have successfully registered for the event!");
+      window.location.reload();
  
       const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
       if(eventToRegister) {
@@ -125,6 +129,11 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
         events.map(event => {
           const availableSlots = event.maxParticipants - event.participants.length;
           const isEventFull = availableSlots <= 0;
+          let totalOtherMembers = 0;
+          event.participants.forEach(participant => {
+            totalOtherMembers += participant.otherMembers.length;
+          });
+          const slotsOpen = event.maxParticipants - totalOtherMembers;
           // Extract the date from the event's start time
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
@@ -151,7 +160,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
-                  <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+                  <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
                 </div>
                 {expandedEventId === event.id && !isEventFull && (
                   <div className={styles.registrationForm}>
@@ -181,6 +190,15 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                     <p>Please select the names of the people in your group who will be participating:</p>
                     <div className={styles.checkboxGroup}>
                     {/* Dynamic generation of family member checkboxes */}
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="participant-main"
+                        checked={selectedMembers.includes(`${user.firstName} ${user.lastName}`)}
+                        onChange={() => handleCheckboxChange(`${user.firstName} ${user.lastName}`)}
+                      />
+                      {user.firstName} {user.lastName}
+                    </label>
                     {user.adults?.map((adult, index) => (
                       <label key={`adult-${index}`}>
                         <input
@@ -206,6 +224,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                   <div className = {styles.buttonWrapper}>
                     <button 
                       className={styles.submitBtn}
+                      disabled={selectedMembers.length === 0}
                       onClick={() =>
                         {
                           handleSubmit(event.id)

@@ -58,6 +58,63 @@ export function createUser(
   });
 }
 
+export function createFamilyUser(
+  email: string,
+  firstName: string,
+  lastName: string,
+  phone: string,
+  zip: string,
+  notifications: boolean,
+  waiver: boolean,
+  children: {
+    childFirstName: string;
+    childLastName: string;
+    childAge: number;
+    childBirthYear: number;
+    childSchool: string;
+  }[],
+  type: string,
+  altName: string,
+  altEmail: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const createFamilyUserCloudFunction = httpsCallable(functions, "createFamilyUser");
+    const auth = getAuth(app);
+
+    const user = {
+      firstName,
+      lastName,
+      phone: Number(phone),
+      zip: Number(zip),
+      notifications,
+      waiver,
+      children,
+      type,
+      altName,
+      altEmail,
+    };
+
+    console.log("Sending data to createFamilyUser Cloud Function:", { email, user });
+
+    createFamilyUserCloudFunction({ email, user })
+      .then(async () => {
+        console.log("Sending password reset email to " + email);
+        await sendPasswordResetEmail(auth, email)
+          .then(() => {
+            resolve();
+          })
+          .catch((error) => {
+            console.error("Error sending password reset email:", error);
+            reject(error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error in Cloud Function call:", error);
+        reject(error);
+      });
+  });
+}
+
 export function updateUserEmail(
   oldEmail: string,
   newEmail: string,
