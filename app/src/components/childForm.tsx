@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Children } from "@/types";
 import Image from "next/image";
 import style from "@/styles/settings.module.css";
 import plus from "@/assets/plus.png";
 import minus from "@/assets/minus.png";
+import { getChildren } from "@/backend/FirestoreCalls";
 
 interface ChildFormProps {
     isEditing: boolean;
+    userId: string;
 }
 
-const ChildForm = ({ isEditing }: ChildFormProps) => {
+const ChildForm = ({ isEditing, userId }: ChildFormProps) => {
     const [sections, setSections] = useState([{ id: 1 }]);
-    const [childrenInfo, setChildrenInfo] = useState([]);
+    const [childrenData, setChildrenData] = useState<Children[]>([]);
+
+    useEffect(() => {
+        const fetchChildrenData = async () => {
+            try {
+                const children = await getChildren(userId);
+                setChildrenData(children);
+            } catch (error) {
+                console.log("Error fetching children's data:", error);
+            }
+        }
+        fetchChildrenData();
+    }, [userId])
 
     const addSection = () => {
         const newSections = [...sections, { id: sections.length + 1 }];
@@ -87,6 +102,7 @@ const ChildForm = ({ isEditing }: ChildFormProps) => {
                     </div>
                     <label htmlFor={`school_${section.id}`}>School</label>
                     <input id={`school_${section.id}`} type="text" disabled={!isEditing} />
+                    <hr></hr>
                 </div>
             ))}
             <div className={style.editChildren}>

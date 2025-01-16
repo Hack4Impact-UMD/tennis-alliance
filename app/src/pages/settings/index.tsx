@@ -207,7 +207,7 @@ const Settings = () => {
             {isFamilyAccount && (
               <div>
                 <h3>Children Info</h3>
-                <ChildForm isEditing={isEditing} />
+                <ChildForm isEditing={isEditing} userId={authContext.user.uid} />
                 <hr />
               </div>
             )}

@@ -10,6 +10,8 @@ import {
   runTransaction,
   updateDoc,
   writeBatch,
+  arrayUnion,
+  arrayRemove
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
@@ -119,13 +121,18 @@ export async function getChildren(uid: string): Promise<Children[]> {
   }
 }
 
-export async function updateChildren(uid: string): Promise<void> {
+export async function updateChildren(
+  uid: string,
+  children: Children[]
+): Promise<void> {
   try {
     const userRef = doc(db, "Users", uid);
-
-    console.log("Additional info updated successfully.");
+    await updateDoc(userRef, {
+      children: arrayUnion()
+    });
+    console.log("Children updated successfully.");
   } catch (error) {
-    console.error("Error updating additional info:", error);
+    console.error("Error updating children:", error);
     throw error;
   }
 }
