@@ -70,6 +70,13 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
           const eventDay = eventDate.getDate();
           const eventMonth = eventDate.toLocaleString("default", { month: "long" });
           const eventDayWithSuffix = `${eventDay}${getOrdinalSuffix(eventDay)}`;
+          
+          const regEvent = user.events.find(regEvent => regEvent.id === event.id);
+          const participantNames = regEvent
+            ? regEvent.participants.map(participant => `${participant.firstName} ${participant.lastName}`).join(", ")
+            : "No participants found.";
+          console.log(event);
+          console.log(regEvent)
 
           return (
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
@@ -91,6 +98,8 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
+                  <p>Registered: {participantNames}</p>
+                  <br />
                   <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
                   <button className={styles.removeButton} onClick={() => 
                       {
