@@ -5,6 +5,7 @@ import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
 import "react-day-picker/dist/style.css";
 import { adminCreateEvent } from "@/backend/FirestoreCalls";
+import Router from "next/router";
 
 const Popup = () => {
     const [visible, setVisible] = useState(false);
@@ -78,6 +79,7 @@ const Popup = () => {
         }
     
         closePopup();
+        Router.reload();
     };
 
     const handleDayClick = (day: Date) => {

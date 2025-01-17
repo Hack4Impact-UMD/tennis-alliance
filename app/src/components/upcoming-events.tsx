@@ -214,9 +214,9 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                         <input
                          type="checkbox"
                          name={`participant-child-${index}`}
-                         checked={selectedMembers.includes(`${child.firstName} ${child.lastName}`)}
-                         onChange={() => handleCheckboxChange(`${child.firstName} ${child.lastName}`)}/>
-                        {child.firstName} {child.lastName}
+                         checked={selectedMembers.includes(`${child.childFirstName} ${child.childLastName}`)}
+                         onChange={() => handleCheckboxChange(`${child.childFirstName} ${child.childLastName}`)}/>
+                        {child.childFirstName} {child.childLastName}
                       </label>
                     ))}
                   </div>

@@ -48,6 +48,15 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
     return ''; // Default (no background color)
   };
 
+  async function handleDeleteUser(auth_id: string, eventId: string) {
+    try {
+      await deleteUserFromEvent(auth_id, eventId); // Wait for the delete function to complete
+      window.location.reload(); // Reload the page after successful deletion
+    } catch (error) {
+      console.error("Error deleting user from event:", error);
+    }
+  }
+
   return (
     <div className={styles.registeredEventsContainer}>
       {events.length > 0 ? (
@@ -86,8 +95,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                   <button className={styles.removeButton} onClick={() => 
                       {
                         // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)
-                        deleteUserFromEvent(user.auth_id as string, event.id as string);
-                        window.location.reload();
+                        handleDeleteUser(user.auth_id as string, event.id as string);
                       }}>
                       Remove
                   </button>
