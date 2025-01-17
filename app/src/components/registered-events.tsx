@@ -75,13 +75,12 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
           const participantNames = regEvent
             ? regEvent.participants.map(participant => `${participant.firstName} ${participant.lastName}`).join(", ")
             : "No participants found.";
+          
           console.log(event);
-          console.log(regEvent)
-
           return (
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
-                <p>{formatDate(event.start)}</p>
+                <p>{formatDate(event.date)}</p>
                 {/* <p>Volunteer</p> */}
               </div>
 
