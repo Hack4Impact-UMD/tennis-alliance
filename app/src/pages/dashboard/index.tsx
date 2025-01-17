@@ -1,15 +1,18 @@
 import MyCalendar from '../../components/calendar-main';
 import Image from "next/image";
 import styles from '../../styles/dashboard.module.css';  // Use relative path
+import RequireAuth from '@/auth/RequireAuth/RequireAuth';
 
-const App: React.FC = () => {
+const Dashboard: React.FC = () => {
     return (
-      <div>
-        <div className = {styles.calendar}>
-          <MyCalendar />
+      <RequireAuth>
+        <div>
+          <div className = {styles.calendar}>
+            <MyCalendar />
+          </div>
         </div>
-      </div>
+      </RequireAuth>
     );
   };
   
-  export default App;
+  export default Dashboard;
