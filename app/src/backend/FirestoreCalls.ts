@@ -198,6 +198,23 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
   });
 }
 
+export function adminGetEventIDs(): Promise<{ [key: string]: string }> {
+  return new Promise((resolve, reject) => {
+    getDocs(collection(db, "Events"))
+      .then((querySnapshot) => {
+        const eventsById: { [key: string]: string } = {};
+        querySnapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          if (data.title && doc.id) {
+            eventsById[data.title] = doc.id;
+          }
+        });
+        resolve(eventsById);
+      })
+      .catch(() => reject());
+  });
+}
+
 export function adminGetEventById(eventId: string): Promise<CustomEvent> {
   return new Promise((resolve, reject) => {
     if (!eventId) {
