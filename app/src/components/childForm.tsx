@@ -13,7 +13,6 @@ interface ChildFormProps {
 }
 
 const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
-    //const [sections, setSections] = useState([{ id: 1 }]);
     const [childrenData, setChildrenData] = useState<Children[]>([]);
 
     useEffect(() => {

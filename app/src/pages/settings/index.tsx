@@ -55,7 +55,6 @@ const Settings = () => {
 
           if (fetchedAdditionalInfo?.skills.includes("other")) {
             setIsOtherSelected(true);
-            console.log("True")
           }
         } catch (error) {
           console.log(error);
@@ -77,7 +76,17 @@ const Settings = () => {
   }
 
   const handleCheckboxChange = () => {
-    setIsOtherSelected(!isOtherSelected);
+    setIsOtherSelected((prev) => {
+      const newValue = !prev;
+      if (!newValue) {
+        // If "Other" is unchecked, set otherDetails to an empty string
+        setAdditionalInfo((prevInfo) => ({
+          ...prevInfo,
+          otherDetails: "",
+        }));
+      }
+      return newValue;
+    });
   };
 
   const handleAdditionalInfoChange = (field: keyof typeof additionalInfo, value: string | string[]) => {
@@ -89,6 +98,12 @@ const Settings = () => {
       const newSkills = prevInfo.skills.includes(skill)
         ? prevInfo.skills.filter((s) => s !== skill)
         : [...prevInfo.skills, skill];
+
+      // If "Other" is being unchecked, clear otherDetails
+      if (skill === "other" && !newSkills.includes("other")) {
+        return { ...prevInfo, skills: newSkills, otherDetails: "" };
+      }
+
       return { ...prevInfo, skills: newSkills };
     });
   };
@@ -100,10 +115,13 @@ const Settings = () => {
   const handleSubmit = () => {
     const uid = authContext.user.uid;
 
+    // Create a new array without the `childId` property
+    const childrenDataWithoutId = childrenData.map(({ childId, ...rest }) => rest);
+
     Promise.all([
       updateUser(user!),
       updateAdditionalInfo(uid, additionalInfo),
-      updateChildren(uid, childrenData)
+      updateChildren(uid, childrenDataWithoutId)
     ])
       .then(() => {
         console.log("done")
