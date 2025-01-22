@@ -123,14 +123,37 @@ export async function getChildren(uid: string): Promise<Children[]> {
 
 export async function updateChildren(
   uid: string,
-  children: Children[]
+  updatedChildren: Children[]
 ): Promise<void> {
   try {
+    // Reference to the user's document in Firestore
     const userRef = doc(db, "Users", uid);
-    await updateDoc(userRef, {
-      children: arrayUnion()
+
+    // Fetch the existing children array
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      throw new Error(`User with ID ${uid} does not exist.`);
+    }
+
+    const userData = userDoc.data();
+    const existingChildren: Children[] = userData.children || [];
+
+    // Merge or replace logic
+    const mergedChildren = updatedChildren.map((newChild) => {
+      const existingChildIndex = existingChildren.findIndex(
+        (existingChild) => existingChild.childId === newChild.childId
+      );
+
+      // If the child exists, update it; otherwise, add it as new
+      if (existingChildIndex !== -1) {
+        return { ...existingChildren[existingChildIndex], ...newChild };
+      }
+      return newChild; // New child to be added
     });
-    console.log("Children updated successfully.");
+
+    await updateDoc(userRef, { children: mergedChildren });
+
+    console.log("Children array updated successfully.");
   } catch (error) {
     console.error("Error updating children:", error);
     throw error;

@@ -18,10 +18,12 @@ type User = {
 };
 
 type Children = {
-  firstName: string;
-  lastName: string;
-  age: number;
-  school: string;
+  childId?: number,
+  childFirstName: string;
+  childLastName: string;
+  childAge: number;
+  childSchool: string;
+  childBirthYear: number;
 };
 
 type CustomEvent = {

@@ -2,11 +2,11 @@ import editButton from "@/assets/pen.png";
 import exitButton from "@/assets/exit.png"
 import { useAuth } from "@/auth/AuthProvider";
 import RequireAuth from "@/auth/RequireAuth/RequireAuth";
-import { getUserWithId, updateUser, getAdditionalInfo, updateAdditionalInfo } from "@/backend/FirestoreCalls";
+import { getUserWithId, updateUser, getAdditionalInfo, updateAdditionalInfo, updateChildren } from "@/backend/FirestoreCalls";
 import ChildForm from "@/components/childForm";
 import Loading from "@/components/LoadingScreen/Loading";
 import style from "@/styles/settings.module.css";
-import { User } from "@/types";
+import { User, Children } from "@/types";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ChangeEmail from "./ChangeEmail/ChangeEmail";
@@ -27,6 +27,7 @@ const Settings = () => {
     skills: [] as string[],
     otherDetails: "",
   });
+  const [childrenData, setChildrenData] = useState<Children[]>([]);
   const authContext = useAuth();
   const maxBackgroundLength = 250;
   const maxOtherDetailsLength = 100;
@@ -51,6 +52,11 @@ const Settings = () => {
             skills: fetchedAdditionalInfo?.skills || [],
             otherDetails: fetchedAdditionalInfo?.otherDetails || ""
           });
+
+          if (fetchedAdditionalInfo?.skills.includes("other")) {
+            setIsOtherSelected(true);
+            console.log("True")
+          }
         } catch (error) {
           console.log(error);
         } finally {
@@ -87,11 +93,17 @@ const Settings = () => {
     });
   };
 
+  const handleChildrenChange = (updatedChildren: Children[]) => {
+    setChildrenData(updatedChildren);
+  };
+
   const handleSubmit = () => {
     const uid = authContext.user.uid;
+
     Promise.all([
       updateUser(user!),
-      updateAdditionalInfo(uid, additionalInfo)
+      updateAdditionalInfo(uid, additionalInfo),
+      updateChildren(uid, childrenData)
     ])
       .then(() => {
         console.log("done")
@@ -207,7 +219,10 @@ const Settings = () => {
             {isFamilyAccount && (
               <div>
                 <h3>Children Info</h3>
-                <ChildForm isEditing={isEditing} userId={authContext.user.uid} />
+                <ChildForm
+                  isEditing={isEditing}
+                  userId={authContext.user.uid}
+                  onChildrenChange={handleChildrenChange} />
                 <hr />
               </div>
             )}
@@ -259,7 +274,11 @@ const Settings = () => {
                 type="checkbox"
                 name="skill"
                 value="other"
-                onClick={handleCheckboxChange} />
+                checked={additionalInfo.skills.includes("other")}
+                onChange={() => {
+                  handleCheckboxChange();
+                  handleSkillCheckboxChange("other")
+                }} />
               <label htmlFor="other">Other</label>
             </div>
             {isOtherSelected && (

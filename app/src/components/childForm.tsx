@@ -9,17 +9,23 @@ import { getChildren } from "@/backend/FirestoreCalls";
 interface ChildFormProps {
     isEditing: boolean;
     userId: string;
+    onChildrenChange: (children: Children[]) => void
 }
 
-const ChildForm = ({ isEditing, userId }: ChildFormProps) => {
-    const [sections, setSections] = useState([{ id: 1 }]);
+const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
+    //const [sections, setSections] = useState([{ id: 1 }]);
     const [childrenData, setChildrenData] = useState<Children[]>([]);
 
     useEffect(() => {
         const fetchChildrenData = async () => {
             try {
                 const children = await getChildren(userId);
-                setChildrenData(children);
+                const updatedChildren = children.map((child, index) => ({
+                    ...child,
+                    childId: index, // Assign childId based on index
+                }));
+                setChildrenData(updatedChildren);
+                onChildrenChange(updatedChildren);
             } catch (error) {
                 console.log("Error fetching children's data:", error);
             }
@@ -27,90 +33,123 @@ const ChildForm = ({ isEditing, userId }: ChildFormProps) => {
         fetchChildrenData();
     }, [userId])
 
-    const addSection = () => {
-        const newSections = [...sections, { id: sections.length + 1 }];
-        setSections(newSections);
+    const addChild = () => {
+        const newChild: Children = {
+            childId: childrenData.length, // Assign the next available ID
+            childFirstName: "",
+            childLastName: "",
+            childAge: 0,
+            childBirthYear: 0,
+            childSchool: "",
+        };
+
+        setChildrenData([...childrenData, newChild]); // Add new child and update the state
+        onChildrenChange(childrenData); // Notify parent of the change
     };
-    const removeSection = (idToRemove: number) => {
-        if (sections.length > 1) {
-            const updatedSections = sections.filter(
-                (section) => section.id !== idToRemove
+
+    const removeChild = (idToRemove: number) => {
+        if (childrenData.length > 1) {
+            const updatedChildren = childrenData.filter(
+                (child) => child.childId !== idToRemove
             );
-            const updatedIDs = updatedSections.map((section, index) => ({
-                ...section,
-                id: index + 1,
-            }));
-            setSections(updatedIDs);
+            setChildrenData(updatedChildren);
+            onChildrenChange(updatedChildren)
         }
+    };
+
+    const handleFieldChange = (
+        field: keyof Children,
+        childId: number,
+        value: string
+    ) => {
+        setChildrenData((prev) => {
+            const updated = prev.map((child) =>
+                child.childId === childId
+                    ? { ...child, [field]: value } // Update the specific field
+                    : child
+            );
+
+            onChildrenChange(updated); // Notify parent of the change
+            return updated; // Return the updated state
+        });
     };
 
     return (
         <div>
-            {sections.map((section) => (
-                <div key={section.id} className={style.child}>
+            {childrenData.map((child) => (
+                <div key={child.childId} className={style.child}>
                     <div className={style.fields}>
                         <div>
-                            <label htmlFor={`first_name_${section.id}`}>
+                            <label htmlFor={`first_name_${child.childId}`}>
                                 First Name
                             </label>
                             <input
-                                id={`first_name_${section.id}`}
+                                id={`first_name_${child.childId}`}
                                 type="text"
-                                placeholder=""
+                                value={child?.childFirstName || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
+                                onChange={(e) => handleFieldChange("childFirstName", child.childId || -1, e.target.value)}
                             />
                         </div>
                         <div>
-                            <label htmlFor={`last_name_${section.id}`}>
+                            <label htmlFor={`last_name_${child.childId}`}>
                                 Last Name
                             </label>
                             <input
-                                id={`last_name_${section.id}`}
+                                id={`last_name_${child.childId}`}
                                 type="text"
-                                placeholder=""
+                                value={child?.childLastName || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
+                                onChange={(e) => handleFieldChange("childLastName", child.childId || -1, e.target.value)}
                             />
                         </div>
                     </div>
                     <div className={style.fields}>
                         <div>
-                            <label htmlFor={`age_${section.id}`}>
+                            <label htmlFor={`age_${child.childId}`}>
                                 Age
                             </label>
                             <input
-                                id={`age_${section.id}`}
+                                id={`age_${child.childId}`}
                                 type="text"
-                                placeholder=""
+                                value={child?.childAge || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
+                                onChange={(e) => handleFieldChange("childAge", child.childId || -1, e.target.value)}
                             />
                         </div>
                         <div>
-                            <label htmlFor={`birth_year_${section.id}`}>
+                            <label htmlFor={`birth_year_${child.childId}`}>
                                 Birth Year
                             </label>
                             <input
-                                id={`birth_year_${section.id}`}
+                                id={`birth_year_${child.childId}`}
                                 type="text"
-                                placeholder=""
+                                value={child?.childBirthYear || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
+                                onChange={(e) => handleFieldChange("childBirthYear", child.childId || -1, e.target.value)}
                             />
                         </div>
                     </div>
-                    <label htmlFor={`school_${section.id}`}>School</label>
-                    <input id={`school_${section.id}`} type="text" disabled={!isEditing} />
+                    <label htmlFor={`school_${child.childId}`}>School</label>
+                    <input
+                        id={`school_${child.childId}`}
+                        type="text"
+                        value={child?.childSchool || ""}
+                        disabled={!isEditing}
+                        onChange={(e) => handleFieldChange("childSchool", child.childId || -1, e.target.value)} />
                     <hr></hr>
                 </div>
             ))}
             <div className={style.editChildren}>
-                <div onClick={addSection}>
+                <div onClick={addChild}>
                     <label htmlFor="name">Add Child</label>
                     <Image src={plus} alt="plus" />
                 </div>
-                <div onClick={() => removeSection(sections.length - 1)}>
+                <div onClick={() => removeChild(childrenData.length - 1)}>
                     <label htmlFor="name">Remove Child</label>
                     <Image src={minus} alt="minus" />
                 </div>
