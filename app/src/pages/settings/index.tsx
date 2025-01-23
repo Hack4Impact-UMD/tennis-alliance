@@ -75,20 +75,6 @@ const Settings = () => {
     setIsEditing(!isEditing);
   }
 
-  const handleCheckboxChange = () => {
-    setIsOtherSelected((prev) => {
-      const newValue = !prev;
-      if (!newValue) {
-        // If "Other" is unchecked, set otherDetails to an empty string
-        setAdditionalInfo((prevInfo) => ({
-          ...prevInfo,
-          otherDetails: "",
-        }));
-      }
-      return newValue;
-    });
-  };
-
   const handleAdditionalInfoChange = (field: keyof typeof additionalInfo, value: string | string[]) => {
     setAdditionalInfo((prevInfo) => ({ ...prevInfo, [field]: value }));
   };
@@ -99,15 +85,21 @@ const Settings = () => {
         ? prevInfo.skills.filter((s) => s !== skill)
         : [...prevInfo.skills, skill];
 
-      // If "Other" is being unchecked, clear otherDetails
-      if (skill === "other" && !newSkills.includes("other")) {
-        return { ...prevInfo, skills: newSkills, otherDetails: "" };
-      }
+      // Determine if "Other" checkbox is selected
+      const isOtherSelected = newSkills.includes("other");
 
-      return { ...prevInfo, skills: newSkills };
+      // Update isOtherSelected state and additionalInfo
+      setIsOtherSelected(isOtherSelected);
+
+      return {
+        ...prevInfo,
+        skills: newSkills,
+        otherDetails: !isOtherSelected ? "" : prevInfo.otherDetails, // Clear "otherDetails" if "Other" is unchecked
+      };
     });
   };
 
+  // shared state change with child component `childForm.tsx`
   const handleChildrenChange = (updatedChildren: Children[]) => {
     setChildrenData(updatedChildren);
   };
@@ -293,10 +285,7 @@ const Settings = () => {
                 name="skill"
                 value="other"
                 checked={additionalInfo.skills.includes("other")}
-                onChange={() => {
-                  handleCheckboxChange();
-                  handleSkillCheckboxChange("other")
-                }} />
+                onChange={() => handleSkillCheckboxChange("other")} />
               <label htmlFor="other">Other</label>
             </div>
             {isOtherSelected && (
