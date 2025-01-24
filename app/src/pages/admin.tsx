@@ -6,7 +6,7 @@ import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers, getUserWithId, adminDeleteParticipant, adminGetEventIDs } from "@/backend/FirestoreCalls";
 import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
 import { useAuth } from "@/auth/AuthProvider";
@@ -56,6 +56,9 @@ const AdminDashboard = () => {
     const [calendarEvents, setCalendarEvents] = useState<CustomEvent[]>([]);
     const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
     const [weekRange, setWeekRange] = useState<string>('');  // New state for the week range
+    const [selectedEvent, setSelectedEvent] = useState<CustomEvent | null>(null);
+    const [eventIDs, setEventIDs] = useState<{ [key: string]: string }>({});
+    const [selectedEventID, setSelectedEventID] = useState<string | null>(null);
 
     // Utility to format date as "Month Day"
     const formatDate = (date: Date) => {
@@ -118,6 +121,17 @@ const AdminDashboard = () => {
 
         calculateCurrentWeekRange();
         /*console.log("weekRange: ", weekRange);*/
+        const getEventIDs = async () => {
+            try {
+            const eventIDs = await adminGetEventIDs();
+            console.log("Event ids: ", eventIDs);
+            setEventIDs(eventIDs);
+            } catch (error) {
+            console.error("Error fetching event IDs:", error);
+            }
+        };
+    
+        getEventIDs();
     }, []);
 
     useEffect(() => {
@@ -208,6 +222,8 @@ const AdminDashboard = () => {
             setData(participantsData.filter(user => user !== null));
             setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
             setSelectedEventTitle(event.title);
+            setSelectedEvent(event);
+            setSelectedEventID(eventIDs[event.title]);
             console.log("Selected event:", event);
         } catch (error) {
             console.error("Error fetching participants data:", error);
@@ -442,7 +458,24 @@ const AdminDashboard = () => {
                             <button>
                                 <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
                             </button>
-                            <button>
+                            <button
+                                onClick={async () => {
+                                try {
+                                    await adminDeleteParticipant(
+                                    selectedEvent,
+                                    selectedEventID,
+                                    row?.auth_id,
+                                    row.email,
+                                    true
+                                    );
+
+                                    alert(`${row.firstName} ${row.lastName} has been removed successfully.`);
+                                } catch (error) {
+                                    console.error("Failed to delete participant:", error);
+                                    alert("An error occurred while removing the participant.");
+                                }
+                                }}
+                            >
                                 <Image src={Trash} alt="delete" />
                             </button>
                         </div>

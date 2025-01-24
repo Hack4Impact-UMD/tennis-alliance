@@ -101,7 +101,7 @@ const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent 
                   <p>{event.description}</p>
                   <p>Slots open:{" "}
                     {(event?.maxParticipants + event?.maxVolunteers) -
-                      event?.participants.reduce((total, participant) => total + (participant?.otherMembers?.length || 0), event?.participants?.length)}{" "}
+                      event?.participants.reduce((total, participant) => total + (participant?.otherMembers?.length || 0), 0)}{" "}
                     out of {event?.maxVolunteers + event?.maxParticipants}
                   </p>
                 </div>

@@ -53,6 +53,8 @@ const Popup = () => {
                 currentEventDate = new Date(currentEventDate); // Create a new Date instance
                 currentEventDate.setDate(currentEventDate.getDate() + 7); // Add 7 days
             }
+
+            console.log(events);
     
             events.forEach((date) => {
                 adminCreateEvent(
