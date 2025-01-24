@@ -100,9 +100,9 @@ const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent 
                   <p>Time: {formatTime(event.start)}</p>
                   <p>{event.description}</p>
                   <p>Slots open:{" "}
-                    {event.maxParticipants -
-                      event.participants.reduce((total, participant) => total + (participant.otherMembers?.length || 0), event.participants.length)}{" "}
-                    out of {event.maxParticipants}
+                    {(event?.maxParticipants + event?.maxVolunteers) -
+                      event?.participants.reduce((total, participant) => total + (participant?.otherMembers?.length || 0), event?.participants?.length)}{" "}
+                    out of {event?.maxVolunteers + event?.maxParticipants}
                   </p>
                 </div>
                 <div className={styles.editDeleteContainer}>

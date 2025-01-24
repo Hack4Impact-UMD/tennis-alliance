@@ -154,7 +154,7 @@ const AdminDashboard = () => {
                 (row) =>
                     (filter === "all" || row.type === filter) &&
                     (search === "" ||
-                        `${row.firstName} ${row.lastName}`
+                        `${row.childFirstName} ${row.childLastName}`
                             .toLowerCase()
                             .includes(search.toLowerCase()))
             );
@@ -208,6 +208,7 @@ const AdminDashboard = () => {
             setData(participantsData.filter(user => user !== null));
             setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
             setSelectedEventTitle(event.title);
+            console.log("Selected event:", event);
         } catch (error) {
             console.error("Error fetching participants data:", error);
         }
@@ -448,7 +449,7 @@ const AdminDashboard = () => {
                         <div className={styles.children}>
                             {row.children?.map((child, i) => (
                                 <div key={i} className={styles.child} style={{ background: getRowColor(i + 1) }}>
-                                    Child {i + 1}: {child.firstName + " " + child.lastName}
+                                    Child {i + 1}: {child.childFirstName + " " + child.childLastName}
                                     <span>Account owner: {row.firstName + " " + row.lastName}</span>
                                 </div>
                             ))}
