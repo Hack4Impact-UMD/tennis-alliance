@@ -310,54 +310,57 @@ export function adminUpdateEvent(
   });
 }
 
-export function adminDeleteParticipant(
+export async function adminDeleteParticipant(
   event: CustomEvent,
   eventId: string,
   participantId: string,
   participantEmail: string,
   email: boolean
 ): Promise<void> {
-  return new Promise(async (resolve, reject) => {
-    if (!eventId) {
-      reject(new Error("Invalid id"));
-      return;
-    }
-    if (email) {
-      const sendEmailCloud = httpsCallable(functions, "sendEmail");
-      sendEmailCloud({
+  if (!eventId) {
+    throw new Error("Invalid id");
+  }
+
+  if (email) {
+    const sendEmailCloud = httpsCallable(functions, "sendEmail");
+    try {
+      await sendEmailCloud({
         text: `An admin has removed you from the event ${event.title}`,
         bcc: [participantEmail],
         reason: "Event Removal",
-      }).catch((error: any) => {
-        reject(error);
       });
+    } catch (error) {
+      console.error("Email failed to send:", error);
     }
+  }
 
-    event.participants = event.participants.filter(
-      (e) => e.mainId !== participantId
-    );
-    const user: User | void = await getUserWithId(participantId).catch(
-      (err) => {
-        reject();
-      }
-    );
+  event.participants = event.participants.filter((e) => e.mainId !== participantId);
+
+  try {
+    const user = await getUserWithId(participantId);
     if (user) {
-      user.events = user?.events.filter((e) => e.id !== eventId);
+      user.events = user.events.filter((e) => e.id !== eventId);
+      await updateDoc(doc(db, "Users", participantId), { events: user.events });
     }
-    const batch = writeBatch(db);
-    const eventRef = doc(db, "Events", eventId);
-    const userRef = doc(db, "Users", participantId);
-    batch.update(eventRef, { ...event });
-    batch.update(userRef, { ...user });
-    batch
-      .commit()
-      .then(() => {
-        resolve();
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+  }
+
+  try {
+    await updateDoc(doc(db, "Events", eventId), {
+      title: event.title,
+      description: event.description,
+      participants: event.participants,
+      maxParticipants: event.maxParticipants,
+      maxVolunteers: event.maxVolunteers,
+      date: event.date,
+      start: event.start,
+      end: event.end,
+    });
+  } catch (err) {
+    console.error("Error updating event:", err);
+    throw err;
+  }
 }
 
 export function adminDeleteEvent(

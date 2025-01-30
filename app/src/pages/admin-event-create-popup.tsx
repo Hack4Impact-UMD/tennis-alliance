@@ -42,23 +42,22 @@ const Popup = () => {
         setRepeatCount(1);
     };
 
-    const submitEvent = () => {
+    const submitEvent = async () => {
         if (isRepeatWeekly && repeatCount > 0) {
             const events = [];
             let currentEventDate = new Date(selectedDay);
     
             for (let i = 0; i < repeatCount; i++) {
-                // Push a new Date instance to avoid mutation issues
-                events.push(new Date(currentEventDate));
-                currentEventDate = new Date(currentEventDate); // Create a new Date instance
-                currentEventDate.setDate(currentEventDate.getDate() + 7); // Add 7 days
+                events.push({ date: new Date(currentEventDate), index: i });
+                currentEventDate = new Date(currentEventDate);
+                currentEventDate.setDate(currentEventDate.getDate() + 7);
             }
 
             console.log(events);
     
-            events.forEach((date) => {
-                adminCreateEvent(
-                    eventName,
+            events.forEach(async ({ date, index }) => {
+                await adminCreateEvent(
+                    `${eventName} #${index + 1}`,
                     startTime,
                     endTime,
                     date,
@@ -68,7 +67,7 @@ const Popup = () => {
                 );
             });
         } else {
-            adminCreateEvent(
+            await adminCreateEvent(
                 eventName,
                 startTime,
                 endTime,

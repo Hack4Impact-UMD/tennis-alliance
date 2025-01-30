@@ -16,9 +16,10 @@ const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID }) => {
     const closePopup = () => setVisible(false);
     const [eventTitle, setEventTitle] = useState<string>("");
 
-    const deleteEvent = () => {
-        adminDeleteEvent(eventID);
+    const deleteEvent = async () => {
+        await adminDeleteEvent(eventID);
         closePopup();
+        location.reload();
     }
 
     useEffect(() => {
