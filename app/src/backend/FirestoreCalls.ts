@@ -1,5 +1,5 @@
 import { db, functions } from "@/config";
-import { CustomEvent, User, Children } from "@/types";
+import { CustomEvent, User, Children, ChildrenWithId } from "@/types";
 import {
   addDoc,
   collection,
@@ -9,9 +9,7 @@ import {
   deleteDoc,
   runTransaction,
   updateDoc,
-  writeBatch,
-  arrayUnion,
-  arrayRemove
+  writeBatch
 } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
@@ -103,14 +101,14 @@ export async function updateAdditionalInfo(
   }
 }
 
-export async function getChildren(uid: string): Promise<Children[]> {
+export async function getChildren(uid: string): Promise<ChildrenWithId[]> {
   try {
     const userRef = doc(db, "Users", uid);
     const userDoc = await getDoc(userRef);
 
     if (userDoc.exists()) {
       const data = userDoc.data();
-      return data.children || []; // Return the additionalInfo field if it exists
+      return data.children || [];
     } else {
       console.error("No such document!");
       return [];
@@ -126,32 +124,14 @@ export async function updateChildren(
   updatedChildren: Children[]
 ): Promise<void> {
   try {
-    // Reference to the user's document in Firestore
     const userRef = doc(db, "Users", uid);
 
-    // Fetch the existing children array
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
       throw new Error(`User with ID ${uid} does not exist.`);
     }
 
-    const userData = userDoc.data();
-    const existingChildren: Children[] = userData.children || [];
-
-    // Merge or replace logic
-    const mergedChildren = updatedChildren.map((newChild) => {
-      const existingChildIndex = existingChildren.findIndex(
-        (existingChild) => existingChild.childId === newChild.childId
-      );
-
-      // If the child exists, update it; otherwise, add it as new
-      if (existingChildIndex !== -1) {
-        return { ...existingChildren[existingChildIndex], ...newChild };
-      }
-      return newChild; // New child to be added
-    });
-
-    await updateDoc(userRef, { children: mergedChildren });
+    await updateDoc(userRef, { children: updatedChildren });
 
     console.log("Children array updated successfully.");
   } catch (error) {

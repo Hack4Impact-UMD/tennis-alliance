@@ -6,7 +6,7 @@ import { getUserWithId, updateUser, getAdditionalInfo, updateAdditionalInfo, upd
 import ChildForm from "@/components/childForm";
 import Loading from "@/components/LoadingScreen/Loading";
 import style from "@/styles/settings.module.css";
-import { User, Children } from "@/types";
+import { User, ChildrenWithId } from "@/types";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ChangeEmail from "./ChangeEmail/ChangeEmail";
@@ -27,7 +27,7 @@ const Settings = () => {
     skills: [] as string[],
     otherDetails: "",
   });
-  const [childrenData, setChildrenData] = useState<Children[]>([]);
+  const [childrenData, setChildrenData] = useState<ChildrenWithId[]>([]);
   const authContext = useAuth();
   const maxBackgroundLength = 250;
   const maxOtherDetailsLength = 100;
@@ -43,7 +43,8 @@ const Settings = () => {
         try {
           const user = await getUserWithId(authContext.user.uid)
           setUser(user);
-          if (user.type === "family") setIsFamilyAccount(true);
+          if (user.type === "family")
+            setIsFamilyAccount(true);
           // Fetches the user's additional info from Firebase
           const fetchedAdditionalInfo = await getAdditionalInfo(authContext.user.uid);
           // Sets default values of additional info to values obtained from database if they exist
@@ -53,9 +54,8 @@ const Settings = () => {
             otherDetails: fetchedAdditionalInfo?.otherDetails || ""
           });
 
-          if (fetchedAdditionalInfo?.skills.includes("other")) {
+          if (fetchedAdditionalInfo?.skills.includes("other"))
             setIsOtherSelected(true);
-          }
         } catch (error) {
           console.log(error);
         } finally {
@@ -67,6 +67,8 @@ const Settings = () => {
     fetchUserData();
   }, [authContext.loading]);
 
+  // Takes the most updated state of the user and updates the chosen User field with 
+  // the passed in value. Otherwise, it remains the same
   const handleInputChange = (field: keyof User, value: string) => {
     setUser((prevUser) => prevUser ? { ...prevUser, [field]: value } : prevUser);
   };
@@ -75,10 +77,13 @@ const Settings = () => {
     setIsEditing(!isEditing);
   }
 
-  const handleAdditionalInfoChange = (field: keyof typeof additionalInfo, value: string | string[]) => {
+  // Takes the most updated state of the User's additionalInfo and updates the chosen additionalInfo field with 
+  // the passed in value
+  const handleAdditionalInfoChange = (field: keyof typeof additionalInfo, value: string) => {
     setAdditionalInfo((prevInfo) => ({ ...prevInfo, [field]: value }));
   };
 
+  // Filters out the skills that are unchecked, includes the ones that are checked
   const handleSkillCheckboxChange = (skill: string) => {
     setAdditionalInfo((prevInfo) => {
       const newSkills = prevInfo.skills.includes(skill)
@@ -99,15 +104,15 @@ const Settings = () => {
     });
   };
 
-  // shared state change with child component `childForm.tsx`
-  const handleChildrenChange = (updatedChildren: Children[]) => {
+  // Share state change with child component `childForm.tsx`
+  const handleChildrenChange = (updatedChildren: ChildrenWithId[]) => {
     setChildrenData(updatedChildren);
   };
 
   const handleSubmit = () => {
     const uid = authContext.user.uid;
 
-    // Create a new array without the `childId` property
+    // Create a new array without the `childId` property to keep childId local
     const childrenDataWithoutId = childrenData.map(({ childId, ...rest }) => rest);
 
     Promise.all([
@@ -152,16 +157,6 @@ const Settings = () => {
             </div>
             <hr />
             <h3>Full Name</h3>
-            {/* <button
-              className={style.save}
-              onClick={() => setOpenChangeEmailModal(true)}
-            >
-              click me to change email
-            </button> */}
-            {/* <button className={style.save} onClick={() => handleSubmit()}>
-              click me to change email2
-            </button> */}
-
             <div className={style.fields}>
               <div>
                 <label htmlFor="firstnamename">First Name</label>

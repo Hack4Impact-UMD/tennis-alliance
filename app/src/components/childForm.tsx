@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Children } from "@/types";
+import { ChildrenWithId } from "@/types";
 import Image from "next/image";
 import style from "@/styles/settings.module.css";
 import plus from "@/assets/plus.png";
@@ -9,12 +9,13 @@ import { getChildren } from "@/backend/FirestoreCalls";
 interface ChildFormProps {
     isEditing: boolean;
     userId: string;
-    onChildrenChange: (children: Children[]) => void
+    onChildrenChange: (children: ChildrenWithId[]) => void
 }
 
 const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
-    const [childrenData, setChildrenData] = useState<Children[]>([]);
+    const [childrenData, setChildrenData] = useState<ChildrenWithId[]>([]);
 
+    // Fetches children data on the initial load of the page
     useEffect(() => {
         const fetchChildrenData = async () => {
             try {
@@ -24,7 +25,7 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                     childId: index, // Assign childId based on index
                 }));
                 setChildrenData(updatedChildren);
-                onChildrenChange(updatedChildren);
+                onChildrenChange(updatedChildren); // Notifies parent on initial children state
             } catch (error) {
                 console.log("Error fetching children's data:", error);
             }
@@ -32,8 +33,12 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
         fetchChildrenData();
     }, [userId])
 
+    useEffect(() => {
+        onChildrenChange(childrenData); // Sync with parent on childrenData updates
+    }, [childrenData, onChildrenChange]);
+
     const addChild = () => {
-        const newChild: Children = {
+        const newChild: ChildrenWithId = {
             childId: childrenData.length, // Assign the next available ID
             childFirstName: "",
             childLastName: "",
@@ -42,33 +47,34 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
             childSchool: "",
         };
 
-        setChildrenData([...childrenData, newChild]); // Add new child and update the state
-        onChildrenChange(childrenData); // Notify parent of the change
+        setChildrenData((prev) => [...prev, newChild]); // Add new child and update the state
     };
 
     const removeChild = (idToRemove: number) => {
-        if (childrenData.length > 1) {
-            const updatedChildren = childrenData.filter(
-                (child) => child.childId !== idToRemove
-            );
-            setChildrenData(updatedChildren);
-            onChildrenChange(updatedChildren)
-        }
+        setChildrenData((prevChildren) => {
+            if (prevChildren.length > 1) {
+                // Filter out the child with the specified ID
+                return prevChildren.filter((child) => child.childId !== idToRemove);
+            }
+            // Return the previous state if no removal should happen
+            return prevChildren;
+        });
     };
 
     const handleFieldChange = (
-        field: keyof Children,
+        field: keyof ChildrenWithId,
         childId: number,
         value: string
     ) => {
         setChildrenData((prev) => {
+            // Maps through each child within the most recent state of childrenData
+            // and checks if the child's id matches
             const updated = prev.map((child) =>
                 child.childId === childId
                     ? { ...child, [field]: value } // Update the specific field
                     : child
             );
 
-            onChildrenChange(updated); // Notify parent of the change
             return updated; // Return the updated state
         });
     };
@@ -88,7 +94,7 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                                 value={child?.childFirstName || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
-                                onChange={(e) => handleFieldChange("childFirstName", child.childId || -1, e.target.value)}
+                                onChange={(e) => handleFieldChange("childFirstName", child.childId, e.target.value)}
                             />
                         </div>
                         <div>
@@ -101,7 +107,7 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                                 value={child?.childLastName || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
-                                onChange={(e) => handleFieldChange("childLastName", child.childId || -1, e.target.value)}
+                                onChange={(e) => handleFieldChange("childLastName", child.childId, e.target.value)}
                             />
                         </div>
                     </div>
@@ -116,7 +122,7 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                                 value={child?.childAge || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
-                                onChange={(e) => handleFieldChange("childAge", child.childId || -1, e.target.value)}
+                                onChange={(e) => handleFieldChange("childAge", child.childId, e.target.value)}
                             />
                         </div>
                         <div>
@@ -129,7 +135,7 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                                 value={child?.childBirthYear || ""}
                                 className={style.individualNames}
                                 disabled={!isEditing}
-                                onChange={(e) => handleFieldChange("childBirthYear", child.childId || -1, e.target.value)}
+                                onChange={(e) => handleFieldChange("childBirthYear", child.childId, e.target.value)}
                             />
                         </div>
                     </div>
@@ -139,7 +145,7 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                         type="text"
                         value={child?.childSchool || ""}
                         disabled={!isEditing}
-                        onChange={(e) => handleFieldChange("childSchool", child.childId || -1, e.target.value)} />
+                        onChange={(e) => handleFieldChange("childSchool", child.childId, e.target.value)} />
                     <hr></hr>
                 </div>
             ))}
