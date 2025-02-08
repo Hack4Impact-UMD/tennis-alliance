@@ -18,11 +18,20 @@ type User = {
 };
 
 type Children = {
-  childAge: number;
-  childBirthYear: number;
   childFirstName: string;
   childLastName: string;
+  childAge: number;
   childSchool: string;
+  childBirthYear: number;
+};
+
+type ChildrenWithId = {
+  childId: number,
+  childFirstName: string;
+  childLastName: string;
+  childAge: number;
+  childSchool: string;
+  childBirthYear: number;
 };
 
 type CustomEvent = {
@@ -44,4 +53,4 @@ type CustomEvent = {
   maxVolunteers: number;
 };
 
-export type { CustomEvent, User };
+export type { CustomEvent, User, Children, ChildrenWithId };

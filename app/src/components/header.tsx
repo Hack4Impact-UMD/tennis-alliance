@@ -34,22 +34,22 @@ const Header = () => {
     const currentUser = useAuth();
     useEffect(() => {
         const fetchRole = async () => {
-          try {
-            const role = currentUser?.token?.claims.role?.toString().toUpperCase();
-            if (role) {
-              setRole(role);
-            } else {
-              setRole("undefined");
+            try {
+                const role = currentUser?.token?.claims.role?.toString().toUpperCase();
+                if (role) {
+                    setRole(role);
+                } else {
+                    setRole("undefined");
+                }
+                console.log("Role:", role);
+            } catch (error) {
+                console.error("Error fetching role:", error);
             }
-            console.log("Role:", role);
-          } catch (error) {
-            console.error("Error fetching role:", error);
-          }
         };
-    
+
         fetchRole();
-      }, [toggleNav]);
-    
+    }, [toggleNav]);
+
     const navigateToDashboard = () => {
         router.push("/dashboard");
     }
@@ -65,7 +65,7 @@ const Header = () => {
         }
         fetchUser();
     })
-    
+
     return (
         <nav className={classes.header}>
             <Image
