@@ -337,16 +337,28 @@ export async function adminDeleteParticipant(
   event.participants = event.participants.filter((e) => e.mainId !== participantId);
 
   try {
-    const user = await getUserWithId(participantId);
-    if (user) {
-      user.events = user.events.filter((e) => e.id !== eventId);
-      await updateDoc(doc(db, "Users", participantId), { events: user.events });
-    }
-  } catch (err) {
-    console.error("Error fetching user:", err);
-  }
-
-  try {
+    console.log("Before fixing:", event.start, event.end);
+  
+    const extractTime = (value: string) => {
+      let timePart = "";
+      let encounteredT = false;
+  
+      for (let i = value.length - 1; i >= 0; i--) {
+        if (value[i] === "T") {
+          encounteredT = true;
+          break;
+        }
+        timePart += value[i];
+      }
+  
+      return encounteredT ? timePart.split("").reverse().join("") : value;
+    };
+  
+    const fixedStart = extractTime(String(event.start));
+    const fixedEnd = extractTime(String(event.end));
+  
+    console.log("Fixed start/end:", fixedStart, fixedEnd);
+  
     await updateDoc(doc(db, "Events", eventId), {
       title: event.title,
       description: event.description,
@@ -354,13 +366,16 @@ export async function adminDeleteParticipant(
       maxParticipants: event.maxParticipants,
       maxVolunteers: event.maxVolunteers,
       date: event.date,
-      start: event.start,
-      end: event.end,
+      start: fixedStart,
+      end: fixedEnd,
     });
   } catch (err) {
     console.error("Error updating event:", err);
     throw err;
   }
+  
+  
+  
 }
 
 export function adminDeleteEvent(

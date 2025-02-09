@@ -470,7 +470,7 @@ const AdminDashboard = () => {
                                     );
 
                                     alert(`${row.firstName} ${row.lastName} has been removed successfully.`);
-                                    location.reload();
+                                    // location.reload();
                                 } catch (error) {
                                     console.error("Failed to delete participant:", error);
                                     alert("An error occurred while removing the participant.");
