@@ -5,6 +5,7 @@ import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
 import "react-day-picker/dist/style.css";
 import { adminCreateEvent } from "@/backend/FirestoreCalls";
+import Router from "next/router";
 
 const Popup = () => {
     const [visible, setVisible] = useState(false);
@@ -41,7 +42,7 @@ const Popup = () => {
         setIsRepeatWeekly(false);
         setRepeatCount(1);
     };
-
+    
     const submitEvent = async () => {
         if (isRepeatWeekly && repeatCount > 0) {
             const events = [];
@@ -52,10 +53,8 @@ const Popup = () => {
                 currentEventDate = new Date(currentEventDate);
                 currentEventDate.setDate(currentEventDate.getDate() + 7);
             }
-
-            console.log(events);
     
-            events.forEach(async ({ date, index }) => {
+            for (const { date, index } of events) {
                 await adminCreateEvent(
                     `${eventName} #${index + 1}`,
                     startTime,
@@ -65,7 +64,7 @@ const Popup = () => {
                     maxVolunteers,
                     description
                 );
-            });
+            }    
         } else {
             await adminCreateEvent(
                 eventName,
@@ -80,6 +79,11 @@ const Popup = () => {
     
         closePopup();
     };
+
+    const handleSubmit = async () => {
+        await submitEvent();
+        Router.reload();
+    };    
 
     const handleDayClick = (day: Date) => {
         setSelectedDay(day);
@@ -267,7 +271,7 @@ const Popup = () => {
                         </div>
                         <div className={styles.submitCancelContainer}>
                             <button
-                                onClick={submitEvent}
+                                onClick={handleSubmit}
                                 className={styles.submitCancelButton}
                             >
                                 Submit

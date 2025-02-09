@@ -48,6 +48,15 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
     return ''; // Default (no background color)
   };
 
+  async function handleDeleteUser(auth_id: string, eventId: string) {
+    try {
+      await deleteUserFromEvent(auth_id, eventId); // Wait for the delete function to complete
+      window.location.reload(); // Reload the page after successful deletion
+    } catch (error) {
+      console.error("Error deleting user from event:", error);
+    }
+  }
+
   return (
     <div className={styles.registeredEventsContainer}>
       {events.length > 0 ? (
@@ -56,16 +65,22 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
           event.participants.forEach(participant => {
               totalOtherMembers += participant.otherMembers.length;
           });
-          const slotsOpen = event.maxParticipants - totalOtherMembers;
+          const slotsOpen = event.maxParticipants + event.maxVolunteers - totalOtherMembers;
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
           const eventMonth = eventDate.toLocaleString("default", { month: "long" });
           const eventDayWithSuffix = `${eventDay}${getOrdinalSuffix(eventDay)}`;
-
+          
+          const regEvent = user.events.find(regEvent => regEvent.id === event.id);
+          const participantNames = regEvent
+            ? regEvent.participants.map(participant => `${participant.firstName} ${participant.lastName}`).join(", ")
+            : "No participants found.";
+          
+          console.log(event);
           return (
             <div key={event.id} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
-                <p>{formatDate(event.start)}</p>
+                <p>{formatDate(event.date)}</p>
                 {/* <p>Volunteer</p> */}
               </div>
 
@@ -82,12 +97,13 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
-                  <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
+                  <p>Registered: {participantNames}</p>
+                  <br />
+                  <p>Slots open: {slotsOpen} out of {event.maxParticipants + event.maxVolunteers}</p>
                   <button className={styles.removeButton} onClick={() => 
                       {
                         // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)
-                        deleteUserFromEvent(user.auth_id as string, event.id as string);
-                        window.location.reload();
+                        handleDeleteUser(user.auth_id as string, event.id as string);
                       }}>
                       Remove
                   </button>
