@@ -25,6 +25,7 @@ interface TodayEventsProps {
  registeredEvents: CustomEvent[];
  setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
  setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
+ onRegisterEvent: (eventId: string) => void;
 }
 
 
@@ -34,7 +35,8 @@ const TodayEvents = forwardRef<HTMLDivElement, TodayEventsProps> (({
   upcomingEvents,
   registeredEvents,
   setUpcomingEvents,
-  setRegisteredEvents}, ref) => {
+  setRegisteredEvents,
+  onRegisterEvent}, ref) => {
 
 
  const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
@@ -93,7 +95,9 @@ const formatTime = (timeString: string) => {
          return { firstName, lastName };
        })
      );
+     /*onRegisterEvent(eventId);*/
      alert("You have successfully registered for the event!");
+     window.location.reload();
 
      const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
      if(eventToRegister) {
@@ -123,6 +127,11 @@ const formatTime = (timeString: string) => {
        events.map(event => {
         const availableSlots = event.maxParticipants - event.participants.length;
         const isEventFull = availableSlots <= 0;
+        let totalOtherMembers = 0;
+        event.participants.forEach(participant => {
+          totalOtherMembers += participant.otherMembers.length;
+        });
+        const slotsOpen = event.maxParticipants - totalOtherMembers;
 
         return (
 
@@ -146,7 +155,7 @@ const formatTime = (timeString: string) => {
              <div className={styles.eventDetails}>
                <p>Time: {formatTime(event.start)}</p>
                <p>{event.description}</p>
-               <p>Slots open: {event.maxParticipants - event.participants.length} out of {event.maxParticipants}</p>
+               <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
              </div>
              <div className={styles.buttonGroup}>
                {/* Show "Register" and "Cancel" buttons only if the event is not expanded */}
@@ -189,6 +198,15 @@ const formatTime = (timeString: string) => {
                </div>
                <p>Please select the names of the people in your group who will be participating:</p>
                <div className={styles.checkboxGroup}>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="participant-main"
+                    checked={selectedMembers.includes(`${user.firstName} ${user.lastName}`)}
+                    onChange={() => handleCheckboxChange(`${user.firstName} ${user.lastName}`)}
+                  />
+                  {user.firstName} {user.lastName}
+                </label>
                  {/* Dynamic generation of family member checkboxes */}
                    {user.adults?.map((adult, index) => (
                      <label key={`adult-${index}`}>
@@ -214,6 +232,7 @@ const formatTime = (timeString: string) => {
                <div className = {styles.buttonWrapper}>
                  <button
                    className={styles.submitBtn}
+                   disabled = {selectedMembers.length === 0}
                    onClick={() =>
                      {
                        handleSubmit(event.id)

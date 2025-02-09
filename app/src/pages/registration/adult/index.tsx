@@ -15,13 +15,13 @@ const Adult: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult")
-    //   .then(() => {
-    //     setSuccessMessage(true); // Show the success message
-    //   })
-    //   .catch((err) => {
-    //     console.error("Error creating user:", err);
-    //   });
+    createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult")
+      .then(() => {
+        setSuccessMessage(true); // Show the success message
+      })
+      .catch((err) => {
+        console.error("Error creating user:", err);
+      });
     setSuccessMessage(true);
   };
 
