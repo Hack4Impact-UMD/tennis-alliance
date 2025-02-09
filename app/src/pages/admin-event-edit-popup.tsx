@@ -80,9 +80,9 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
         setEndTime({ hours: "1", minutes: "30", period: "PM" });
     };
 
-    const submitEvent = () => {
+    const submitEvent = async () => {
         closePopup();
-        adminUpdateEvent(
+        await adminUpdateEvent(
             eventID,
             eventName,
             startTime,
@@ -98,6 +98,7 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
         setMaxVolunteers(0);
         setDescription("");
         setEventName("");
+        location.reload();
     };
 
     /* TimePicker */

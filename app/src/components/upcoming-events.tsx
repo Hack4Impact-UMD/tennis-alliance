@@ -127,7 +127,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
     <div ref = {ref} className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
         events.map(event => {
-          const availableSlots = event.maxParticipants - event.participants.length;
+          const availableSlots = (event.maxParticipants + event.maxVolunteers) - event.participants.length;
           const isEventFull = availableSlots <= 0;
           let totalOtherMembers = 0;
           event.participants.forEach(participant => {
@@ -160,7 +160,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
                   <p>Time: {formatTime(event.start)}</p>
-                  <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
+                  <p>Slots open: {(event.maxParticipants + event.maxVolunteers) - event.participants.length} out of {(event.maxParticipants + event.maxVolunteers)}</p>
                 </div>
                 {expandedEventId === event.id && !isEventFull && (
                   <div className={styles.registrationForm}>
