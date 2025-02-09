@@ -337,8 +337,6 @@ export async function adminDeleteParticipant(
   event.participants = event.participants.filter((e) => e.mainId !== participantId);
 
   try {
-    console.log("Before fixing:", event.start, event.end);
-  
     const extractTime = (value: string) => {
       let timePart = "";
       let encounteredT = false;
@@ -356,8 +354,6 @@ export async function adminDeleteParticipant(
   
     const fixedStart = extractTime(String(event.start));
     const fixedEnd = extractTime(String(event.end));
-  
-    console.log("Fixed start/end:", fixedStart, fixedEnd);
   
     await updateDoc(doc(db, "Events", eventId), {
       title: event.title,
