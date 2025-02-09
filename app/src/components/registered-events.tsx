@@ -65,7 +65,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
           event.participants.forEach(participant => {
               totalOtherMembers += participant.otherMembers.length;
           });
-          const slotsOpen = event.maxParticipants - totalOtherMembers;
+          const slotsOpen = event.maxParticipants + event.maxVolunteers - totalOtherMembers;
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
           const eventMonth = eventDate.toLocaleString("default", { month: "long" });
@@ -99,7 +99,7 @@ export const RegisteredEvents: React.FC<RegisteredEventsProp> = ({ events, user,
                   <p>Time: {formatTime(event.start)}</p>
                   <p>Registered: {participantNames}</p>
                   <br />
-                  <p>Slots open: {slotsOpen} out of {event.maxParticipants}</p>
+                  <p>Slots open: {slotsOpen} out of {event.maxParticipants + event.maxVolunteers}</p>
                   <button className={styles.removeButton} onClick={() => 
                       {
                         // console.log("Payload: ", user.auth_id as string, " ",  event.id as string)

@@ -6,7 +6,7 @@ import styles from "@/styles/admin.module.css";
 import Email from "@/assets/email.png";
 import Trash from "@/assets/trash.png";
 import Popup from "./admin-event-create-popup";
-import { adminGetEvents, adminGetUsers, getUserWithId } from "@/backend/FirestoreCalls";
+import { adminGetEvents, adminGetUsers, getUserWithId, adminDeleteParticipant, adminGetEventIDs } from "@/backend/FirestoreCalls";
 import { User, CustomEvent } from "@/types";
 import { set } from "date-fns";
 import { useAuth } from "@/auth/AuthProvider";
@@ -21,7 +21,8 @@ import { RegisteredEvents } from '../components/registered-events';
 import UpcomingEvents from '../components/upcoming-events';
 import DashboardEvents from '../components/dashboard-events';
 import { Upcoming } from "@mui/icons-material";
-import RequireAdminAuth from "@/auth/RequireAdminAuth/RequireAdminAuth";
+import EditPopup from "./admin-event-edit-popup";
+import DeletePopUp from "./admin-event-delete-popup";
 
 const FILTERS = {
     "All Users": "all",
@@ -55,6 +56,9 @@ const AdminDashboard = () => {
     const [calendarEvents, setCalendarEvents] = useState<CustomEvent[]>([]);
     const [todayInEST, setTodayInEST] = useState<string>('');  // New state for today's date in EST
     const [weekRange, setWeekRange] = useState<string>('');  // New state for the week range
+    const [selectedEvent, setSelectedEvent] = useState<CustomEvent | null>(null);
+    const [eventIDs, setEventIDs] = useState<{ [key: string]: string }>({});
+    const [selectedEventID, setSelectedEventID] = useState<string | null>(null);
 
     // Utility to format date as "Month Day"
     const formatDate = (date: Date) => {
@@ -117,6 +121,17 @@ const AdminDashboard = () => {
 
         calculateCurrentWeekRange();
         /*console.log("weekRange: ", weekRange);*/
+        const getEventIDs = async () => {
+            try {
+            const eventIDs = await adminGetEventIDs();
+            console.log("Event ids: ", eventIDs);
+            setEventIDs(eventIDs);
+            } catch (error) {
+            console.error("Error fetching event IDs:", error);
+            }
+        };
+    
+        getEventIDs();
     }, []);
 
     useEffect(() => {
@@ -207,6 +222,9 @@ const AdminDashboard = () => {
             setData(participantsData.filter(user => user !== null));
             setAllEmails(participantsData.filter(user => user !== null).map((user) => user.email).join(","));
             setSelectedEventTitle(event.title);
+            setSelectedEvent(event);
+            setSelectedEventID(eventIDs[event.title]);
+            console.log("Selected event:", event);
         } catch (error) {
             console.error("Error fetching participants data:", error);
         }
@@ -377,57 +395,58 @@ const AdminDashboard = () => {
       }, [eventData, regUpcomingEvents, todayInEST, displayedDate]);
 
     return (
-            <div className={styles.container}>
-                <div className = {styles.headerContainer}>
-                    <div className = {styles.headers}>
-                        <p className = {styles.eventSchedule}>Event Schedule</p>
-                        <p className = {styles.eventWeek}>{weekRange}</p>
-                    </div>
-                    <div className = {styles.imgContainer}>
-                        <Image src = {TennisBalls} alt = "Tennis Balls" className = {styles.tennisBalls}/>
-                    </div>
+        <div className={styles.container}>
+            <div className = {styles.headerContainer}>
+                <div className = {styles.headers}>
+                    <p className = {styles.eventSchedule}>Event Schedule</p>
+                    <p className = {styles.eventWeek}>{weekRange}</p>
                 </div>
-                <div ref = {calendarRef} className={styles.calendar}></div>
-                <div className={styles.table}>
-                    <div className={styles.createContainer}>
-                        {<Popup/>}
-                    </div>
-                    <div className={styles.selectedDateContainer}>
-                        <div className={styles.selectedDateText}>Date selected:</div>
-                        <div className={styles.selectedEvent}>{displayedDate2}</div>
-                    </div>
-                    <DashboardEvents 
-                        events={selectedDate ? eventsForSelectedDate : upcomingEvents}
-                        onSelectEvent={handleSelectEvent}
+                <div className = {styles.imgContainer}>
+                    <Image src = {TennisBalls} alt = "Tennis Balls" className = {styles.tennisBalls}/>
+                </div>
+            </div>
+            <div ref = {calendarRef} className={styles.calendar}></div>
+            <div className={styles.table}>
+                <div className={styles.createContainer}>
+                    {<Popup/>}
+                </div>
+                <div className={styles.selectedDateContainer}>
+                    <div className={styles.selectedDateText}>Date selected:</div>
+                    <div className={styles.selectedEvent}>{displayedDate2}</div>
+                </div>
+                <DashboardEvents 
+                    events={selectedDate ? eventsForSelectedDate : upcomingEvents}
+                    onSelectEvent={handleSelectEvent}
+                />
+                <div className={styles.selectedEventContainer}>
+                    <div className={styles.selectedEventText}>Event selected:</div>
+                    <div className={styles.selectedEvent}>{selectedEventTitle}</div>
+                </div>
+                <p>All Users</p>
+                <div className={styles.search}>
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
-                    <div className={styles.selectedEventContainer}>
-                        <div className={styles.selectedEventText}>Event selected:</div>
-                        <div className={styles.selectedEvent}>{selectedEventTitle}</div>
-                    </div>
-                    <p>All Users</p>
-                    <div className={styles.search}>
-                        <input
-                            type="text"
-                            placeholder="Search"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                        <select onChange={(e) => setFilter(e.target.value)}>
-                            {Object.entries(FILTERS).map(([key, value]) => (
-                                <option key={key} value={value}>
-                                    {key}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className={`${styles.row} ${styles.header}`}>
-                        <span>Name</span>
-                        <span>Email</span>
-                        <span>Type</span>
-                        <div />
-                        <div />
-                    </div>
-                    {data.map((row, i) => (
+                    <select onChange={(e) => setFilter(e.target.value)}>
+                        {Object.entries(FILTERS).map(([key, value]) => (
+                            <option key={key} value={value}>
+                                {key}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className={`${styles.row} ${styles.header}`}>
+                    <span>Name</span>
+                    <span>Email</span>
+                    <span>Type</span>
+                    <div />
+                    <div />
+                </div>
+                {data.map((row, i) => (
+                    <div>    
                         <div
                             key={i}
                             className={styles.row}
@@ -439,25 +458,52 @@ const AdminDashboard = () => {
                             <button>
                                 <a href={`mailto:${row.email}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
                             </button>
-                            <button>
+                            <button
+                                onClick={async () => {
+                                try {
+                                    await adminDeleteParticipant(
+                                    selectedEvent!,
+                                    selectedEventID!,
+                                    row.auth_id!,
+                                    row.email,
+                                    true
+                                    );
+
+                                    alert(`${row.firstName} ${row.lastName} has been removed successfully.`);
+                                    location.reload();
+                                } catch (error) {
+                                    console.error("Failed to delete participant:", error);
+                                    alert("An error occurred while removing the participant.");
+                                }
+                                }}
+                            >
                                 <Image src={Trash} alt="delete" />
                             </button>
                         </div>
-                    ))}
-                    <div className={styles.buttons}>
-                        <button onClick={downloadUsers}>Export Users</button>
-                        {/*<button><a href={`mailto:${auth.user.email}?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>*/}
-                        <a
-                            href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-                                download
-                            )}`}
-                            download="users.csv"
-                            hidden={true}
-                            ref={downloadLink}
-                        ></a>
+                        <div className={styles.children}>
+                            {row.children?.map((child, i) => (
+                                <div key={i} className={styles.child} style={{ background: getRowColor(i + 1) }}>
+                                    Child {i + 1}: {child.childFirstName + " " + child.childLastName}
+                                    <span>Account owner: {row.firstName + " " + row.lastName}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+                ))}
+                <div className={styles.buttons}>
+                    <button onClick={downloadUsers}>Export Users</button>
+                    {/*<button><a href={`mailto:${auth.user.email}?bcc=${allEmails}`} target="_blank" rel="noreferrer">Message All Participants</a></button>*/}
+                    <a
+                        href={`data:text/csv;charset=utf-8,${encodeURIComponent(
+                            download
+                        )}`}
+                        download="users.csv"
+                        hidden={true}
+                        ref={downloadLink}
+                    ></a>
                 </div>
             </div>
+        </div>
     );
 };
 
