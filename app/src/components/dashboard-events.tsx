@@ -1,28 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from "@/styles/dashboard-events.module.css";
-import { type CustomEvent, type User } from "@/types";
+import { type CustomEvent } from "@/types";
 import Racquet from "@/assets/tennis_racquet.png";
 import Image from "next/image";
-import { addUserToEvent } from '@/backend/CloudFunctionsCalls';
 import EditPopup from '@/pages/admin-event-edit-popup';
 import DeletePopUp from '@/pages/admin-event-delete-popup';
-import { adminGetEventIDs } from '@/backend/FirestoreCalls';
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  start: string; // ISO 8601 string or other compatible date format
-  end: string;
-  description: string;
-}
 
 interface DashboardEventsProp {
   events: CustomEvent[];
   onSelectEvent?: (event: CustomEvent) => Promise<void>;
+  onEventUpdated?: () => Promise<void>;
+  onEventDeleted?: () => Promise<void>;
+  emptyMessage?: string | null;
 }
 
-const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent }) => {
-  const [eventIDs, setEventIDs] = useState<{ [key: string]: string }>({});
+const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent, onEventUpdated, onEventDeleted, emptyMessage = "No events today." }) => {
+  const getRoleCounts = (event: CustomEvent) => {
+    return event.participants.reduce(
+      (totals, participant) => {
+        const memberCount = Array.isArray(participant.otherMembers)
+          ? participant.otherMembers.length
+          : 0;
+
+        if (participant.role === "participant") {
+          totals.participants += memberCount;
+        } else if (participant.role === "volunteer") {
+          totals.volunteers += memberCount;
+        }
+
+        return totals;
+      },
+      { participants: 0, volunteers: 0 }
+    );
+  };
 
   const getOrdinalSuffix = (day: number) => {
     if (day > 3 && day < 21) return 'th'; // Special case for numbers 11-20
@@ -34,9 +44,10 @@ const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent 
     }
   };
 
-  const formatTime = (timeString: string) => {
-    const getTime = timeString.split('T')[1];
-    return getTime;
+  const formatTimeRange = (startTimeString: string, endTimeString: string) => {
+    const startTime = startTimeString.split('T')[1];
+    const endTime = endTimeString.split('T')[1];
+    return `${startTime} - ${endTime}`;
   };
 
   const getEventBackgroundColor = (role: string) => {
@@ -59,62 +70,47 @@ const DashboardEvents: React.FC<DashboardEventsProp> = ({ events, onSelectEvent 
     return `${monthName} ${day}${getOrdinalSuffix(day)}`;
   };
 
-  const today = new Date();
-  const day = today.getDate();
-  const month = today.toLocaleString('default', { month: 'long' });
-  const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
-
-  useEffect(() => {
-    const getEventIDs = async () => {
-      try {
-        const eventIDs = await adminGetEventIDs();
-        setEventIDs(eventIDs);
-      } catch (error) {
-        console.error("Error fetching event IDs:", error);
-      }
-    };
-
-    getEventIDs();
-  }, []);
-
   return (
     <div className={styles.dashboardEventsContainer}>
       {events.length > 0 ? (
         events.map(event => {
-          const eventID = eventIDs[event.title] || "";
+          const eventID = event.id || "";
+          const roleCounts = getRoleCounts(event);
+          const participantSlotsOpen = event.maxParticipants - roleCounts.participants;
+          const volunteerSlotsOpen = event.maxVolunteers - roleCounts.volunteers;
+          const isEventFull = participantSlotsOpen <= 0 && volunteerSlotsOpen <= 0;
           return (
             <div key={event.id} onClick={() => onSelectEvent && onSelectEvent(event)} className={styles.individualEvent} style={{ backgroundColor: getEventBackgroundColor("Participant") }}>
               <div className={styles.dateSection}>
                 <p>{formatDate(event.start)}</p>
-                <p>Participant</p>
               </div>
 
               <div className={styles.divider}></div>
 
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
-                  <Image src={Racquet} alt="Racquet" />
-                  <p style={{ fontSize: '1.50rem' }}>{event.title}</p>
+                  <Image src={Racquet} alt="Racquet" className={styles.titleIcon} />
+                  <div className={styles.titleStack}>
+                    <p style={{ fontSize: '1.50rem' }}>{event.title}</p>
+                    {isEventFull && <span className={styles.statusBadge}>Full</span>}
+                  </div>
                 </div>
                 <div className={styles.eventDetails}>
-                  <p>Time: {formatTime(event.start)}</p>
+                  <p>Time: {formatTimeRange(event.start, event.end)}</p>
                   <p>{event.description}</p>
-                  <p>Slots open:{" "}
-                    {(event?.maxParticipants + event?.maxVolunteers) -
-                      event?.participants.reduce((total, participant) => total + (participant?.otherMembers?.length || 0), 0)}{" "}
-                    out of {event?.maxVolunteers + event?.maxParticipants}
-                  </p>
+                  <p>Participant spots: {Math.max(0, participantSlotsOpen)} out of {event.maxParticipants}</p>
+                  <p>Volunteer spots: {Math.max(0, volunteerSlotsOpen)} out of {event.maxVolunteers}</p>
                 </div>
                 <div className={styles.editDeleteContainer}>
-                  <EditPopup eventID={eventID} />
-                  <DeletePopUp eventID={eventID} />
+                  <EditPopup eventID={eventID} onEventUpdated={onEventUpdated} />
+                  <DeletePopUp eventID={eventID} onEventDeleted={onEventDeleted} />
                 </div>
               </div>
             </div>
           );
         })
       ) : (
-        <p>No events today.</p>
+        emptyMessage ? <p className={styles.emptyState}>{emptyMessage}</p> : null
       )}
     </div>
   );

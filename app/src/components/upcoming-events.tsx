@@ -13,7 +13,8 @@ interface UpcomingEventsProps {
   registeredEvents: CustomEvent[];
   setUpcomingEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
   setRegisteredEvents: React.Dispatch<React.SetStateAction<CustomEvent[]>>;
-  onRegisterEvent: (eventId: string) => void;
+  onRegisterEvent: (eventId: string) => Promise<void>;
+  emptyMessage?: string;
 }
 
 const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({ 
@@ -23,10 +24,35 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
   registeredEvents,
   setUpcomingEvents,
   setRegisteredEvents,
-  onRegisterEvent}, ref) => {
+  onRegisterEvent,
+  emptyMessage = "No unregistered events upcoming."}, ref) => {
+  const INITIAL_VISIBLE_EVENTS = 3;
+  const VISIBLE_EVENTS_STEP = 3;
   const [expandedEventId, setExpandedEventId] = React.useState<string | null>(null);
   const [selectedMembers, setSelectedMembers] = React.useState<string[]>([]);
   const [role, setRole] = React.useState<string>("participant");
+  const [submittingEventId, setSubmittingEventId] = React.useState<string | null>(null);
+  const [visibleEventCount, setVisibleEventCount] = React.useState(INITIAL_VISIBLE_EVENTS);
+  const eventIdsKey = events.map((event) => event.id ?? "").join("|");
+
+  const getRoleCounts = (event: CustomEvent) => {
+    return event.participants.reduce(
+      (totals, participant) => {
+        const memberCount = Array.isArray(participant.otherMembers)
+          ? participant.otherMembers.length
+          : 0;
+
+        if (participant.role === "participant") {
+          totals.participants += memberCount;
+        } else if (participant.role === "volunteer") {
+          totals.volunteers += memberCount;
+        }
+
+        return totals;
+      },
+      { participants: 0, volunteers: 0 }
+    );
+  };
  
 
   // Function to get the correct ordinal suffix for the day
@@ -40,9 +66,10 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
     }
   };
 
-  const formatTime = (timeString: string) => {
-    const getTime = timeString.split('T')[1];
-    return getTime;
+  const formatTimeRange = (startTimeString: string, endTimeString: string) => {
+    const startTime = startTimeString.split('T')[1];
+    const endTime = endTimeString.split('T')[1];
+    return `${startTime} - ${endTime}`;
   };
 
   /*const formatDate = (timeString: string) => {
@@ -83,6 +110,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
       alert("Event ID is missing.");
       return;
     }
+    setSubmittingEventId(eventId);
     /*console.log("user auth id: ", user.auth_id);
     console.log("event id: ", eventId);
     console.log("members: ", selectedMembers.map(member => {
@@ -96,23 +124,18 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
         selectedMembers.map(member => {
           const [firstName, lastName] = member.split(' ');
           return { firstName, lastName };
-        })
+        }),
+        role === "volunteer" ? "volunteer" : "participant"
       );
-      /*onRegisterEvent(eventId);*/
+      await onRegisterEvent(eventId);
       alert("You have successfully registered for the event!");
-      window.location.reload();
- 
-      const eventToRegister = upcomingEvents.find((event) => event.id === eventId);
-      if(eventToRegister) {
-         setUpcomingEvents((prev) => prev.filter((event) => event.id !== eventId));
-         setRegisteredEvents((prev) => [...prev, eventToRegister]);
-      }
-      
       setExpandedEventId(null);
       setSelectedMembers([]);
     } catch (error) {
       console.error("Error registering for event:", error);
       alert("There was an error. Please try again.");
+    } finally {
+      setSubmittingEventId(null);
     }
   };
  
@@ -123,17 +146,35 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
     );
   };
 
+  React.useEffect(() => {
+    setVisibleEventCount(INITIAL_VISIBLE_EVENTS);
+  }, [eventIdsKey]);
+
+  const visibleEvents = events.slice(0, visibleEventCount);
+  const hiddenEventCount = Math.max(0, events.length - visibleEventCount);
+  const nextVisibleCount = Math.min(events.length, visibleEventCount + VISIBLE_EVENTS_STEP);
+  const revealCount = nextVisibleCount - visibleEventCount;
+
   return (
     <div ref = {ref} className={styles.upcomingEventContainer}>
       {events.length > 0 ? (
-        events.map(event => {
-          const availableSlots = (event.maxParticipants + event.maxVolunteers) - event.participants.length;
-          const isEventFull = availableSlots <= 0;
-          let totalOtherMembers = 0;
-          event.participants.forEach(participant => {
-            totalOtherMembers += participant.otherMembers.length;
-          });
-          const slotsOpen = event.maxParticipants - totalOtherMembers;
+        visibleEvents.map(event => {
+          const isExpanded = expandedEventId === event.id;
+          const isSubmitting = submittingEventId === event.id;
+          const roleCounts = getRoleCounts(event);
+          const participantSlotsOpen = event.maxParticipants - roleCounts.participants;
+          const volunteerSlotsOpen = event.maxVolunteers - roleCounts.volunteers;
+          const isParticipantFull = participantSlotsOpen <= 0;
+          const isVolunteerFull = volunteerSlotsOpen <= 0;
+          const isEventFull = isParticipantFull && isVolunteerFull;
+          const selectedRoleIsFull =
+            role === "volunteer" ? isVolunteerFull : isParticipantFull;
+          const remainingSlotsForSelectedRole =
+            role === "volunteer" ? Math.max(0, volunteerSlotsOpen) : Math.max(0, participantSlotsOpen);
+          const selectedMembersExceedRemainingSlots =
+            selectedMembers.length > remainingSlotsForSelectedRole;
+          const selectionLimitReached =
+            selectedMembers.length >= remainingSlotsForSelectedRole;
           // Extract the date from the event's start time
           const eventDate = new Date(event.start);
           const eventDay = eventDate.getDate();
@@ -152,19 +193,52 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
 
               <div className={styles.eventInformation}>
                 <div className={styles.titleButtonContainer}>
-                  <Image src={Racquet} alt="Racquet" />
-                  <p style={{ display: 'inline' , fontSize:'1.25rem', textAlign:'center', width:'60%'}}>{event.title}</p>
+                  <Image src={Racquet} alt="Racquet" className={styles.titleIcon} />
+                  <div className={styles.titleStack}>
+                    <p className={styles.titleText}>{event.title}</p>
+                    {isEventFull && <span className={styles.statusBadge}>Full</span>}
+                  </div>
                   {/* Square button next to event title */}
-                  <Image src = {Arrow} style={{width:'33px', height:'35px'}} alt = "Arrow" onClick={() => setExpandedEventId(expandedEventId === event.id ? null : event.id as string | null)} /> 
+                  <Image
+                    className={styles.titleAction}
+                    src={Arrow}
+                    style={{
+                      width: '33px',
+                      height: '35px',
+                      cursor: 'pointer',
+                      transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s ease',
+                    }}
+                    alt="Arrow"
+                    onClick={() => {
+                      if (isExpanded) {
+                        setExpandedEventId(null);
+                        setSelectedMembers([]);
+                        setRole("participant");
+                        return;
+                      }
+
+                      setExpandedEventId(event.id as string | null);
+                      setSelectedMembers([]);
+
+                      if (!isParticipantFull) {
+                        setRole("participant");
+                      } else if (!isVolunteerFull) {
+                        setRole("volunteer");
+                      }
+                    }}
+                  /> 
                 </div>                
                 {/* Center-aligned details */}
                 <div className={styles.eventDetails}>
-                  <p>Time: {formatTime(event.start)}</p>
-                  <p>Slots open: {(event.maxParticipants + event.maxVolunteers) - event.participants.length} out of {(event.maxParticipants + event.maxVolunteers)}</p>
+                  <p className={styles.summaryRow}><span className={styles.summaryLabel}>Time:</span> <span className={styles.summaryValue}>{formatTimeRange(event.start, event.end)}</span></p>
+                  <p className={styles.summaryRow}><span className={styles.summaryLabel}>Participant spots:</span> <span className={styles.summaryValue}>{Math.max(0, participantSlotsOpen)} out of {event.maxParticipants}</span></p>
+                  <p className={styles.summaryRow}><span className={styles.summaryLabel}>Volunteer spots:</span> <span className={styles.summaryValue}>{Math.max(0, volunteerSlotsOpen)} out of {event.maxVolunteers}</span></p>
                 </div>
-                {expandedEventId === event.id && !isEventFull && (
+                {isExpanded && !isEventFull && (
                   <div className={styles.registrationForm}>
-                    <p>Would you like to register as a participant or volunteer?</p>
+                    <p className={styles.descriptionText}><span className={styles.descriptionLabel}>Description:</span> {event.description}</p>
+                    <p className={styles.registrationPrompt}>Would you like to register as a participant or volunteer?</p>
                     <div className={styles.radioButtonRow}>
                       <label>
                         <input
@@ -172,9 +246,10 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                           name="role"
                           value="participant"
                           checked={role === "participant"}
+                          disabled={isParticipantFull}
                           onChange={() => setRole("participant")}
                         />
-                        Participant
+                        Participant{isParticipantFull ? " (Full)" : ""}
                       </label>
                       <label>
                         <input
@@ -182,12 +257,13 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                           name="role"
                           value="volunteer"
                           checked={role === "volunteer"}
+                          disabled={isVolunteerFull}
                           onChange={() => setRole("volunteer")}
                         />
-                        Volunteer
+                        Volunteer{isVolunteerFull ? " (Full)" : ""}
                       </label>
                     </div>
-                    <p>Please select the names of the people in your group who will be participating:</p>
+                    <p className={styles.registrationFollowup}>Please select the names of the people in your group who will be participating:</p>
                     <div className={styles.checkboxGroup}>
                     {/* Dynamic generation of family member checkboxes */}
                     <label>
@@ -195,6 +271,10 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                         type="checkbox"
                         name="participant-main"
                         checked={selectedMembers.includes(`${user.firstName} ${user.lastName}`)}
+                        disabled={
+                          !selectedMembers.includes(`${user.firstName} ${user.lastName}`) &&
+                          selectionLimitReached
+                        }
                         onChange={() => handleCheckboxChange(`${user.firstName} ${user.lastName}`)}
                       />
                       {user.firstName} {user.lastName}
@@ -205,6 +285,7 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                          type="checkbox"
                          name={`participant-adult-${index}`}
                          checked={selectedMembers.includes(adult.name)}
+                         disabled={!selectedMembers.includes(adult.name) && selectionLimitReached}
                          onChange={() => handleCheckboxChange(adult.name)} />
                         {adult.name}
                       </label>
@@ -215,6 +296,10 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                          type="checkbox"
                          name={`participant-child-${index}`}
                          checked={selectedMembers.includes(`${child.childFirstName} ${child.childLastName}`)}
+                         disabled={
+                           !selectedMembers.includes(`${child.childFirstName} ${child.childLastName}`) &&
+                           selectionLimitReached
+                         }
                          onChange={() => handleCheckboxChange(`${child.childFirstName} ${child.childLastName}`)}/>
                         {child.childFirstName} {child.childLastName}
                       </label>
@@ -224,13 +309,29 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
                   <div className = {styles.buttonWrapper}>
                     <button 
                       className={styles.submitBtn}
-                      disabled={selectedMembers.length === 0}
+                      disabled={
+                        selectedMembers.length === 0 ||
+                        isSubmitting ||
+                        selectedRoleIsFull ||
+                        selectedMembersExceedRemainingSlots
+                      }
                       onClick={() =>
                         {
                           handleSubmit(event.id)
                         }}
                     >
-                      Submit
+                      {isSubmitting ? (
+                        <span className={styles.buttonContent}>
+                          <span className={styles.inlineSpinner} aria-hidden="true" />
+                          Registering...
+                        </span>
+                      ) : (
+                        selectedRoleIsFull
+                          ? "Role Full"
+                          : selectedMembersExceedRemainingSlots
+                            ? "Too Many Selected"
+                            : "Submit"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -240,7 +341,25 @@ const UpcomingEvents = forwardRef<HTMLDivElement, UpcomingEventsProps> (({
           );
         })
       ) : (
-        <p>No events upcoming.</p>
+        <p>{emptyMessage}</p>
+      )}
+      {hiddenEventCount > 0 && (
+        <button
+          type="button"
+          className={styles.showMoreButton}
+          onClick={() => setVisibleEventCount(nextVisibleCount)}
+        >
+          Show {revealCount} more
+        </button>
+      )}
+      {hiddenEventCount === 0 && events.length > INITIAL_VISIBLE_EVENTS && (
+        <button
+          type="button"
+          className={styles.showMoreButton}
+          onClick={() => setVisibleEventCount(INITIAL_VISIBLE_EVENTS)}
+        >
+          Show less
+        </button>
       )}
     </div>
   );

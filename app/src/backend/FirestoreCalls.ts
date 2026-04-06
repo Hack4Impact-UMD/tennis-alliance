@@ -94,7 +94,7 @@ export async function updateAdditionalInfo(
     await updateDoc(userRef, {
       additionalInfo,
     });
-    console.log("Additional info updated successfully.");
+    // console.log("Additional info updated successfully.");
   } catch (error) {
     console.error("Error updating additional info:", error);
     throw error;
@@ -133,7 +133,7 @@ export async function updateChildren(
 
     await updateDoc(userRef, { children: updatedChildren });
 
-    console.log("Children array updated successfully.");
+    // console.log("Children array updated successfully.");
   } catch (error) {
     console.error("Error updating children:", error);
     throw error;
@@ -228,7 +228,10 @@ export function adminGetEvents(): Promise<CustomEvent[]> {
     getDocs(collection(db, "Events"))
       .then((querySnapshot) => {
         const events: CustomEvent[] = querySnapshot.docs.map(
-          (doc) => doc.data() as CustomEvent
+          (doc) => ({
+            ...(doc.data() as CustomEvent),
+            id: doc.id,
+          })
         );
         resolve(events);
       })
@@ -284,7 +287,10 @@ export function adminCreateEvent(
   description: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const formattedDate = selectedDay.toISOString().split('T')[0];
+    const year = selectedDay.getFullYear();
+    const month = String(selectedDay.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDay.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
 
     const event: CustomEvent = {
       title: eventName,
@@ -324,15 +330,17 @@ export function adminUpdateEvent(
       return;
     }
 
-    const formattedDate = selectedDay.toISOString().split('T')[0];
+    const year = selectedDay.getFullYear();
+    const month = String(selectedDay.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDay.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
 
-    const updatedEvent: CustomEvent = {
+    const updatedEvent = {
       title: eventName,
       date: formattedDate,
       start: `${startTime.hours}:${startTime.minutes} ${startTime.period}`,
       end: `${endTime.hours}:${endTime.minutes} ${endTime.period}`,
       description,
-      participants: [],
       maxParticipants: maxParticipants,
       maxVolunteers: maxVolunteers,
     };
@@ -352,6 +360,7 @@ export async function adminDeleteParticipant(
   event: CustomEvent,
   eventId: string,
   participantId: string,
+  attendeeName: { firstName: string; lastName: string },
   participantEmail: string,
   email: boolean
 ): Promise<void> {
@@ -362,8 +371,9 @@ export async function adminDeleteParticipant(
   if (email) {
     const sendEmailCloud = httpsCallable(functions, "sendEmail");
     try {
+      const removedAttendeeName = `${attendeeName.firstName} ${attendeeName.lastName}`;
       await sendEmailCloud({
-        text: `An admin has removed you from the event ${event.title}`,
+        text: `An admin has removed ${removedAttendeeName} from the event ${event.title}.`,
         bcc: [participantEmail],
         reason: "Event Removal",
       });
@@ -372,9 +382,64 @@ export async function adminDeleteParticipant(
     }
   }
 
-  event.participants = event.participants.filter((e) => e.mainId !== participantId);
-
   try {
+    const userRef = doc(db, "Users", participantId);
+    const userSnapshot = await getDoc(userRef);
+
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.data();
+      const userEvents = Array.isArray(userData.events) ? userData.events : [];
+      const updatedUserEvents = userEvents
+        .map((registeredEvent: { id: string; participants?: { firstName: string; lastName: string }[] }) => {
+          if (registeredEvent.id !== eventId) {
+            return registeredEvent;
+          }
+
+          const remainingParticipants = Array.isArray(registeredEvent.participants)
+            ? registeredEvent.participants.filter(
+                (member) =>
+                  member.firstName !== attendeeName.firstName ||
+                  member.lastName !== attendeeName.lastName
+              )
+            : [];
+
+          return {
+            ...registeredEvent,
+            participants: remainingParticipants,
+          };
+        })
+        .filter((registeredEvent: { id: string; participants?: { firstName: string; lastName: string }[] }) => {
+          if (registeredEvent.id !== eventId) {
+            return true;
+          }
+
+          return Array.isArray(registeredEvent.participants) && registeredEvent.participants.length > 0;
+        });
+
+      event.participants = event.participants
+        .map((participant) => {
+          if (participant.mainId !== participantId) {
+            return participant;
+          }
+
+          const remainingMembers = participant.otherMembers.filter(
+            (member) =>
+              member.firstName !== attendeeName.firstName ||
+              member.lastName !== attendeeName.lastName
+          );
+
+          return {
+            ...participant,
+            otherMembers: remainingMembers,
+          };
+        })
+        .filter((participant) => participant.mainId !== participantId || participant.otherMembers.length > 0);
+
+      await updateDoc(userRef, {
+        events: updatedUserEvents,
+      });
+    }
+
     const extractTime = (value: string) => {
       let timePart = "";
       let encounteredT = false;
@@ -438,27 +503,46 @@ export function adminDeleteEvent(
           const participantEmails = participants.map((p: any) => p.email);
 
           const sendEmailCloud = httpsCallable(functions, "sendEmail");
-          await sendEmailCloud({
-            text: `The ${eventData.title} event has been cancelled.`,
-            bcc: participantEmails,
-            reason: "Event Cancellation",
-          });
+          try {
+            await sendEmailCloud({
+              text: `The ${eventData.title} event has been cancelled.`,
+              bcc: participantEmails,
+              reason: "Event Cancellation",
+            });
+          } catch (error) {
+            console.error(
+              `Failed to send cancellation email for event ${eventId}. Proceeding with delete.`,
+              error
+            );
+          }
         }
 
         await runTransaction(db, async (transaction) => {
-          for (const participant of participants) {
-            const userDocRef = doc(db, "Users", participant.mainId);
-            const userSnapshot = await transaction.get(userDocRef);
+          const userDocRefs = Array.from(
+            new Map(
+              participants.map((participant: any) => [
+                participant.mainId,
+                doc(db, "Users", participant.mainId),
+              ])
+            ).values()
+          );
+
+          const userSnapshots = await Promise.all(
+            userDocRefs.map((userDocRef) => transaction.get(userDocRef))
+          );
+
+          userSnapshots.forEach((userSnapshot, index) => {
+            const userDocRef = userDocRefs[index];
 
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
-              const updatedRegisteredEvents = (userData?.registeredEvents || []).filter(
-                (event: string) => event !== eventId
+              const updatedUserEvents = (userData?.events || []).filter(
+                (event: { id: string }) => event.id !== eventId
               );
 
-              transaction.update(userDocRef, { registeredEvents: updatedRegisteredEvents });
+              transaction.update(userDocRef, { events: updatedUserEvents });
             }
-          }
+          });
 
           transaction.delete(eventDocRef);
         });

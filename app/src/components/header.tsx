@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/auth/AuthProvider";
+import { logOut } from "@/backend/AuthCalls";
 import { getUserWithId } from "@/backend/FirestoreCalls";
 import { User } from "@/types";
 import Image from "next/image";
@@ -24,6 +25,24 @@ const Header = () => {
         setToggleNav(!toggleNav);
     };
 
+    const closeMenuAndNavigate = (path: string) => (event: React.MouseEvent) => {
+        event.preventDefault();
+        setToggleNav(false);
+        router.push(path);
+    };
+
+    const handleSignOut = async () => {
+        try {
+            setUser(undefined);
+            setRole("undefined");
+            await logOut();
+            setToggleNav(false);
+            router.push("/login");
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    };
+
     useEffect(() => {
         toggleNav
             ? (document.body.style.overflowY = "hidden")
@@ -41,7 +60,7 @@ const Header = () => {
                 } else {
                     setRole("undefined");
                 }
-                console.log("Role:", role);
+                // console.log("Role:", role);
             } catch (error) {
                 console.error("Error fetching role:", error);
             }
@@ -51,11 +70,15 @@ const Header = () => {
     }, [toggleNav]);
 
     const navigateToDashboard = () => {
-        router.push("/dashboard");
+        router.push(role === "ADMIN" ? "/admin" : "/dashboard");
     }
 
     useEffect(() => {
         const fetchUser = async () => {
+            if (!authContext.user) {
+                setUser(undefined);
+                return;
+            }
             try {
                 const user = await getUserWithId(authContext.user.uid)
                 setUser(user);
@@ -64,7 +87,7 @@ const Header = () => {
             }
         }
         fetchUser();
-    })
+    }, [authContext.user])
 
     return (
         <nav className={classes.header}>
@@ -94,23 +117,33 @@ const Header = () => {
 
                     <p className={classes.eventRegTitle}>Event Registration</p>
                     {role === "ADMIN" ? (
-                        <Link href="/admin" onClick={toggleMenu}>
+                        <Link href="/admin" onClick={closeMenuAndNavigate("/admin")}>
                             Admin Dashboard
                         </Link>
                     ) : (
-                        <Link href="/dashboard" onClick={toggleMenu}>
+                        <Link href="/dashboard" onClick={closeMenuAndNavigate("/dashboard")}>
                             Dashboard
                         </Link>
                     )}
-                    <Link href="/settings" onClick={toggleMenu}>
+                    <Link href="/settings" onClick={closeMenuAndNavigate("/settings")}>
                         Settings
                     </Link>
-                    <Link href="/registration" onClick={toggleMenu}>
+                    <Link href="/registration" onClick={closeMenuAndNavigate("/registration")}>
                         Account Registration
                     </Link>
-                    <Link href="/login" onClick={toggleMenu}>
-                        Sign In
-                    </Link>
+                    {!authContext.user ? (
+                        <Link href="/login" onClick={closeMenuAndNavigate("/login")}>
+                            Sign In
+                        </Link>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={handleSignOut}
+                            className={classes.menuButton}
+                        >
+                            Sign out
+                        </button>
+                    )}
                     <p className={classes.info}>Information</p>
                     <Link href={base}>Home</Link>
                     <Link href={`${base}/about-us`}>About Us</Link>

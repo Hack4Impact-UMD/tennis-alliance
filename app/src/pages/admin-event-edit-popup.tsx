@@ -9,14 +9,25 @@ import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
 import "react-day-picker/dist/style.css";
 import { adminUpdateEvent, adminGetEventById } from "@/backend/FirestoreCalls";
-import { create } from "domain";
 
 interface EditPopUpProps {
     eventID: string;
+    onEventUpdated?: () => Promise<void>;
 }
 
-const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
+const parseLocalDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+    return new Date(year, month - 1, day);
+};
+
+const parseCapacityInput = (value: string) => {
+    const parsedValue = Number.parseInt(value, 10);
+    return Number.isNaN(parsedValue) ? 0 : parsedValue;
+};
+
+const EditPopup: React.FC<EditPopUpProps> = ({ eventID, onEventUpdated }) => {
     const [visible, setVisible] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [eventName, setEventName] = useState("");
     const [startTime, setStartTime] = useState({
         hours: "10",
@@ -41,10 +52,12 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
         if (visible && eventID) {
             adminGetEventById(eventID)
                 .then((event) => {
+                    const parsedEventDate = parseLocalDate(event.date);
                     setEventName(event.title);
-                    setSelectedDay(new Date(event.date));
+                    setSelectedDay(parsedEventDate);
+                    setCurrentMonth(parsedEventDate);
 
-                    const [startHours, startMinutesPeriod] = event.startTime.split(":");
+                    const [startHours, startMinutesPeriod] = event.start.split(":");
                     const [startMinutes, startPeriod] = startMinutesPeriod.split(" ");
                     setStartTime({
                         hours: startHours,
@@ -52,7 +65,7 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
                         period: startPeriod,
                     });
 
-                    const [endHours, endMinutesPeriod] = event.endTime.split(":");
+                    const [endHours, endMinutesPeriod] = event.end.split(":");
                     const [endMinutes, endPeriod] = endMinutesPeriod.split(" ");
                     setEndTime({
                         hours: endHours,
@@ -71,9 +84,13 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
     }, [visible, eventID]);
 
     /* PopUp Button */
-    const openPopup = () => setVisible(true);
+    const openPopup = (event?: React.MouseEvent) => {
+        event?.stopPropagation();
+        setVisible(true);
+    };
 
-    const closePopup = () => {
+    const closePopup = (event?: React.MouseEvent) => {
+        event?.stopPropagation();
         setVisible(false);
         setEventName("");
         setStartTime({ hours: "10", minutes: "30", period: "AM" });
@@ -81,24 +98,31 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
     };
 
     const submitEvent = async () => {
-        closePopup();
-        await adminUpdateEvent(
-            eventID,
-            eventName,
-            startTime,
-            endTime,
-            selectedDay,
-            maxParticipants,
-            maxVolunteers,
-            description
-        );
-        setStartTime({ hours: "10", minutes: "30", period: "AM" });
-        setEndTime({ hours: "1", minutes: "30", period: "PM" });
-        setMaxParticipants(0);
-        setMaxVolunteers(0);
-        setDescription("");
-        setEventName("");
-        location.reload();
+        setIsSubmitting(true);
+        try {
+            await adminUpdateEvent(
+                eventID,
+                eventName,
+                startTime,
+                endTime,
+                selectedDay,
+                maxParticipants,
+                maxVolunteers,
+                description
+            );
+            closePopup();
+            setStartTime({ hours: "10", minutes: "30", period: "AM" });
+            setEndTime({ hours: "1", minutes: "30", period: "PM" });
+            setMaxParticipants(0);
+            setMaxVolunteers(0);
+            setDescription("");
+            setEventName("");
+            if (onEventUpdated) {
+                await onEventUpdated();
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     /* TimePicker */
@@ -165,12 +189,12 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
 
     const handleParticipantsChange = (num: number) => {
         setMaxParticipants(num);
-        console.log(num);
+        // console.log(num);
     }
 
     const handleVolunteersChange = (num: number) => {
         setMaxVolunteers(num);
-        console.log(num);
+        // console.log(num);
     }
 
     const customCaption = ({ displayMonth }: CaptionProps) => {
@@ -237,11 +261,12 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
                 Edit Event
             </button>
             {visible && (
-                <div className={styles.popup}>
-                    <div className={styles.popupInner}>
+                <div className={styles.popup} onClick={(event) => event.stopPropagation()}>
+                    <div className={styles.popupInner} onClick={(event) => event.stopPropagation()}>
                         <button
                             onClick={closePopup}
                             className={styles.closeButton}
+                            disabled={isSubmitting}
                         >
                             <Image src={xMark} alt="close" />
                         </button>
@@ -333,7 +358,7 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
                                 className={styles.maxInput}
                                 value={maxParticipants}
                                 min={0}
-                                onChange={(e) => handleParticipantsChange(parseInt(e.target.value))}
+                                onChange={(e) => handleParticipantsChange(parseCapacityInput(e.target.value))}
                             />
                             <p className={styles.maxTitle}>
                                 Max # of Volunteers
@@ -343,7 +368,7 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
                                 className={styles.maxInput}
                                 value={maxVolunteers}
                                 min={0}
-                                onChange={(e) => handleVolunteersChange(parseInt(e.target.value))}
+                                onChange={(e) => handleVolunteersChange(parseCapacityInput(e.target.value))}
                             />
                         </div>
                         <div>
@@ -360,14 +385,26 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID }) => {
                         </div>
                         <div className={styles.submitCancelContainer}>
                             <button
-                                onClick={submitEvent}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    submitEvent();
+                                }}
                                 className={styles.submitCancelButton}
+                                disabled={isSubmitting}
                             >
-                                Submit
+                                {isSubmitting ? (
+                                    <span className={styles.buttonContent}>
+                                        <span className={styles.inlineSpinner} aria-hidden="true" />
+                                        Saving...
+                                    </span>
+                                ) : (
+                                    "Submit"
+                                )}
                             </button>
                             <button
                                 onClick={closePopup}
                                 className={styles.submitCancelButton}
+                                disabled={isSubmitting}
                             >
                                 Cancel
                             </button>

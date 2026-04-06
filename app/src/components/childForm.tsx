@@ -38,6 +38,10 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
     }, [childrenData, onChildrenChange]);
 
     const addChild = () => {
+        if (!isEditing) {
+            return;
+        }
+
         const newChild: ChildrenWithId = {
             childId: childrenData.length, // Assign the next available ID
             childFirstName: "",
@@ -51,6 +55,10 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
     };
 
     const removeChild = (idToRemove: number) => {
+        if (!isEditing) {
+            return;
+        }
+
         setChildrenData((prevChildren) => {
             if (prevChildren.length > 1) {
                 // Filter out the child with the specified ID
@@ -150,11 +158,22 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
                 </div>
             ))}
             <div className={style.editChildren}>
-                <div onClick={addChild}>
+                <div
+                    onClick={addChild}
+                    style={{ opacity: isEditing ? 1 : 0.5, pointerEvents: isEditing ? "auto" : "none" }}
+                >
                     <label htmlFor="name">Add Child</label>
                     <Image src={plus} alt="plus" />
                 </div>
-                <div onClick={() => removeChild(childrenData.length - 1)}>
+                <div
+                    onClick={() => {
+                        const lastChild = childrenData[childrenData.length - 1];
+                        if (lastChild) {
+                            removeChild(lastChild.childId);
+                        }
+                    }}
+                    style={{ opacity: isEditing ? 1 : 0.5, pointerEvents: isEditing ? "auto" : "none" }}
+                >
                     <label htmlFor="name">Remove Child</label>
                     <Image src={minus} alt="minus" />
                 </div>
