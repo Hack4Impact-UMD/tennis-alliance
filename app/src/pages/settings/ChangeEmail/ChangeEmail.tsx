@@ -9,7 +9,7 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthProvider";
 import Loading from "../../../components/LoadingScreen/Loading";
 import styles from "./ChangeEmail.module.css";
@@ -46,6 +46,18 @@ const ChangeEmail = ({ open, handleClose }: any) => {
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (status.errorMessage == "none") {
+      const timeoutId = window.setTimeout(() => {
+        logOut()
+          .catch(() => {})
+          .finally(() => window.location.reload());
+      }, 1500);
+
+      return () => window.clearTimeout(timeoutId);
+    }
+  }, [status.errorMessage]);
+
   const handleSubmit = () => {
     setStatus({ ...status, loading: true });
     if (fields.email != fields.emailConfirm) {
@@ -77,11 +89,6 @@ const ChangeEmail = ({ open, handleClose }: any) => {
     setStatus({ loading: false, error: false, errorMessage: "" });
     setShowPassword(false);
     handleClose();
-    if (!status.error && status.errorMessage == "none") {
-      logOut()
-        .catch((error) => {})
-        .finally(() => window.location.reload());
-    }
   };
   return (
     <>

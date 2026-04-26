@@ -3,23 +3,37 @@ import Image from "next/image";
 import styles from "@/styles/popup.module.css";
 import xMark from "@/assets/x_black.svg";
 import { adminDeleteEvent, adminGetEventById } from "@/backend/FirestoreCalls";
-import { adminGetEvents } from "@/backend/FirestoreCalls";
 
 interface DeletePopUpProps {
     eventID: string;
+    onEventDeleted?: () => Promise<void>;
 }
 
-const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID }) => {
+const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID, onEventDeleted }) => {
     const [visible, setVisible] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    const openPopup = () => setVisible(true);
-    const closePopup = () => setVisible(false);
+    const openPopup = (event?: React.MouseEvent) => {
+        event?.stopPropagation();
+        setVisible(true);
+    };
+    const closePopup = (event?: React.MouseEvent) => {
+        event?.stopPropagation();
+        setVisible(false);
+    };
     const [eventTitle, setEventTitle] = useState<string>("");
 
     const deleteEvent = async () => {
-        await adminDeleteEvent(eventID);
-        closePopup();
-        location.reload();
+        setIsDeleting(true);
+        try {
+            await adminDeleteEvent(eventID);
+            closePopup();
+            if (onEventDeleted) {
+                await onEventDeleted();
+            }
+        } finally {
+            setIsDeleting(false);
+        }
     }
 
     useEffect(() => {
@@ -46,11 +60,12 @@ const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID }) => {
                 Delete
             </button>
             {visible && (
-                <div className={styles.popup}>
-                    <div className={styles.popupInner}>
+                <div className={styles.popup} onClick={(event) => event.stopPropagation()}>
+                    <div className={styles.popupInner} onClick={(event) => event.stopPropagation()}>
                         <button
                             onClick={closePopup}
                             className={styles.closeButton}
+                            disabled={isDeleting}
                         >
                             <Image src={xMark} alt="close" />
                         </button>
@@ -61,10 +76,21 @@ const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID }) => {
                         <p className={styles.deleteText}>Cancel Event?</p>
                         <div className={styles.confirmButtonContainer}>
                             <button
-                                onClick={deleteEvent}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    deleteEvent();
+                                }}
                                 className={styles.confirmButton}
+                                disabled={isDeleting}
                             >
-                                Confirm
+                                {isDeleting ? (
+                                    <span className={styles.buttonContent}>
+                                        <span className={styles.inlineSpinner} aria-hidden="true" />
+                                        Deleting...
+                                    </span>
+                                ) : (
+                                    "Confirm"
+                                )}
                             </button>
                         </div>
                     </div>

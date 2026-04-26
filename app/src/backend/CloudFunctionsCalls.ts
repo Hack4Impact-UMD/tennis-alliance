@@ -38,11 +38,11 @@ export function createUser(
       type,
     };
 
-    console.log(user);
+    // console.log(user);
 
     createUserCloudFunction({ email: user.email, user })
       .then(async () => {
-        console.log("emailing" + user.email);
+        // console.log("emailing" + user.email);
         await sendPasswordResetEmail(auth, user.email)
           .then(() => {
             resolve();
@@ -94,11 +94,11 @@ export function createFamilyUser(
       altEmail,
     };
 
-    console.log("Sending data to createFamilyUser Cloud Function:", { email, user });
+    // console.log("Sending data to createFamilyUser Cloud Function:", { email, user });
 
     createFamilyUserCloudFunction({ email, user })
       .then(async () => {
-        console.log("Sending password reset email to " + email);
+        // console.log("Sending password reset email to " + email);
         await sendPasswordResetEmail(auth, email)
           .then(() => {
             resolve();
@@ -191,7 +191,8 @@ export function deleteUserFromEvent(
 export function addUserToEvent(
   auth_id: string,
   eventId: string,
-  members: { firstName: string; lastName: string }[]
+  members: { firstName: string; lastName: string }[],
+  role: "participant" | "volunteer"
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const addUserToEvent = httpsCallable(functions, "addUserToEvent");
@@ -199,6 +200,7 @@ export function addUserToEvent(
       auth_id: auth_id,
       eventId: eventId,
       members: members,
+      role: role,
     })
       .then(() => resolve())
       .catch((error: any) => {

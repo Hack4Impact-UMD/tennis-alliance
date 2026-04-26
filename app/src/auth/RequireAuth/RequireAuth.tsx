@@ -18,7 +18,9 @@ const RequireAuth: React.FC<Props> = ({ children }) => {
       </div>
     );
   } else if (!authContext.user) {
+    console.log("User is not authenticated");
     router.push("/login");
+    return null;
   }
 
   return <AuthProvider>{children}</AuthProvider>;

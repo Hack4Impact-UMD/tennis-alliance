@@ -14,6 +14,7 @@ const Family: React.FC = () => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [waiver, setWaiver] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [children, setChildren] = useState<
     { childFirstName: string; childLastName: string; childAge: number | ""; childBirthYear: number | ""; childSchool: string }[]
@@ -53,30 +54,33 @@ const Family: React.FC = () => {
     setChildren(children.filter((_, childIndex) => childIndex !== index));
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    createFamilyUser(
-      email,
-      firstName,
-      lastName,
-      phone,
-      zip,
-      notifications,
-      waiver,
-      children.map((child) => ({
-        ...child,
-        childAge: Number(child.childAge),
-        childBirthYear: Number(child.childBirthYear),
-      })),
-      "family",
-      altName,
-      altEmail
-    )
-      .then(() => {
-        setSuccessMessage(true);
-      })
-      .catch((err) => console.error("Error creating family:", err));
+    setIsSubmitting(true);
+    try {
+      await createFamilyUser(
+        email,
+        firstName,
+        lastName,
+        phone,
+        zip,
+        notifications,
+        waiver,
+        children.map((child) => ({
+          ...child,
+          childAge: Number(child.childAge),
+          childBirthYear: Number(child.childBirthYear),
+        })),
+        "family",
+        altName,
+        altEmail
+      );
+      setSuccessMessage(true);
+    } catch (err) {
+      console.error("Error creating family:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -255,8 +259,8 @@ const Family: React.FC = () => {
           checked={notifications}
           onChange={(e) => setNotifications(e.target.checked)}
         />
-        <button className="button" type="submit">
-          Submit
+        <button className="button" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
         {successMessage && (
           <div className={styles.successMessage}>

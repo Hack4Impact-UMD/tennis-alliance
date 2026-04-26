@@ -38,34 +38,65 @@
   }
   
   .eventInformation {
-    padding: 20px;
-    width:100%
-    /* border-radius: 8px;
-    margin-bottom: 15px; */
+    padding: 20px 24px 24px;
+    width: 100%;
   }
   
   .titleButtonContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 15%;
+    justify-content: center;
+    position: relative;
+    min-height: 52px;
+  }
+
+  .titleIcon {
+    position: absolute;
+    left: 0;
+    top: 6px;
+  }
+
+  .titleAction {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .titleStack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: calc(100% - 96px);
+    margin: 0 auto;
   }
   
   .eventInformation p {
-    margin: 5px 0;
-    font-size: 1.25rem;
+    text-align: center;
+    margin: 0;
+    font-size: 0.95rem;
     color: #000;
+    line-height: 1.45;
   }
   
   .removeButton {
-    background-color: #AACDEE;
+    background-color: #d65f4a;
     border: none;
     border-radius: 25px;
     padding: 10px 30px;
     font-size: 1rem;
-    color: #000;
+    color: #fff;
     cursor: pointer;
-    margin-top:10px;
+    margin-top:20px;
+  }
+
+  .removeButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .removeButton:hover:not(:disabled) {
+    background-color: #bc4f3c;
   }
   
   .divider {
@@ -84,11 +115,28 @@
   .eventDetails {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center-aligns contents horizontally */
-    text-align: center; /* Centers text within each p element */
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    margin-top: 14px;
   }
   
   .eventDetails p {
+    font-size: 1rem;
+    color: #000;
+  }
+
+  .expandedDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .expandedDetails p {
     font-size: 1rem;
     color: #000;
   }
@@ -104,24 +152,88 @@
     transition: background-color 0.3s ease;
   }
 
+  .buttonContent {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .inlineSpinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(47, 58, 64, 0.2);
+    border-top-color: #2f3a40;
+    animation: spin 0.8s linear infinite;
+  }
+
   .noEventsContainer {
     display: flex;
     flex-direction: row;
     background-color: #AACDEE;
-    justify-content: flex-start;
+    justify-content: space-between;
     border-radius: 10px;
-    gap: 10px;
     align-items: center;
-    margin-top: 10px; /* Space below the Events Registered header */
+    padding: 5px;
+    margin-top: 10px;
 }
+
+.iconContainer {
+    flex: 0 0 auto;
+}
+
 .noEventsText {
-    padding-left: 10%;
+    flex: 1;
+    text-align: center;
+    padding: 0;
 }
-  
+
   .buttonWrapper {
     display: flex;
-    justify-content: flex-end; /* Aligns the submit button to the right */
-    margin-top: 1rem; /* Adds some space above the button */
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+
+  .titleText {
+    display: block;
+    font-size: 1.25rem !important;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .statusBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #d65f4a;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+
+  .summaryRow {
+    width: 100%;
+  }
+
+  .summaryLabel {
+    font-weight: 600;
+  }
+
+  .summaryValue {
+    color: #2f3a40;
+  }
+
+  .descriptionText {
+    margin-bottom: 14px !important;
+  }
+
+  .descriptionLabel {
+    font-weight: 700;
   }
   
   .checkboxGroup {
@@ -149,10 +261,32 @@
     align-items: center;
     gap: 0.25rem; /* Adds space between the radio button and label text */
   }
+
+  .showMoreButton {
+    align-self: center;
+    border: none;
+    background: transparent;
+    color: #0e8fcc;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+
+  .showMoreButton:hover {
+    color: #0a6f9f;
+  }
   
   @media (max-width: 768px) {
     .todayEventsContainer {
       flex-direction: column;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
     }
   }
   

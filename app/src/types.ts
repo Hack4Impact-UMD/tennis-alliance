@@ -9,6 +9,7 @@ type User = {
   events: {
     id: string;
     participants: { firstName: string; lastName: string }[];
+    role?: "participant" | "volunteer";
   }[];
   children?: Children[];
   adults?: { name: string; email: string }[];
@@ -48,6 +49,7 @@ type CustomEvent = {
     mainFirstName: string;
     mainLastName: string;
     otherMembers: { firstName: string; lastName: string }[];
+    role?: "participant" | "volunteer";
   }[];
   maxParticipants: number;
   maxVolunteers: number;

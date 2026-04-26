@@ -8,6 +8,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+}
+
+.popupButton:disabled,
+.submitCancelButton:disabled,
+.confirmButton:disabled,
+.sendButton:disabled,
+.closeButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .plus {
@@ -51,6 +61,7 @@
     border: none;
     background-color: transparent;
     mix-blend-mode: multiply;
+    cursor: pointer;
 }
 
 .closeButton > img {
@@ -119,6 +130,23 @@
     display: inline-block;
     margin: 0 50px;
     padding: 1px;
+    cursor: pointer;
+}
+
+.buttonContent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.inlineSpinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
 }
 
 .calendar {
@@ -189,6 +217,7 @@
     border-radius: 15px;
     text-align: center;
     font-size: 15px;
+    cursor: pointer;
 }
 
 .monthPicker,
@@ -201,6 +230,11 @@
     height: 100px;
     cursor: pointer;
     overflow: scroll;
+}
+
+.monthPicker > div,
+.yearPicker > div {
+    cursor: pointer;
 }
 
 .monthPicker div:hover,
@@ -237,6 +271,13 @@
     background: #000c79;
     color: white;
     font-size: 14.75px;
+    cursor: pointer;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .messageInputBox {

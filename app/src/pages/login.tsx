@@ -4,7 +4,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import circleX from "@/assets/circle_x.png";
 import miniLogo from "@/assets/mini_logo.png";
 import tennisBalls from "@/assets/tennis_balls.png";
-import { authenticateUser, logOut, sendResetEmail } from "@/backend/AuthCalls";
+import { authenticateUser, sendResetEmail } from "@/backend/AuthCalls";
+import { useAuth } from "@/auth/AuthProvider";
 import styles from "@/styles/login.module.css";
 import { AuthError } from "firebase/auth";
 import { useRouter } from "next/router";
@@ -20,9 +21,19 @@ const LoginPage = () => {
   const [failureMessage, setFailureMessage] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const authContext = useAuth();
+
   useEffect(() => {
-    logOut();
-  }, []);
+    if (!authContext.loading && authContext.user) {
+      const role = authContext.token?.claims.role;
+      if (role === "ADMIN") {
+        router.replace("/admin");
+      } else {
+        router.replace("/dashboard");
+      }
+    }
+  }, [authContext.loading, authContext.user, authContext.token, router]);
+
   useEffect(() => {
     if (ref.current === null) return;
     const rect = ref.current.getBoundingClientRect();

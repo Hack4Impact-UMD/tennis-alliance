@@ -12,17 +12,19 @@ const Adult: React.FC = () => {
   const [notifications, setNotifications] = useState<boolean>(false);
   const [waiver, setWaiver] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult")
-      .then(() => {
-        setSuccessMessage(true); // Show the success message
-      })
-      .catch((err) => {
-        console.error("Error creating user:", err);
-      });
-    setSuccessMessage(true);
+    setIsSubmitting(true);
+    try {
+      await createUser(email, firstName, lastName, phone, zip, notifications, waiver, "adult");
+      setSuccessMessage(true); // Show the success message
+    } catch (err) {
+      console.error("Error creating user:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -112,8 +114,8 @@ const Adult: React.FC = () => {
           checked={notifications}
           onChange={(e) => setNotifications(e.target.checked)}
         />
-        <button className="button" type="submit">
-          Submit
+        <button className="button" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
         {successMessage && (
           <div className={styles.successMessage}>

@@ -8,8 +8,7 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../auth/AuthProvider";
 import Loading from "../../../components/LoadingScreen/Loading";
 import styles from "./ChangePassword.module.css";
@@ -27,7 +26,6 @@ type Status = {
 
 const ChangePassword = ({ open, handleClose }: any) => {
   const auth = useAuth();
-  const router = useRouter();
   const style = {
     width: "250px",
     padding: "10px 10px 10px 10px",
@@ -49,6 +47,18 @@ const ChangePassword = ({ open, handleClose }: any) => {
     showNewPass: boolean;
     showNewConfirmPass: boolean;
   }>({ showOldPass: false, showNewPass: false, showNewConfirmPass: false });
+
+  useEffect(() => {
+    if (status.errorMessage == "none") {
+      const timeoutId = window.setTimeout(() => {
+        logOut()
+          .catch(() => {})
+          .finally(() => window.location.reload());
+      }, 1500);
+
+      return () => window.clearTimeout(timeoutId);
+    }
+  }, [status.errorMessage]);
 
   const handleSubmit = () => {
     setStatus({ ...status, loading: true });
@@ -85,11 +95,6 @@ const ChangePassword = ({ open, handleClose }: any) => {
       showNewConfirmPass: false,
     });
     handleClose();
-    if (!status.error && status.errorMessage == "none") {
-      logOut()
-        .catch((error) => {})
-        .finally(() => window.location.reload());
-    }
   };
   return (
     <>

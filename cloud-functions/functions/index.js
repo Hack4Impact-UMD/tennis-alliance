@@ -15,31 +15,32 @@ const { onSchedule } = require("firebase-functions/v2/scheduler");
 
 // Once email is obtained, set it up
 const emailToUse = "";
-// const oauth2Client = new OAuth2(
-//   process.env.OAUTH_CLIENT_ID, // ClientID
-//   process.env.OAUTH_CLIENT_SECRET, // Client Secret
-//   "https://developers.google.com/oauthplayground" // Redirect URL
-// );
+const configuredEmail = process.env.EMAIL_USER || emailToUse;
 
-// oauth2Client.setCredentials({
-//   refresh_token: process.env.OAUTH_REFRESH,
-// });
-// const accessToken = oauth2Client.getAccessToken();
+const createTransporter = () => {
+  if (
+    !configuredEmail ||
+    !process.env.OAUTH_CLIENT_ID ||
+    !process.env.OAUTH_CLIENT_SECRET ||
+    !process.env.OAUTH_REFRESH
+  ) {
+    return null;
+  }
 
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     type: "OAuth2",
-//     user: emailToUse,
-//     clientId: process.env.OAUTH_CLIENT_ID,
-//     clientSecret: process.env.OAUTH_CLIENT_SECRET,
-//     refreshToken: process.env.OAUTH_REFRESH,
-//     accessToken: accessToken,
-//   },
-//   tls: {
-//     rejectUnauthorized: false,
-//   },
-// });
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: configuredEmail,
+      clientId: process.env.OAUTH_CLIENT_ID,
+      clientSecret: process.env.OAUTH_CLIENT_SECRET,
+      refreshToken: process.env.OAUTH_REFRESH,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+};
 
 /*
  * Creates a new user.
@@ -83,49 +84,108 @@ exports.createUser = onCall(
   }
 );
 
-exports.sendEmail = onCall(
+exports.createFamilyUser = onCall(
   { region: "us-east4", cors: true },
   async ({ auth, data }) => {
     return new Promise(async (resolve, reject) => {
       try {
+        const authorization = admin.auth();
+        if (data.email != null && data.user != null) {
+          const pass = crypto.randomBytes(32).toString("hex");
+          const userRecord = await authorization.createUser({
+            email: data.email,
+            password: pass,
+          });
+          await authorization.setCustomUserClaims(userRecord.uid, {
+            role: "USER",
+          });
+
+          const familyData = {
+            email: data.email,
+            firstName: data.user.firstName,
+            lastName: data.user.lastName,
+            phone: data.user.phone,
+            zip: data.user.zip,
+            notifications: data.user.notifications,
+            waiver: data.user.waiver,
+            children: Array.isArray(data.user.children) ? data.user.children : [],
+            type: data.user.type,
+            altName: data.user.altName || "",
+            altEmail: data.user.altEmail || "",
+            events: [],
+            createdAt: new Date(),
+            auth_id: userRecord.uid,
+          };
+
+          await db.collection("Users").doc(userRecord.uid).set(familyData);
+          resolve();
+          return;
+        }
+
+        reject(new Error("Invalid family user payload"));
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+  }
+);
+
+exports.sendEmail = onCall(
+  {
+    region: "us-east4",
+    cors: true,
+    secrets: [
+      "EMAIL_USER",
+      "OAUTH_CLIENT_ID",
+      "OAUTH_CLIENT_SECRET",
+      "OAUTH_REFRESH",
+    ],
+  },
+  async ({ auth, data }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
         if (
-          data.bcc != null &&
-          data.text != null &&
-          auth &&
-          auth.token &&
-          auth.token.role.toLowerCase() == "admin"
+          data.bcc == null ||
+          data.text == null ||
+          !auth ||
+          !auth.token ||
+          auth.token.role.toLowerCase() != "admin"
         ) {
-          const msg = {
-            from: emailToUse, // sender address
-            to: emailToUse, // list of receivers
-            subject: `Tennis Alliance ${data.reason}`, // Subject line
-            bcc: data.bcc,
-            html: `
+          reject(new Error("Invalid email request"));
+          return;
+        }
+
+        const transporter = createTransporter();
+        if (!transporter || !configuredEmail) {
+          reject(new Error("Email transporter is not configured"));
+          return;
+        }
+
+        const msg = {
+          from: configuredEmail,
+          to: configuredEmail,
+          subject: `Tennis Alliance ${data.reason}`,
+          bcc: data.bcc,
+          html: `
               <div>
                   <div style="max-width: 600px; margin: auto">
                       <br><br><br>
                       <p style="font-size: 16px">
                       Hello,<br>
                       <br>
-                      ${text}
+                      ${data.text}
                       <br>
-                      
                   <div>
               </div>
-                  
-              `, // html body
-          };
-          await transporter.sendMail(msg).catch((error) => {
-            console.log(
-              "Error occured with new submission. Email also could not be sent."
-            );
-            console.log(error);
-          });
-        } else {
-          reject();
-        }
+              `,
+        };
+
+        await transporter.sendMail(msg);
+        resolve({ sent: true });
       } catch (error) {
-        reject();
+        console.error("Failed to send email:", error);
+        reject(error);
       }
     });
   }
@@ -161,9 +221,45 @@ exports.updateUserEmail = onCall(
             reject();
           }
           const promises = [];
+          const eventIds = new Set();
           querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            const userEvents = Array.isArray(userData.events) ? userData.events : [];
+            userEvents.forEach((event) => {
+              if (event && event.id) {
+                eventIds.add(event.id);
+              }
+            });
             promises.push(doc.ref.update({ email: data.newEmail }));
           });
+
+          eventIds.forEach((eventId) => {
+            const eventRef = db.collection("Events").doc(eventId);
+            promises.push(
+              eventRef.get().then(async (eventSnapshot) => {
+                if (!eventSnapshot.exists) {
+                  return;
+                }
+
+                const eventData = eventSnapshot.data();
+                const participants = Array.isArray(eventData.participants)
+                  ? eventData.participants
+                  : [];
+                const updatedParticipants = participants.map((participant) => {
+                  if (participant.mainId === auth.uid) {
+                    return {
+                      ...participant,
+                      email: data.newEmail,
+                    };
+                  }
+                  return participant;
+                });
+
+                return eventRef.update({ participants: updatedParticipants });
+              })
+            );
+          });
+
           await Promise.all(promises);
           resolve();
         }
@@ -206,6 +302,9 @@ exports.getEvents = onCall(
                   timeZone: "America/New_York",
                 }).format(date);
                 const eventData = { ...doc.data(), id: doc.id };
+                eventData.participants = Array.isArray(eventData.participants)
+                  ? eventData.participants
+                  : [];
                 const upcoming = eventData.date >= formattedDate;
                 if (auth.token.role.toLowerCase() == "admin") {
                   if (upcoming) {
@@ -223,7 +322,7 @@ exports.getEvents = onCall(
                         member.lastName = "lastName";
                       });
                     }
-                    eventData[index] = participant;
+                    eventData.participants[index] = participant;
                   });
 
                   const userInEvent = eventData.participants.find(
@@ -268,29 +367,101 @@ exports.addUserToEvent = onCall(
           auth.token.role.toLowerCase() == "user"
         ) {
           const eventRef = db.collection("Events").doc(data.eventId);
-          const event = await eventRef.get();
           const userRef = db.collection("Users").doc(data.auth_id);
-          const user = await userRef.get();
-          user.events = user.events.push({
-            id: data.eventId,
-            participants: data.members,
+          const selectedRole =
+            data.role === "volunteer" ? "volunteer" : data.role === "participant" ? "participant" : null;
+
+          if (!selectedRole || !Array.isArray(data.members) || data.members.length === 0) {
+            reject(new Error("Invalid registration payload"));
+            return;
+          }
+
+          await db.runTransaction(async (transaction) => {
+            const [eventSnapshot, userSnapshot] = await Promise.all([
+              transaction.get(eventRef),
+              transaction.get(userRef),
+            ]);
+
+            if (!eventSnapshot.exists || !userSnapshot.exists) {
+              throw new functions.https.HttpsError(
+                "not-found",
+                "Event or user record not found"
+              );
+            }
+
+            const event = eventSnapshot.data();
+            const user = userSnapshot.data();
+            const userEvents = Array.isArray(user.events) ? user.events : [];
+            const eventParticipants = Array.isArray(event.participants)
+              ? event.participants
+              : [];
+
+            const isUserAlreadyRegistered = userEvents.some(
+              (registeredEvent) => registeredEvent.id == data.eventId
+            );
+            const isEventAlreadyRegistered = eventParticipants.some(
+              (participant) => participant.mainId == data.auth_id
+            );
+
+            if (isUserAlreadyRegistered || isEventAlreadyRegistered) {
+              throw new functions.https.HttpsError(
+                "already-exists",
+                "User already registered for this event"
+              );
+            }
+
+            const requestedCount = data.members.length;
+            const roleKey =
+              selectedRole === "participant" ? "maxParticipants" : "maxVolunteers";
+            const roleCapacity = Number(event[roleKey]);
+            const currentRoleCount = eventParticipants.reduce((total, participant) => {
+              if (participant.role !== selectedRole) {
+                return total;
+              }
+
+              const memberCount = Array.isArray(participant.otherMembers)
+                ? participant.otherMembers.length
+                : 0;
+              return total + memberCount;
+            }, 0);
+
+            if (!Number.isFinite(roleCapacity) || roleCapacity < currentRoleCount + requestedCount) {
+              throw new functions.https.HttpsError(
+                "failed-precondition",
+                `${selectedRole} capacity is full`
+              );
+            }
+
+            transaction.update(userRef, {
+              events: [
+                ...userEvents,
+                {
+                  id: data.eventId,
+                  participants: data.members,
+                  role: selectedRole,
+                },
+              ],
+            });
+
+            transaction.update(eventRef, {
+              participants: [
+                ...eventParticipants,
+                {
+                  email: user.email,
+                  mainId: user.auth_id,
+                  mainFirstName: user.firstName,
+                  mainLastName: user.lastName,
+                  otherMembers: data.members,
+                  role: selectedRole,
+                },
+              ],
+            });
           });
-          event.participants.push({
-            email: user.email,
-            mainId: user.auth_id,
-            mainFirstName: user.firstName,
-            mainLastName: user.lastName,
-            otherMembers: data.members,
-          });
-          const batch = db.batch();
-          batch.update(eventRef, event);
-          batch.update(userRef, user);
-          await batch.commit();
           resolve();
         }
       } catch (error) {
         console.log(error);
-        reject();
+        reject(error);
       }
     });
   }
@@ -309,16 +480,31 @@ exports.removeUserFromEvent = onCall(
           auth.token.role.toLowerCase() == "user"
         ) {
           const eventRef = db.collection("Events").doc(data.eventId);
-          const event = await eventRef.get();
+          const eventSnapshot = await eventRef.get();
           const userRef = db.collection("Users").doc(data.auth_id);
-          const user = await userRef.get();
-          user.events = user.events.filter((event) => event.id != data.eventId);
-          event.participants = event.participants.filter(
+          const userSnapshot = await userRef.get();
+
+          if (!eventSnapshot.exists || !userSnapshot.exists) {
+            reject();
+            return;
+          }
+
+          const event = eventSnapshot.data();
+          const user = userSnapshot.data();
+          const userEvents = Array.isArray(user.events) ? user.events : [];
+          const eventParticipants = Array.isArray(event.participants)
+            ? event.participants
+            : [];
+
+          const updatedUserEvents = userEvents.filter(
+            (event) => event.id != data.eventId
+          );
+          const updatedEventParticipants = eventParticipants.filter(
             (participant) => participant.mainId != data.auth_id
           );
           const batch = db.batch();
-          batch.update(eventRef, event);
-          batch.update(userRef, user);
+          batch.update(eventRef, { participants: updatedEventParticipants });
+          batch.update(userRef, { events: updatedUserEvents });
           await batch.commit();
           resolve();
         }

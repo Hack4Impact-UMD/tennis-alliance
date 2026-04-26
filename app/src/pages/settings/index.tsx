@@ -29,43 +29,52 @@ const Settings = () => {
   });
   const [childrenData, setChildrenData] = useState<ChildrenWithId[]>([]);
   const authContext = useAuth();
+  const userId = authContext.user?.uid;
+  const isAdmin =
+    authContext?.token?.claims.role?.toString().toUpperCase() === "ADMIN";
   const maxBackgroundLength = 250;
   const maxOtherDetailsLength = 100;
 
   // On page load, fetch the user
   useEffect(() => {
     const fetchUserData = async () => {
+      const role = authContext?.token?.claims.role?.toString().toUpperCase();
+
       if (
-        (!authContext.loading &&
-          authContext?.token?.claims.role?.toString().toUpperCase() == "ADMIN") ||
-        authContext?.token?.claims.role?.toString().toUpperCase() == "USER"
+        userId &&
+        !authContext.loading &&
+        (role === "ADMIN" || role === "USER")
       ) {
         try {
-          const user = await getUserWithId(authContext.user.uid)
+          const user = await getUserWithId(userId);
           setUser(user);
           if (user.type === "family")
             setIsFamilyAccount(true);
-          // Fetches the user's additional info from Firebase
-          const fetchedAdditionalInfo = await getAdditionalInfo(authContext.user.uid);
-          // Sets default values of additional info to values obtained from database if they exist
-          setAdditionalInfo({
-            backgroundAndInterests: fetchedAdditionalInfo?.backgroundAndInterests || "",
-            skills: fetchedAdditionalInfo?.skills || [],
-            otherDetails: fetchedAdditionalInfo?.otherDetails || ""
-          });
+          if (!isAdmin) {
+            // Fetches the user's additional info from Firebase
+            const fetchedAdditionalInfo = await getAdditionalInfo(userId);
+            // Sets default values of additional info to values obtained from database if they exist
+            setAdditionalInfo({
+              backgroundAndInterests: fetchedAdditionalInfo?.backgroundAndInterests || "",
+              skills: fetchedAdditionalInfo?.skills || [],
+              otherDetails: fetchedAdditionalInfo?.otherDetails || ""
+            });
 
-          if (fetchedAdditionalInfo?.skills.includes("other"))
-            setIsOtherSelected(true);
+            if (fetchedAdditionalInfo?.skills.includes("other"))
+              setIsOtherSelected(true);
+          }
         } catch (error) {
           console.log(error);
         } finally {
           setLoading(false);
         }
+      } else if (!authContext.loading && !userId) {
+        setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [authContext.loading]);
+  }, [authContext.loading, authContext.token, isAdmin, userId]);
 
   // Takes the most updated state of the user and updates the chosen User field with 
   // the passed in value. Otherwise, it remains the same
@@ -110,16 +119,26 @@ const Settings = () => {
   };
 
   const handleSubmit = () => {
-    const uid = authContext.user.uid;
+    if (!userId || !user) {
+      return;
+    }
+
+    const uid = userId;
 
     // Create a new array without the `childId` property to keep childId local
     const childrenDataWithoutId = childrenData.map(({ childId, ...rest }) => rest);
 
-    Promise.all([
-      updateUser(user!),
-      updateAdditionalInfo(uid, additionalInfo),
-      updateChildren(uid, childrenDataWithoutId)
-    ])
+    const updateRequests = [updateUser(user!)];
+
+    if (!isAdmin) {
+      updateRequests.push(updateAdditionalInfo(uid, additionalInfo));
+    }
+
+    if (isFamilyAccount) {
+      updateRequests.push(updateChildren(uid, childrenDataWithoutId));
+    }
+
+    Promise.all(updateRequests)
       .then(() => {
         console.log("done")
         window.location.reload();
@@ -187,8 +206,14 @@ const Settings = () => {
               type="text"
               className={style.email}
               value={user?.email || ""}
-              disabled={!isEditing}
-              onChange={(e) => handleInputChange("email", e.target.value)} />
+              disabled={true} />
+            <button
+              type="button"
+              className={style.save}
+              onClick={() => setOpenChangeEmailModal(true)}
+            >
+              Change email
+            </button>
             <button
               type="button"
               className={style.save}
@@ -226,74 +251,78 @@ const Settings = () => {
                 <h3>Children Info</h3>
                 <ChildForm
                   isEditing={isEditing}
-                  userId={authContext.user.uid}
+                  userId={userId}
                   onChildrenChange={handleChildrenChange} />
                 <hr />
               </div>
             )}
-            <h3>Additional Info</h3>
-            <label>Tell us about your background and interests</label>
-            <textarea
-              rows={10}
-              maxLength={maxBackgroundLength}
-              onChange={(e) => handleAdditionalInfoChange("backgroundAndInterests", e.target.value)}
-              value={additionalInfo.backgroundAndInterests} />
-            <p>{additionalInfo.backgroundAndInterests.length}/{maxBackgroundLength} characters</p>
-            <legend>Check any skills that apply to you:</legend>
-            <div className={style.checkbox}>
-              <input
-                id="fundraising"
-                type="checkbox"
-                name="skill"
-                value="fundraising"
-                checked={additionalInfo.skills.includes("fundraising")}
-                onChange={() => handleSkillCheckboxChange("fundraising")}
-              />
-              <label htmlFor="fundraising">Fundraising</label>
-            </div>
-            <div className={style.checkbox}>
-              <input
-                id="marketing"
-                type="checkbox"
-                name="skill"
-                value="marketing"
-                checked={additionalInfo.skills.includes("marketing")}
-                onChange={() => handleSkillCheckboxChange("marketing")}
-              />
-              <label htmlFor="marketing">Marketing</label>
-            </div>
-            <div className={style.checkbox}>
-              <input
-                id="event_planning"
-                type="checkbox"
-                name="skill"
-                value="event_planning"
-                checked={additionalInfo.skills.includes("event_planning")}
-                onChange={() => handleSkillCheckboxChange("event_planning")}
-              />
-              <label htmlFor="event_planning">Event Planning</label>
-            </div>
-            <div className={style.checkbox}>
-              <input
-                id="other"
-                type="checkbox"
-                name="skill"
-                value="other"
-                checked={additionalInfo.skills.includes("other")}
-                onChange={() => handleSkillCheckboxChange("other")} />
-              <label htmlFor="other">Other</label>
-            </div>
-            {isOtherSelected && (
-              <div>
-                <label>If other, please specify</label>
+            {!isAdmin && (
+              <>
+                <h3>Additional Info</h3>
+                <label>Tell us about your background and interests</label>
                 <textarea
                   rows={10}
-                  maxLength={maxOtherDetailsLength}
-                  onChange={(e) => handleAdditionalInfoChange("otherDetails", e.target.value)}
-                  value={additionalInfo.otherDetails}
-                  required />
-                <p>{additionalInfo.otherDetails.length}/{maxOtherDetailsLength} characters</p>
-              </div>
+                  maxLength={maxBackgroundLength}
+                  onChange={(e) => handleAdditionalInfoChange("backgroundAndInterests", e.target.value)}
+                  value={additionalInfo.backgroundAndInterests} />
+                <p>{additionalInfo.backgroundAndInterests.length}/{maxBackgroundLength} characters</p>
+                <legend>Check any skills that apply to you:</legend>
+                <div className={style.checkbox}>
+                  <input
+                    id="fundraising"
+                    type="checkbox"
+                    name="skill"
+                    value="fundraising"
+                    checked={additionalInfo.skills.includes("fundraising")}
+                    onChange={() => handleSkillCheckboxChange("fundraising")}
+                  />
+                  <label htmlFor="fundraising">Fundraising</label>
+                </div>
+                <div className={style.checkbox}>
+                  <input
+                    id="marketing"
+                    type="checkbox"
+                    name="skill"
+                    value="marketing"
+                    checked={additionalInfo.skills.includes("marketing")}
+                    onChange={() => handleSkillCheckboxChange("marketing")}
+                  />
+                  <label htmlFor="marketing">Marketing</label>
+                </div>
+                <div className={style.checkbox}>
+                  <input
+                    id="event_planning"
+                    type="checkbox"
+                    name="skill"
+                    value="event_planning"
+                    checked={additionalInfo.skills.includes("event_planning")}
+                    onChange={() => handleSkillCheckboxChange("event_planning")}
+                  />
+                  <label htmlFor="event_planning">Event Planning</label>
+                </div>
+                <div className={style.checkbox}>
+                  <input
+                    id="other"
+                    type="checkbox"
+                    name="skill"
+                    value="other"
+                    checked={additionalInfo.skills.includes("other")}
+                    onChange={() => handleSkillCheckboxChange("other")} />
+                  <label htmlFor="other">Other</label>
+                </div>
+                {isOtherSelected && (
+                  <div>
+                    <label>If other, please specify</label>
+                    <textarea
+                      rows={10}
+                      maxLength={maxOtherDetailsLength}
+                      onChange={(e) => handleAdditionalInfoChange("otherDetails", e.target.value)}
+                      value={additionalInfo.otherDetails}
+                      required />
+                    <p>{additionalInfo.otherDetails.length}/{maxOtherDetailsLength} characters</p>
+                  </div>
+                )}
+              </>
             )}
             <button>Save</button>
           </form>

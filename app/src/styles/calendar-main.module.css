@@ -3,6 +3,26 @@
     /* max-width: 600px; */
 }
 
+.loadingState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 360px;
+    width: 100%;
+    color: #2f3a40;
+}
+
+.inlineSpinner {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid rgba(14, 143, 204, 0.2);
+    border-top-color: #0e8fcc;
+    animation: spin 0.8s linear infinite;
+}
+
 .registeredContainer {
     display: flex;
     flex-direction: column; /* Stack items vertically */
@@ -80,4 +100,25 @@
 }
 .calendarDiv {
     margin-bottom: 10%;
+}
+
+.calendarDiv :global(.ec) {
+    --ec-highlight-color: rgba(14, 143, 204, 0.18);
+}
+
+.calendarDiv :global(.ec-day),
+.calendarDiv :global(.ec-day-head),
+.calendarDiv :global(.ec-day-grid .ec-day),
+.calendarDiv :global(.ec-day-grid .ec-day-head) {
+    cursor: pointer;
+}
+
+.calendarDiv :global(.ec-day.ec-highlight) {
+    background-color: rgba(14, 143, 204, 0.18);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

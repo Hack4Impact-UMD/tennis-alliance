@@ -6,8 +6,13 @@ import xMark from "@/assets/x_black.svg";
 import "react-day-picker/dist/style.css";
 import { adminCreateEvent } from "@/backend/FirestoreCalls";
 
-const Popup = () => {
+interface PopupProps {
+    onEventCreated?: () => Promise<void>;
+}
+
+const Popup: React.FC<PopupProps> = ({ onEventCreated }) => {
     const [visible, setVisible] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [eventName, setEventName] = useState("");
     const [startTime, setStartTime] = useState({
         hours: "10",
@@ -28,6 +33,11 @@ const Popup = () => {
     const [isRepeatWeekly, setIsRepeatWeekly] = useState(false);
     const [repeatCount, setRepeatCount] = useState(1);
 
+    const parseCapacityInput = (value: string) => {
+        const parsedValue = Number.parseInt(value, 10);
+        return Number.isNaN(parsedValue) ? 0 : parsedValue;
+    };
+
     const openPopup = () => setVisible(true);
 
     const closePopup = () => {
@@ -41,7 +51,7 @@ const Popup = () => {
         setIsRepeatWeekly(false);
         setRepeatCount(1);
     };
-
+    
     const submitEvent = async () => {
         if (isRepeatWeekly && repeatCount > 0) {
             const events = [];
@@ -52,10 +62,8 @@ const Popup = () => {
                 currentEventDate = new Date(currentEventDate);
                 currentEventDate.setDate(currentEventDate.getDate() + 7);
             }
-
-            console.log(events);
     
-            events.forEach(async ({ date, index }) => {
+            for (const { date, index } of events) {
                 await adminCreateEvent(
                     `${eventName} #${index + 1}`,
                     startTime,
@@ -65,7 +73,7 @@ const Popup = () => {
                     maxVolunteers,
                     description
                 );
-            });
+            }    
         } else {
             await adminCreateEvent(
                 eventName,
@@ -80,6 +88,18 @@ const Popup = () => {
     
         closePopup();
     };
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            await submitEvent();
+            if (onEventCreated) {
+                await onEventCreated();
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };    
 
     const handleDayClick = (day: Date) => {
         setSelectedDay(day);
@@ -125,6 +145,7 @@ const Popup = () => {
                         <button
                             onClick={closePopup}
                             className={styles.closeButton}
+                            disabled={isSubmitting}
                         >
                             <Image src={xMark} alt="close" />
                         </button>
@@ -208,9 +229,10 @@ const Popup = () => {
                             <input
                                 type="number"
                                 className={styles.maxInput}
+                                value={maxParticipants}
                                 min={0}
                                 onChange={(e) =>
-                                    setMaxParticipants(parseInt(e.target.value))
+                                    setMaxParticipants(parseCapacityInput(e.target.value))
                                 }
                             />
                             <p className={styles.maxTitle}>
@@ -219,9 +241,10 @@ const Popup = () => {
                             <input
                                 type="number"
                                 className={styles.maxInput}
+                                value={maxVolunteers}
                                 min={0}
                                 onChange={(e) =>
-                                    setMaxVolunteers(parseInt(e.target.value))
+                                    setMaxVolunteers(parseCapacityInput(e.target.value))
                                 }
                             />
                         </div>
@@ -267,14 +290,23 @@ const Popup = () => {
                         </div>
                         <div className={styles.submitCancelContainer}>
                             <button
-                                onClick={submitEvent}
+                                onClick={handleSubmit}
                                 className={styles.submitCancelButton}
+                                disabled={isSubmitting}
                             >
-                                Submit
+                                {isSubmitting ? (
+                                    <span className={styles.buttonContent}>
+                                        <span className={styles.inlineSpinner} aria-hidden="true" />
+                                        Creating...
+                                    </span>
+                                ) : (
+                                    "Submit"
+                                )}
                             </button>
                             <button
                                 onClick={closePopup}
                                 className={styles.submitCancelButton}
+                                disabled={isSubmitting}
                             >
                                 Cancel
                             </button>

@@ -13,6 +13,7 @@
     background-color: #FCF7CE;
     border-radius: 12px;
     margin-top:5%;
+    cursor: pointer;
   }
   .editDeleteContainer {
     display: flex;
@@ -83,8 +84,43 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* gap: 15%; */
-}
+    position: relative;
+    min-height: 52px;
+  }
+
+  .titleIcon {
+    position: absolute;
+    left: 0;
+    top: 6px;
+  }
+
+  .titleStack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: calc(100% - 64px);
+    margin: 0 auto;
+  }
+
+  .statusBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #d65f4a;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+
+  .emptyState {
+    text-align: center;
+    margin: 12px 0 0;
+  }
   
   @media (max-width: 768px) {
     .upcomingEventContainer {

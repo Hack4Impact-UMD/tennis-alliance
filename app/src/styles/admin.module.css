@@ -65,6 +65,13 @@
     margin-bottom: 5%;
 }
 
+.calendar :global(.ec-day),
+.calendar :global(.ec-day-head),
+.calendar :global(.ec-day-grid .ec-day),
+.calendar :global(.ec-day-grid .ec-day-head) {
+    cursor: pointer;
+}
+
 .tennisBalls{
     width: auto;
     height: auto;
@@ -118,6 +125,7 @@
     background-repeat: no-repeat;
     background-position: 24px;
     background-size: 20px;
+    cursor: pointer;
 }
 
 .selectedDateContainer {
@@ -164,21 +172,142 @@
     background-color: #aacdee;
 }
 
-/* placeholder */
-.header > div:first-of-type {
-    flex: 0 0 20px;
-}
-
-.header > div:nth-of-type(2) {
-    flex: 0 0 17px;
-}
-
 .row {
     display: flex;
     align-items: center;
-    gap: 24px;
-    padding: 0px 32px 0px 64px;
+    gap: 16px;
+    padding: 0px 16px;
     border-radius: 12px;
+}
+
+.row > span {
+    padding: 12px 0px;
+}
+
+.row > span:nth-of-type(1) {
+    flex: 1.35;
+}
+
+.row > span:nth-of-type(2) {
+    flex: 0.7;
+}
+
+.row > span:nth-of-type(3) {
+    flex: 0.9;
+}
+
+.row > span:nth-of-type(4) {
+    flex: 1.7;
+}
+
+.row > button {
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.groupCard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #f5fbff;
+    border: 1px solid rgba(14, 143, 204, 0.25);
+}
+
+.groupHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 4px 8px 0;
+}
+
+.groupTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.groupMeta {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #35556a;
+}
+
+.groupType {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #d7edf9;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.groupRows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.emptyTableState {
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: #f5fbff;
+    text-align: center;
+    color: #35556a;
+}
+
+.loadingState,
+.loadingStateCompact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    border-radius: 16px;
+    background: #f5fbff;
+    color: #35556a;
+}
+
+.loadingState {
+    min-height: 260px;
+}
+
+.inlineSpinner {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 3px solid rgba(14, 143, 204, 0.2);
+    border-top-color: #0e8fcc;
+    animation: spin 0.8s linear infinite;
+}
+
+.inlineSpinnerSmall {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(14, 143, 204, 0.2);
+    border-top-color: #0e8fcc;
+    animation: spin 0.8s linear infinite;
+}
+
+.buttonContent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.row > button:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
 }
 
 .children {
@@ -208,23 +337,6 @@
     flex-basis: 40%;
 }
 
-.row > span {
-    flex-basis: 30%;
-    padding: 12px 0px;
-}
-
-.row > span:nth-of-type(2) {
-    flex-basis: 40%;
-}
-
-.row > span:nth-of-type(3) {
-    flex-basis: 20%;
-}
-
-.row > button {
-    border: none;
-}
-
 .buttons {
     display: flex;
     justify-content: space-between;
@@ -238,6 +350,12 @@
     border-radius: 16px;
     font-size: 16px;
     background-color: #0e8fcc;
+    cursor: pointer;
+}
+
+.buttons > button:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
 }
 
 @media screen and (max-width: 700px) {
@@ -248,7 +366,7 @@
 
     .row {
         gap: 8px;
-        padding-left: 5%;
+        padding: 0 12px;
     }
 
     .row > span {
@@ -260,5 +378,11 @@
 @media screen and (max-width: 550px) {
     .row > span {
         font-size: 12px;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
