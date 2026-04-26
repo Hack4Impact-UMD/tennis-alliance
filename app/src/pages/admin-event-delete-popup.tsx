@@ -34,10 +34,9 @@ const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID, onEventDeleted }) =>
         } finally {
             setIsDeleting(false);
         }
-    }
+    };
 
     useEffect(() => {
-        console.log(eventID);
         const fetchEvent = async () => {
             try {
                 const event = await adminGetEventById(eventID);
@@ -49,10 +48,10 @@ const DeletePopUp: React.FC<DeletePopUpProps> = ({ eventID, onEventDeleted }) =>
             }
         };
 
-        if (eventID) {
+        if (visible && eventID) {
             fetchEvent();
         }
-    }, [visible]);
+    }, [visible, eventID]);
 
     return (
         <>

@@ -1,42 +1,57 @@
-import { User, Event } from "@/types";
+import { CustomEvent, User } from "@/types";
 
 const user: User = {
-    id: 1000,
+    auth_id: "1000",
     email: "person@gmail.com",
-    password: "123456",
     firstName: "John",
     lastName: "Doe",
     phone: 1234567890,
     zip: 20001,
+    events: [],
     children: [
         {
-            id: 1001,
-            firstName: "Jane",
-            lastName: "Doe",
-            age: 12,
-            birthYear: 2011,
-            school: "Middle School",
+            childFirstName: "Jane",
+            childLastName: "Doe",
+            childAge: 12,
+            childBirthYear: 2011,
+            childSchool: "Middle School",
         },
         {
-            id: 1002,
-            firstName: "Jane",
-            lastName: "Doe",
-            age: 13,
-            birthYear: 2010,
-            school: "Middle School",
+            childFirstName: "Jane",
+            childLastName: "Doe",
+            childAge: 13,
+            childBirthYear: 2010,
+            childSchool: "Middle School",
         },
     ],
     notifications: false,
+    waiver: true,
+    createdAt: new Date("2023-01-01T00:00:00"),
+    type: "family",
 };
 
-const event: Event = {
-    id: 1,
+const event: CustomEvent = {
+    id: "1",
     title: "Event Title",
-    startDate: new Date("2023-12-01T16:00:00"),
-    endDate: new Date("2023-12-01T18:00:00"),
+    date: "2023-12-01",
+    start: "16:00",
+    end: "18:00",
     description: "Event Description",
-    participants: [1001, 1002],
-    slots: 10,
+    participants: [
+        {
+            email: "person@gmail.com",
+            mainId: "1000",
+            mainFirstName: "John",
+            mainLastName: "Doe",
+            otherMembers: [
+                { firstName: "John", lastName: "Doe" },
+                { firstName: "Jane", lastName: "Doe" },
+            ],
+            role: "participant",
+        },
+    ],
+    maxParticipants: 10,
+    maxVolunteers: 5,
 };
 
 const users = [

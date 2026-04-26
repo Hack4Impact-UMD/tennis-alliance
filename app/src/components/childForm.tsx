@@ -29,9 +29,9 @@ const ChildForm = ({ isEditing, userId, onChildrenChange }: ChildFormProps) => {
             } catch (error) {
                 console.log("Error fetching children's data:", error);
             }
-        }
+        };
         fetchChildrenData();
-    }, [userId])
+    }, [userId, onChildrenChange]);
 
     useEffect(() => {
         onChildrenChange(childrenData); // Sync with parent on childrenData updates

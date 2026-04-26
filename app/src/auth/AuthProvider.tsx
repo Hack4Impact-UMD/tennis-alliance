@@ -1,8 +1,8 @@
 import {
-  getAuth,
-  onIdTokenChanged,
-  type IdTokenResult,
-  type User,
+    getAuth,
+    onIdTokenChanged,
+    type IdTokenResult,
+    type User,
 } from "@firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import app from "../config";
@@ -12,7 +12,7 @@ interface Props {
 }
 
 interface AuthContextType {
-  user: User;
+  user: User | null;
   token: IdTokenResult;
   loading: boolean;
 }
@@ -23,34 +23,34 @@ const AuthContext = createContext<AuthContextType>(null!);
 // Updates the AuthContext and re-renders children when the user changes.
 // See onIdTokenChanged for what events trigger a change.
 export const AuthProvider = ({ children }: Props): React.ReactElement => {
-  const [user, setUser] = useState<User | any>(null!);
-  const [token, setToken] = useState<IdTokenResult>(null!);
-  // The loading state is used by RequireAuth/RequireAdminAuth
-  const [loading, setLoading] = useState<boolean>(true);
+    const [user, setUser] = useState<User | null>(null);
+    const [token, setToken] = useState<IdTokenResult>(null!);
+    // The loading state is used by RequireAuth/RequireAdminAuth
+    const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const auth = getAuth(app);
-    onIdTokenChanged(auth, (newUser) => {
-      setUser(newUser);
-      if (newUser != null) {
-        newUser
-          .getIdTokenResult()
-          .then((newToken) => {
-            setToken(newToken);
-          })
-          .catch(() => {});
-      }
-      setLoading(false);
-    });
-  }, []);
+    useEffect(() => {
+        const auth = getAuth(app);
+        onIdTokenChanged(auth, (newUser) => {
+            setUser(newUser);
+            if (newUser != null) {
+                newUser
+                    .getIdTokenResult()
+                    .then((newToken) => {
+                        setToken(newToken);
+                    })
+                    .catch(() => {});
+            }
+            setLoading(false);
+        });
+    }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, token, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, token, loading }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+    return useContext(AuthContext);
 };

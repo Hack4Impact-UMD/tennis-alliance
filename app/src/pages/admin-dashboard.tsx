@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import os from "os";
 import styles from "@/styles/admin.module.css";
@@ -8,12 +8,12 @@ import Popup from "./admin-event-create-popup";
 import { adminDeleteParticipant, adminGetEvents, getUserWithId } from "@/backend/FirestoreCalls";
 import { CustomEvent, User } from "@/types";
 import TennisBalls from "@/assets/tennis_balls.png";
-import Calendar from '@event-calendar/core';
-import TimeGrid from '@event-calendar/time-grid';
-import DayGrid from '@event-calendar/day-grid';
-import Interaction from '@event-calendar/interaction';
-import '@event-calendar/core/index.css';
-import DashboardEvents from '../components/dashboard-events';
+import Calendar from "@event-calendar/core";
+import TimeGrid from "@event-calendar/time-grid";
+import DayGrid from "@event-calendar/day-grid";
+import Interaction from "@event-calendar/interaction";
+import "@event-calendar/core/index.css";
+import DashboardEvents from "../components/dashboard-events";
 
 const AGE_FILTERS = {
     "All Ages": "all",
@@ -59,7 +59,7 @@ const toDashboardEvent = (event: CustomEvent): CustomEvent => ({
 });
 
 const escapeCsvValue = (value: string) => {
-    const normalizedValue = value.replace(/"/g, '""');
+    const normalizedValue = value.replace(/"/g, "\"\"");
     return `"${normalizedValue}"`;
 };
 
@@ -84,17 +84,21 @@ const AdminDashboard = () => {
     const [displayedDate2, setDisplayedDate2] = useState<string>("No date selected");
     const [upcomingEvents, setUpcomingEvents] = useState<CustomEvent[]>([]);
     const [eventsForSelectedDate, setEventsForSelectedDate] = useState<CustomEvent[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string>('');
-    const [calendarViewDate, setCalendarViewDate] = useState<string>('');
-    const [weekRange, setWeekRange] = useState<string>('');  // New state for the week range
+    const [selectedDate, setSelectedDate] = useState<string>("");
+    const [calendarViewDate, setCalendarViewDate] = useState<string>("");
+    const [weekRange, setWeekRange] = useState<string>("");  // New state for the week range
     const [selectedEvent, setSelectedEvent] = useState<CustomEvent | null>(null);
     const [isLoadingEvents, setIsLoadingEvents] = useState<boolean>(true);
     const [isLoadingAttendees, setIsLoadingAttendees] = useState<boolean>(false);
     const [deletingAttendeeId, setDeletingAttendeeId] = useState<string | null>(null);
+    const selectedDateRef = useRef(selectedDate);
+    const selectedEventIdRef = useRef<string | null>(selectedEvent?.id ?? null);
 
     const isLoadingDashboard = isLoadingEvents;
+    selectedDateRef.current = selectedDate;
+    selectedEventIdRef.current = selectedEvent?.id ?? null;
 
-    const buildAttendeeGroups = async (event: CustomEvent): Promise<AttendeeGroup[]> => {
+    const buildAttendeeGroups = useCallback(async (event: CustomEvent): Promise<AttendeeGroup[]> => {
         const groups = await Promise.all(
             event.participants.map(async (participantObj, index) => {
                 const participantId = String(participantObj.mainId);
@@ -173,37 +177,37 @@ const AdminDashboard = () => {
         );
 
         return groups.filter((group) => group.rows.length > 0);
-    };
+    }, []);
 
     const monthDay = (date: string) => {
         // Parse the input date (in 'YYYY-MM-DD' format)
-        const [year, month, day] = date.split('-');
-    
+        const [, month, day] = date.split("-");
+
         // Map the month number to the corresponding month name
         const monthNames = [
-            "January", "February", "March", "April", "May", "June", 
+            "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
-        
+
         const monthName = monthNames[parseInt(month) - 1]; // Get the month name
-    
+
         // Add the appropriate suffix to the day
         const suffix = (day: number) => {
             if (day >= 11 && day <= 13) return "th"; // Special case for 11th, 12th, 13th
             switch (day % 10) {
-                case 1: return "st";
-                case 2: return "nd";
-                case 3: return "rd";
-                default: return "th";
+            case 1: return "st";
+            case 2: return "nd";
+            case 3: return "rd";
+            default: return "th";
             }
         };
-    
+
         const formattedDay = `${parseInt(day)}${suffix(parseInt(day))}`; // Add the suffix to the day
-    
+
         return `${monthName} ${formattedDay}`;
     };
 
-    const reconcileSelectedEvent = async (
+    const reconcileSelectedEvent = useCallback(async (
         normalizedEvents: CustomEvent[],
         currentSelectedDate: string,
         currentSelectedEventId: string | null
@@ -239,11 +243,11 @@ const AdminDashboard = () => {
         } finally {
             setIsLoadingAttendees(false);
         }
-    };
+    }, [buildAttendeeGroups]);
 
-    const refreshEvents = async () => {
-        const currentSelectedDate = selectedDate;
-        const currentSelectedEventId = selectedEvent?.id ?? null;
+    const refreshEvents = useCallback(async () => {
+        const currentSelectedDate = selectedDateRef.current;
+        const currentSelectedEventId = selectedEventIdRef.current;
 
         setIsLoadingEvents(true);
         try {
@@ -261,7 +265,7 @@ const AdminDashboard = () => {
         } finally {
             setIsLoadingEvents(false);
         }
-    };
+    }, [reconcileSelectedEvent]);
 
     useEffect(() => {
         const calculateCurrentWeekRange = () => {
@@ -286,7 +290,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         refreshEvents();
-    }, []);
+    }, [refreshEvents]);
 
     const filteredGroups = useMemo(() => {
         const searchValue = search.trim().toLowerCase();
@@ -467,133 +471,133 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         if (calendarRef.current) {
-          const calendarEvents: CustomEvent[] = [];
-          const eventCountByDate: { [key: string]: number } = {};
-          const eventsByDate: { [key: string]: CustomEvent[] } = {};
-    
-          const now = new Date();
-          const utcOffset = now.getTimezoneOffset() * 60000;
-          const estOffset = 5 * 60 * 60000;
-          const estDate = new Date(now.getTime() - utcOffset + estOffset);
-    
-          const year = estDate.getFullYear();
-          const month = String(estDate.getMonth() + 1).padStart(2, '0');
-          const day = String(estDate.getDate()).padStart(2, '0');
-          const todayInEST = `${year}-${month}-${day}`;
-    
-          const currentWeekStart = new Date(weekRange.split(" - ")[0]);
-          const currentWeekEnd = new Date(weekRange.split(" - ")[1]);
-    
-          const upcomingEventList: CustomEvent[] = [];
-    
-          eventData.forEach(event => {
-            const dateKey = event.date;
-            eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
-                  
-            let eventObj: CustomEvent = {
-              id: '',
-              title: '',
-              start: '',
-              end: '',
-              description: '',
-              date: '',
-              participants: [],
-              maxParticipants: 0,
-              maxVolunteers: 0,
-            };
-    
-            if (!eventsByDate[dateKey]) {
-              eventsByDate[dateKey] = [];
-            }
-            if (event.title) {
-              eventObj = {
-                id: event.id,
-                title: event.title,
-                start: `${event.date}T${event.start}`,
-                end: `${event.date}T${event.end}`,
-                description: event.description,
-                date: event.date,
-                participants: event.participants,
-                maxParticipants: event.maxParticipants,
-                maxVolunteers: event.maxVolunteers,
-              };
-            }
-    
-            eventsByDate[dateKey].push(eventObj);
-    
-            const eventDate = new Date(dateKey);
-    
-            // Add events that are within the week range
-            if (eventDate >= currentWeekStart && eventDate <= currentWeekEnd) {
-              upcomingEventList.push(eventObj);
-            }
-    
-          });
-    
-          // Create aggregated events for the calendar
-          
-          Object.keys(eventCountByDate).forEach(date => {
-            calendarEvents.push({
-              id: date,
-              title: `${eventCountByDate[date]} event${eventCountByDate[date] > 1 ? 's' : ''}`,
-              start: `${date}T00:00`,
-              end: `${date}T23:59`,
-              description: 'temporary description',
-              date: date,
-              participants: [],
-              maxParticipants: 0,
-              maxVolunteers: 0,
+            const calendarEvents: CustomEvent[] = [];
+            const eventCountByDate: { [key: string]: number } = {};
+            const eventsByDate: { [key: string]: CustomEvent[] } = {};
+
+            const now = new Date();
+            const utcOffset = now.getTimezoneOffset() * 60000;
+            const estOffset = 5 * 60 * 60000;
+            const estDate = new Date(now.getTime() - utcOffset + estOffset);
+
+            const year = estDate.getFullYear();
+            const month = String(estDate.getMonth() + 1).padStart(2, "0");
+            const day = String(estDate.getDate()).padStart(2, "0");
+            const todayInEST = `${year}-${month}-${day}`;
+
+            const currentWeekStart = new Date(weekRange.split(" - ")[0]);
+            const currentWeekEnd = new Date(weekRange.split(" - ")[1]);
+
+            const upcomingEventList: CustomEvent[] = [];
+
+            eventData.forEach(event => {
+                const dateKey = event.date;
+                eventCountByDate[dateKey] = (eventCountByDate[dateKey] || 0) + 1;
+
+                let eventObj: CustomEvent = {
+                    id: "",
+                    title: "",
+                    start: "",
+                    end: "",
+                    description: "",
+                    date: "",
+                    participants: [],
+                    maxParticipants: 0,
+                    maxVolunteers: 0,
+                };
+
+                if (!eventsByDate[dateKey]) {
+                    eventsByDate[dateKey] = [];
+                }
+                if (event.title) {
+                    eventObj = {
+                        id: event.id,
+                        title: event.title,
+                        start: `${event.date}T${event.start}`,
+                        end: `${event.date}T${event.end}`,
+                        description: event.description,
+                        date: event.date,
+                        participants: event.participants,
+                        maxParticipants: event.maxParticipants,
+                        maxVolunteers: event.maxVolunteers,
+                    };
+                }
+
+                eventsByDate[dateKey].push(eventObj);
+
+                const eventDate = new Date(dateKey);
+
+                // Add events that are within the week range
+                if (eventDate >= currentWeekStart && eventDate <= currentWeekEnd) {
+                    upcomingEventList.push(eventObj);
+                }
+
             });
-          });
-    
-          upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-          setUpcomingEvents(upcomingEventList);
-    
-          const ec = new Calendar({
-            target: calendarRef.current,
-            props: {
-              plugins: [TimeGrid, DayGrid, Interaction],
-              options: {
-                view: 'dayGridMonth',
-                date: new Date(`${calendarViewDate || todayInEST}T00:00:00`),
-                events: calendarEvents,
-                highlightedDates: selectedDate ? [selectedDate] : [],
-                eventContent: (info) => info.event.title,
-                dateClick: (info) => {
-                  const clickedDate = info.date.toISOString().split('T')[0];
-                  const nextSelectedDate = selectedDate === clickedDate ? '' : clickedDate;
 
-                  setCalendarViewDate(clickedDate);
-                  setSelectedDate(nextSelectedDate);
-                  setEventsForSelectedDate(nextSelectedDate ? (eventsByDate[clickedDate] || []) : []);
-                  setDisplayedDate2(nextSelectedDate ? monthDay(clickedDate) : "No date selected");
-                  setSelectedEventTitle("No event selected"); // Ensure this is reset
-                  setSelectedEvent(null);
-                  setAttendeeGroups([]);
-                  setIsLoadingAttendees(false);
-                },
-                eventClick: (info) => {
-                  const clickedDate = info.event.start.toISOString().split('T')[0];
-                  const nextSelectedDate = selectedDate === clickedDate ? '' : clickedDate;
+            // Create aggregated events for the calendar
 
-                  setCalendarViewDate(clickedDate);
-                  setSelectedDate(nextSelectedDate);
-                  setEventsForSelectedDate(nextSelectedDate ? (eventsByDate[clickedDate] || []) : []);
-                  setDisplayedDate2(nextSelectedDate ? monthDay(clickedDate) : "No date selected");
-                  setSelectedEventTitle("No event selected");
-                  setSelectedEvent(null);
-                  setAttendeeGroups([]);
-                  setIsLoadingAttendees(false);
+            Object.keys(eventCountByDate).forEach(date => {
+                calendarEvents.push({
+                    id: date,
+                    title: `${eventCountByDate[date]} event${eventCountByDate[date] > 1 ? "s" : ""}`,
+                    start: `${date}T00:00`,
+                    end: `${date}T23:59`,
+                    description: "temporary description",
+                    date: date,
+                    participants: [],
+                    maxParticipants: 0,
+                    maxVolunteers: 0,
+                });
+            });
+
+            upcomingEventList.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            setUpcomingEvents(upcomingEventList);
+
+            const ec = new Calendar({
+                target: calendarRef.current,
+                props: {
+                    plugins: [TimeGrid, DayGrid, Interaction],
+                    options: {
+                        view: "dayGridMonth",
+                        date: new Date(`${calendarViewDate || todayInEST}T00:00:00`),
+                        events: calendarEvents,
+                        highlightedDates: selectedDate ? [selectedDate] : [],
+                        eventContent: (info) => info.event.title,
+                        dateClick: (info) => {
+                            const clickedDate = info.date.toISOString().split("T")[0];
+                            const nextSelectedDate = selectedDate === clickedDate ? "" : clickedDate;
+
+                            setCalendarViewDate(clickedDate);
+                            setSelectedDate(nextSelectedDate);
+                            setEventsForSelectedDate(nextSelectedDate ? (eventsByDate[clickedDate] || []) : []);
+                            setDisplayedDate2(nextSelectedDate ? monthDay(clickedDate) : "No date selected");
+                            setSelectedEventTitle("No event selected"); // Ensure this is reset
+                            setSelectedEvent(null);
+                            setAttendeeGroups([]);
+                            setIsLoadingAttendees(false);
+                        },
+                        eventClick: (info) => {
+                            const clickedDate = info.event.start.toISOString().split("T")[0];
+                            const nextSelectedDate = selectedDate === clickedDate ? "" : clickedDate;
+
+                            setCalendarViewDate(clickedDate);
+                            setSelectedDate(nextSelectedDate);
+                            setEventsForSelectedDate(nextSelectedDate ? (eventsByDate[clickedDate] || []) : []);
+                            setDisplayedDate2(nextSelectedDate ? monthDay(clickedDate) : "No date selected");
+                            setSelectedEventTitle("No event selected");
+                            setSelectedEvent(null);
+                            setAttendeeGroups([]);
+                            setIsLoadingAttendees(false);
+                        },
+                    },
                 },
-              },
-            },
-          });
-    
-          return () => {
-            ec.destroy();
-          };
+            });
+
+            return () => {
+                ec.destroy();
+            };
         }
-      }, [calendarViewDate, eventData, selectedDate, weekRange]);
+    }, [calendarViewDate, eventData, selectedDate, weekRange]);
 
     return (
         <div className={styles.container}>
@@ -618,125 +622,125 @@ const AdminDashboard = () => {
                     </div>
                 ) : (
                     <>
-                <div className={styles.selectedDateContainer}>
-                    <div className={styles.selectedDateText}>Date selected:</div>
-                    <div className={styles.selectedEvent}>{displayedDate2}</div>
-                </div>
-                <DashboardEvents 
-                    events={selectedDate ? eventsForSelectedDate : upcomingEvents}
-                    onSelectEvent={handleSelectEvent}
-                    onEventUpdated={refreshEvents}
-                    onEventDeleted={refreshEvents}
-                    emptyMessage={selectedDate ? "No events" : null}
-                />
-                <div className={styles.selectedEventContainer}>
-                    <div className={styles.selectedEventText}>Event selected:</div>
-                    <div className={styles.selectedEvent}>{selectedEventTitle}</div>
-                </div>
-                <p>Attendees</p>
-                <div className={styles.search}>
-                    <input
-                        type="text"
-                        placeholder="Search attendees"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                    <select value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)}>
-                        {Object.entries(AGE_FILTERS).map(([key, value]) => (
-                            <option key={key} value={value}>
-                                {key}
-                            </option>
-                        ))}
-                    </select>
-                    <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-                        {Object.entries(ROLE_FILTERS).map(([key, value]) => (
-                            <option key={key} value={value}>
-                                {key}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className={`${styles.row} ${styles.header}`}>
-                    <span>Attendee</span>
-                    <span>Age Group</span>
-                    <span>Role</span>
-                    <span>Contact Email</span>
-                    <div />
-                    <div />
-                </div>
-                {isLoadingAttendees ? (
-                    <div className={styles.loadingStateCompact}>
-                        <div className={styles.inlineSpinner} aria-hidden="true" />
-                        <p>Loading attendees...</p>
-                    </div>
-                ) : filteredGroups.length > 0 ? (
-                    filteredGroups.map((group, groupIndex) => (
-                        <div key={group.id} className={styles.groupCard}>
-                            <div className={styles.groupHeader}>
-                                <div>
-                                    <p className={styles.groupTitle}>{group.householdLabel}</p>
-                                    <p className={styles.groupMeta}>Primary Contact: {group.contactEmail}</p>
-                                </div>
-                                <p className={styles.groupType}>{group.accountType}</p>
-                            </div>
-                            <div className={styles.groupRows}>
-                                {group.rows.map((row) => {
-                                    const isDeleting = deletingAttendeeId === row.id;
-
-                                    return (
-                                    <div
-                                        key={row.id}
-                                        className={styles.row}
-                                        style={{ background: getRowColor(row.role) }}
-                                    >
-                                        <span>{row.displayName}</span>
-                                        <span>{row.ageGroup}</span>
-                                        <span>{row.role}</span>
-                                        <span>{row.contactEmail}</span>
-                                        <button>
-                                            <a href={`mailto:${row.contactEmail}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
-                                        </button>
-                                        <button disabled={isDeleting} onClick={() => handleDeleteAttendee(row)}>
-                                            {isDeleting ? (
-                                                <span className={styles.buttonContent}>
-                                                    <span className={styles.inlineSpinnerSmall} aria-hidden="true" />
-                                                    Removing...
-                                                </span>
-                                            ) : (
-                                                <Image src={Trash} alt="delete" />
-                                            )}
-                                        </button>
-                                    </div>
-                                    );
-                                })}
-                            </div>
+                        <div className={styles.selectedDateContainer}>
+                            <div className={styles.selectedDateText}>Date selected:</div>
+                            <div className={styles.selectedEvent}>{displayedDate2}</div>
                         </div>
-                    ))
-                ) : (
-                    <div className={styles.emptyTableState}>
-                        {selectedEventTitle === "No event selected"
-                            ? "Select an event to view attendees."
-                            : attendeeGroups.length === 0
-                                ? "No attendees are currently registered for this event."
-                                : "No attendees match the current filters."}
-                    </div>
-                )}
-                <div className={styles.buttons}>
-                    <button onClick={emailFilteredAttendees} disabled={filteredEmailRecipients.length === 0}>
+                        <DashboardEvents
+                            events={selectedDate ? eventsForSelectedDate : upcomingEvents}
+                            onSelectEvent={handleSelectEvent}
+                            onEventUpdated={refreshEvents}
+                            onEventDeleted={refreshEvents}
+                            emptyMessage={selectedDate ? "No events" : null}
+                        />
+                        <div className={styles.selectedEventContainer}>
+                            <div className={styles.selectedEventText}>Event selected:</div>
+                            <div className={styles.selectedEvent}>{selectedEventTitle}</div>
+                        </div>
+                        <p>Attendees</p>
+                        <div className={styles.search}>
+                            <input
+                                type="text"
+                                placeholder="Search attendees"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                            <select value={ageFilter} onChange={(e) => setAgeFilter(e.target.value)}>
+                                {Object.entries(AGE_FILTERS).map(([key, value]) => (
+                                    <option key={key} value={value}>
+                                        {key}
+                                    </option>
+                                ))}
+                            </select>
+                            <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+                                {Object.entries(ROLE_FILTERS).map(([key, value]) => (
+                                    <option key={key} value={value}>
+                                        {key}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className={`${styles.row} ${styles.header}`}>
+                            <span>Attendee</span>
+                            <span>Age Group</span>
+                            <span>Role</span>
+                            <span>Contact Email</span>
+                            <div />
+                            <div />
+                        </div>
+                        {isLoadingAttendees ? (
+                            <div className={styles.loadingStateCompact}>
+                                <div className={styles.inlineSpinner} aria-hidden="true" />
+                                <p>Loading attendees...</p>
+                            </div>
+                        ) : filteredGroups.length > 0 ? (
+                            filteredGroups.map((group) => (
+                                <div key={group.id} className={styles.groupCard}>
+                                    <div className={styles.groupHeader}>
+                                        <div>
+                                            <p className={styles.groupTitle}>{group.householdLabel}</p>
+                                            <p className={styles.groupMeta}>Primary Contact: {group.contactEmail}</p>
+                                        </div>
+                                        <p className={styles.groupType}>{group.accountType}</p>
+                                    </div>
+                                    <div className={styles.groupRows}>
+                                        {group.rows.map((row) => {
+                                            const isDeleting = deletingAttendeeId === row.id;
+
+                                            return (
+                                                <div
+                                                    key={row.id}
+                                                    className={styles.row}
+                                                    style={{ background: getRowColor(row.role) }}
+                                                >
+                                                    <span>{row.displayName}</span>
+                                                    <span>{row.ageGroup}</span>
+                                                    <span>{row.role}</span>
+                                                    <span>{row.contactEmail}</span>
+                                                    <button>
+                                                        <a href={`mailto:${row.contactEmail}`} target="_blank" rel="noreferrer"><Image src={Email} alt="mail" /></a>
+                                                    </button>
+                                                    <button disabled={isDeleting} onClick={() => handleDeleteAttendee(row)}>
+                                                        {isDeleting ? (
+                                                            <span className={styles.buttonContent}>
+                                                                <span className={styles.inlineSpinnerSmall} aria-hidden="true" />
+                                                    Removing...
+                                                            </span>
+                                                        ) : (
+                                                            <Image src={Trash} alt="delete" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className={styles.emptyTableState}>
+                                {selectedEventTitle === "No event selected"
+                                    ? "Select an event to view attendees."
+                                    : attendeeGroups.length === 0
+                                        ? "No attendees are currently registered for this event."
+                                        : "No attendees match the current filters."}
+                            </div>
+                        )}
+                        <div className={styles.buttons}>
+                            <button onClick={emailFilteredAttendees} disabled={filteredEmailRecipients.length === 0}>
                         Email All
-                    </button>
-                    <button onClick={downloadUsers} disabled={filteredGroups.length === 0}>
+                            </button>
+                            <button onClick={downloadUsers} disabled={filteredGroups.length === 0}>
                         Export Attendees
-                    </button>
-                    <a
-                        href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-                            download
-                        )}`}
-                        download={downloadFileName}
-                        hidden={true}
-                        ref={downloadLink}
-                    ></a>
-                </div>
+                            </button>
+                            <a
+                                href={`data:text/csv;charset=utf-8,${encodeURIComponent(
+                                    download
+                                )}`}
+                                download={downloadFileName}
+                                hidden={true}
+                                ref={downloadLink}
+                            ></a>
+                        </div>
                     </>
                 )}
             </div>

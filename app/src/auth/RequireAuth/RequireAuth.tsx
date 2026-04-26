@@ -9,21 +9,21 @@ interface Props {
 }
 
 const RequireAuth: React.FC<Props> = ({ children }) => {
-  const router = useRouter();
-  const authContext = useAuth();
-  if (authContext.loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <Loading />;
-      </div>
-    );
-  } else if (!authContext.user) {
-    console.log("User is not authenticated");
-    router.push("/login");
-    return null;
-  }
+    const router = useRouter();
+    const authContext = useAuth();
+    if (authContext.loading) {
+        return (
+            <div className={styles.loadingContainer}>
+                <Loading />;
+            </div>
+        );
+    } else if (!authContext.user) {
+        console.log("User is not authenticated");
+        router.push("/login");
+        return null;
+    }
 
-  return <AuthProvider>{children}</AuthProvider>;
+    return <AuthProvider>{children}</AuthProvider>;
 };
 
 export default RequireAuth;

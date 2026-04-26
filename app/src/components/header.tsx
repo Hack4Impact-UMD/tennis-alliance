@@ -11,8 +11,6 @@ import Hamburger from "@/assets/hamburger.svg";
 import Logo from "@/assets/logo.png";
 import Profile from "@/assets/profile.png";
 import XButton from "@/assets/x_white.svg";
-import firebase from "firebase/compat/app";
-import { set } from "date-fns";
 
 const Header = () => {
     const [toggleNav, setToggleNav] = useState(false);
@@ -51,10 +49,12 @@ const Header = () => {
 
     const [role, setRole] = useState<string>("");
     const currentUser = useAuth();
+    const currentUserRole = currentUser?.token?.claims.role;
+
     useEffect(() => {
         const fetchRole = async () => {
             try {
-                const role = currentUser?.token?.claims.role?.toString().toUpperCase();
+                const role = currentUserRole?.toString().toUpperCase();
                 if (role) {
                     setRole(role);
                 } else {
@@ -67,11 +67,11 @@ const Header = () => {
         };
 
         fetchRole();
-    }, [toggleNav]);
+    }, [currentUserRole]);
 
     const navigateToDashboard = () => {
         router.push(role === "ADMIN" ? "/admin" : "/dashboard");
-    }
+    };
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -80,20 +80,20 @@ const Header = () => {
                 return;
             }
             try {
-                const user = await getUserWithId(authContext.user.uid)
+                const user = await getUserWithId(authContext.user.uid);
                 setUser(user);
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
-        }
+        };
         fetchUser();
-    }, [authContext.user])
+    }, [authContext.user]);
 
     return (
         <nav className={classes.header}>
             <Image
                 className={`${classes.hamburger} ${toggleNav ? classes.active : ""
-                    }`}
+                }`}
                 src={Hamburger}
                 onClick={toggleMenu}
                 alt="hamburger"
@@ -102,11 +102,11 @@ const Header = () => {
 
             <div
                 className={`${classes.overlay} ${toggleNav ? classes.active : ""
-                    }`}
+                }`}
             >
                 <div
                     className={`${classes.menu} ${toggleNav ? classes.active : ""
-                        }`}
+                    }`}
                 >
                     <Image src={XButton} onClick={toggleMenu} alt="exit" />
                     <div className={classes.profile}>

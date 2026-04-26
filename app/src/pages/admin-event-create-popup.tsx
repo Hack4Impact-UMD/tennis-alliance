@@ -26,7 +26,6 @@ const Popup: React.FC<PopupProps> = ({ onEventCreated }) => {
     });
 
     const [selectedDay, setSelectedDay] = useState(new Date());
-    const [currentMonth, setCurrentMonth] = useState(new Date());
     const [maxParticipants, setMaxParticipants] = useState(0);
     const [maxVolunteers, setMaxVolunteers] = useState(0);
     const [description, setDescription] = useState("");

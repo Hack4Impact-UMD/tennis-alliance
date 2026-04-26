@@ -190,12 +190,12 @@ const EditPopup: React.FC<EditPopUpProps> = ({ eventID, onEventUpdated }) => {
     const handleParticipantsChange = (num: number) => {
         setMaxParticipants(num);
         // console.log(num);
-    }
+    };
 
     const handleVolunteersChange = (num: number) => {
         setMaxVolunteers(num);
         // console.log(num);
-    }
+    };
 
     const customCaption = ({ displayMonth }: CaptionProps) => {
         const currentYear = getYear(displayMonth);
